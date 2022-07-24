@@ -72,7 +72,7 @@ public class LocationFilter : Filter
     public override bool Run()
     {
         state.locations = state.leves
-            .Select(row => row.value.PlaceNameStartZone.Value)
+            .Select(row => row.leve.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
@@ -84,7 +84,7 @@ public class LocationFilter : Filter
         if (Config.SelectedLocation == 0)
             return false;
 
-        state.leves = state.leves.Where(item => item.value.PlaceNameStartZone.Row == Config.SelectedLocation);
+        state.leves = state.leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
 
         return true;
     }

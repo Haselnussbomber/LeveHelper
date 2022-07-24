@@ -192,7 +192,7 @@ public unsafe partial class PluginUi
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                filterManager.SetValue<ClassFilter>((uint)item.value.Unknown4);
+                filterManager.SetValue<ClassFilter>((uint)item.leve.Unknown4);
             }
 
             // Levemete
@@ -207,12 +207,12 @@ public unsafe partial class PluginUi
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                item.value.LevelLevemete.Value?.OpenMapLocation();
+                item.leve.LevelLevemete.Value?.OpenMapLocation();
             }
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                filterManager.SetValue<LevemeteFilter>(item.value.LevelLevemete.Value!.Object);
+                filterManager.SetValue<LevemeteFilter>(item.leve.LevelLevemete.Value!.Object);
             }
         }
 

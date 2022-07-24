@@ -44,10 +44,10 @@ public class FilterManager
         state.leves = (state.sortColumnIndex, state.sortDirection) switch
         {
             //(0, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.value.RowId),
-            (0, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.value.RowId),
+            (0, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.RowId),
 
-            (1, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.value.ClassJobLevel),
-            (1, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.value.ClassJobLevel),
+            (1, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.leve.ClassJobLevel),
+            (1, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.ClassJobLevel),
 
             (2, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.Name),
             (2, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.Name),
@@ -67,7 +67,7 @@ public class FilterManager
         state.numTotalLeves = state.leves.Count();
         state.neededAllowances = state.leves
             .Where(row => !row.IsComplete)
-            .Select(item => (int)item.value.AllowanceCost)
+            .Select(item => (int)item.leve.AllowanceCost)
             .Aggregate(0, (total, cost) => total + cost);
     }
 

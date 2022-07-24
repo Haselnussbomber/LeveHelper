@@ -65,7 +65,7 @@ public class ClassFilter : Filter
     {
         var LeveAssignmentTypeSheet = Service.Data.GetExcelSheet<LeveAssignmentType>();
         state.classes = state.leves
-            .Select(item => item.value.Unknown4 != 0 ? LeveAssignmentTypeSheet?.GetRow((uint)item.value.Unknown4) : null)
+            .Select(item => item.leve.Unknown4 != 0 ? LeveAssignmentTypeSheet?.GetRow((uint)item.leve.Unknown4) : null)
             .Where(item => item != null)
             .Cast<LeveAssignmentType>()
             .GroupBy(item => item.RowId)
@@ -78,7 +78,7 @@ public class ClassFilter : Filter
         if (Config.SelectedClass == 0)
             return false;
 
-        state.leves = state.leves.Where(item => item.value.Unknown4 == Config.SelectedClass);
+        state.leves = state.leves.Where(item => item.leve.Unknown4 == Config.SelectedClass);
 
         return true;
     }

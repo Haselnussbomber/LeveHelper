@@ -40,7 +40,7 @@ public class FiltersState
             .ToArray();
 
         AllLocations = AllLeves
-            .Select(row => row.value.PlaceNameStartZone.Value)
+            .Select(row => row.leve.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)

@@ -4,7 +4,7 @@ namespace LeveHelper;
 
 public record LeveRecord
 {
-    public readonly Leve value;
+    public readonly Leve leve;
     public readonly string RowId;
     public readonly string Name;
     public readonly string ClassJobLevel;
@@ -15,7 +15,7 @@ public record LeveRecord
 
     public LeveRecord(Leve leve)
     {
-        this.value = leve;
+        this.leve = leve;
         this.RowId = leve.RowId.ToString();
         this.Name = leve.Name.ClearString();
         this.ClassJobLevel = leve.ClassJobLevel.ToString();
@@ -29,8 +29,8 @@ public record LeveRecord
 
         this.ClassName = Service.Data.GetExcelSheet<LeveAssignmentType>()!.GetRow((uint)leve.Unknown4)!.Name.ClearString();
         this.TownName = leve.Town.Value?.Name.ClearString() ?? "???";
-        this.TownLocked = value.RowId == 546 || value.RowId == 556 || value.RowId == 566;
+        this.TownLocked = leve.RowId == 546 || leve.RowId == 556 || leve.RowId == 566;
     }
 
-    public bool IsComplete => QuestManagerHelper.Instance.IsLevequestCompleted((ushort)value.RowId);
+    public bool IsComplete => QuestManagerHelper.Instance.IsLevequestCompleted((ushort)leve.RowId);
 }

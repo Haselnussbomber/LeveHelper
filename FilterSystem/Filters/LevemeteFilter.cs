@@ -65,7 +65,7 @@ public class LevemeteFilter : Filter
     {
         var ENpcResidentSheet = Service.Data.GetExcelSheet<ENpcResident>();
         state.levemetes = state.leves
-            .Select(row => row.value.LevelLevemete.Value?.Object)
+            .Select(row => row.leve.LevelLevemete.Value?.Object)
             .Where(item => item != null)
             .Cast<uint>()
             .GroupBy(item => item)
@@ -79,7 +79,7 @@ public class LevemeteFilter : Filter
         if (Config.SelectedLevemete == 0)
             return false;
 
-        state.leves = state.leves.Where(item => item.value.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        state.leves = state.leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
 
         return true;
     }
