@@ -24,9 +24,9 @@ internal class FilterConfigs
 
 internal partial class Configuration
 {
-    internal static Configuration Load(Plugin plugin)
+    internal static Configuration Load()
     {
-        var configPath = plugin.PluginInterface.ConfigFile.FullName;
+        var configPath = Service.PluginInterface.ConfigFile.FullName;
 
         string? jsonData = File.Exists(configPath) ? File.ReadAllText(configPath) : null;
         if (string.IsNullOrEmpty(jsonData))

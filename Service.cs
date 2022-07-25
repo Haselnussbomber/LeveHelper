@@ -13,6 +13,7 @@ namespace LeveHelper;
 public class Service
 {
     internal static Configuration Config { get; set; } = null!;
+    internal static PlaceNameService PlaceNameService { get; set; } = null!;
     [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] public static ChatGui Chat { get; private set; } = null!;
     [PluginService] public static ClientState ClientState { get; private set; } = null!;

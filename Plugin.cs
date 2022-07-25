@@ -1,47 +1,76 @@
 using System;
+using Dalamud.Game.Command;
+using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using Dalamud.Plugin;
 
 namespace LeveHelper;
 
-public unsafe partial class Plugin : IDalamudPlugin
+public class Plugin : IDalamudPlugin, IDisposable
 {
     public string Name => "LeveHelper";
 
-    internal DalamudPluginInterface PluginInterface;
-    internal PluginUi Ui;
+    private readonly WindowSystem windowSystem = new("LeveHelper");
+    private readonly PluginWindow pluginWindow;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
-        PluginInterface = pluginInterface;
-
         pluginInterface.Create<Service>();
-        Service.Config = Configuration.Load(this);
 
-        Ui = new(this);
-    }
-}
+        Service.Config = Configuration.Load();
+        Service.PlaceNameService = new PlaceNameService();
 
-public sealed partial class Plugin : IDisposable
-{
-    private bool isDisposed;
+        this.pluginWindow = new PluginWindow();
+        this.windowSystem.AddWindow(this.pluginWindow);
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Dispose(true);
-    }
+        Service.PluginInterface.UiBuilder.Draw += this.OnDraw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 
-    private void Dispose(bool disposing)
-    {
-        if (isDisposed)
-            return;
-
-        if (disposing)
+        var commandInfo = new CommandInfo(this.OnCommand)
         {
-            Ui.Show = false;
-            Ui.Dispose();
-        }
+            HelpMessage = "Show Window"
+        };
 
-        isDisposed = true;
+        Service.Commands.AddHandler("/levehelper", commandInfo);
+        Service.Commands.AddHandler("/lh", commandInfo);
+
+#if DEBUG
+        this.windowSystem.GetWindow("LeveHelper")?.Toggle();
+#endif
+    }
+
+    private void OnDraw()
+    {
+        try
+        {
+            this.windowSystem.Draw();
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Error(ex, "Unexpected exception in OnDraw");
+        }
+    }
+
+    private void OnCommand(string command, string args)
+    {
+        this.pluginWindow.Toggle();
+    }
+
+    private void OnOpenConfigUi()
+    {
+        this.pluginWindow.Toggle();
+    }
+
+    void IDisposable.Dispose()
+    {
+        Service.PluginInterface.UiBuilder.Draw -= this.OnDraw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+
+        Service.Commands.RemoveHandler("/levehelper");
+        Service.Commands.RemoveHandler("/lh");
+
+        this.windowSystem.RemoveAllWindows();
+
+        Service.Config.Save();
     }
 }

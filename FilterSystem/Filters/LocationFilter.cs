@@ -62,9 +62,10 @@ public class LocationFilter : Filter
 
         ImGui.SameLine();
 
-        if (manager.PluginUi.PlaceNameId != 0 && state.AllLocations.Contains(manager.PluginUi.PlaceNameId) && ImGui.Button("Set Current Zone"))
+        var placeNameId = Service.PlaceNameService.PlaceNameId;
+        if (placeNameId != 0 && state.AllLocations.Contains(placeNameId) && ImGui.Button("Set Current Zone"))
         {
-            Config.SelectedLocation = manager.PluginUi.PlaceNameId;
+            Config.SelectedLocation = placeNameId;
             manager.Update();
         }
     }

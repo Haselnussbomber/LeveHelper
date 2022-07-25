@@ -7,15 +7,11 @@ namespace LeveHelper;
 
 public class FilterManager
 {
-    public Plugin Plugin { get; init; }
-    public PluginUi PluginUi { get; init; }
     public FiltersState state { get; set; }
     public List<Filter> filters { get; private set; }
 
-    public FilterManager(Plugin plugin, PluginUi pluginUi)
+    public FilterManager()
     {
-        Plugin = plugin;
-        PluginUi = pluginUi;
         state = new();
         filters = new()
         {
@@ -126,47 +122,22 @@ public class FilterManager
 
     public void Draw()
     {
-        ImGui.Text("Filters");
-
-        //var cursorX = ImGui.GetCursorPosX();
-        //ImGui.SetCursorPosX(cursorX + 14);
-
-        if (ImGui.BeginTable("LeveHelper_Filters", 2/*4*/, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoSavedSettings))
+        if (ImGui.BeginTable("filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoSavedSettings))
         {
-            for (var i = 0; i < filters.Count; i++)
+            foreach (var filter in filters)
             {
-                var filter = filters[i];
-
                 filter.Draw();
-
-                /*
-                ImGui.TableNextColumn();
-                if (i > 0 && ImGui.ArrowButton($"##LeveHelper_FilterManager_Filter-{i}_Up", ImGuiDir.Up))
-                    MoveFilter(filter, -1);
-
-                ImGui.TableNextColumn();
-                if (i < filters.Count - 1 && ImGui.ArrowButton($"##LeveHelper_FilterManager_Filter-{i}_Down", ImGuiDir.Down))
-                    MoveFilter(filter, 1);
-                */
             }
 
             ImGui.TableNextColumn();
             ImGui.TableNextColumn();
 
-            if (ImGui.Button("Clear Filters##LeveHelper_FilterManager_ClearFilters"))
+            if (ImGui.Button("Clear Filters"))
+            {
                 Reset();
-            /*
-            ImGui.SameLine();
-
-            if (ImGui.Button("Reset Filter Order##LeveHelper_FilterManager_ResetFilterOrder"))
-                ResetOrder();
-            
-            ImGui.TableNextColumn();
-            ImGui.TableNextColumn();
-            */
+            }
         }
 
         ImGui.EndTable();
-        //ImGui.SetCursorPosX(cursorX);
     }
 }

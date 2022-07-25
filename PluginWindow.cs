@@ -1,132 +1,70 @@
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
+using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Filters;
-using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public unsafe partial class PluginUi
+public class PluginWindow : Window, IDisposable
 {
-    private Plugin Plugin { get; init; }
+    private readonly FilterManager filterManager = new();
 
-    internal uint PlaceNameId;
-
-    private FilterManager filterManager;
-
-    //private byte PlayerCityState => *(byte*)((IntPtr)UIState.Instance() + 0xA38 + 0x13A); // UIState.PlayerState.CityState
-
-    private bool _show = false;
-
-    internal bool Show
+    public PluginWindow() : base("LeveHelper")
     {
-        get => _show;
-        set => _show = value;
-    }
+        base.Size = new Vector2(830, 600);
+        base.SizeCondition = ImGuiCond.FirstUseEver;
 
-    public PluginUi(Plugin plugin)
-    {
-        Plugin = plugin;
-
-        Service.PluginInterface.UiBuilder.Draw += Draw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfig;
-
-        Service.ClientState.TerritoryChanged += ClientState_TerritoryChanged;
-        UpdatePlaceName();
-
-        Service.Commands.AddHandler("/levehelper", new(delegate { Show = !Show; })
+        base.SizeConstraints = new()
         {
-            HelpMessage = "Show Window"
-        });
-
-        Service.Commands.AddHandler("/lh", new(delegate { Show = !Show; })
-        {
-            HelpMessage = "Show Window"
-        });
-
-        filterManager = new(plugin, this);
-
-#if DEBUG
-        _show = true;
-#endif
+            MinimumSize = new Vector2(400, 400),
+            MaximumSize = new Vector2(4096, 2160)
+        };
     }
 
-    private void ClientState_TerritoryChanged(object? sender, ushort e)
+    public unsafe override void Draw()
     {
-        UpdatePlaceName();
-    }
-
-    private void UpdatePlaceName()
-    {
-        var curTerritory = Service.Data.GetExcelSheet<TerritoryType>()?.GetRow(Service.ClientState.TerritoryType);
-        PlaceNameId = curTerritory?.PlaceName?.Row ?? 0;
-    }
-
-    private void OpenConfig()
-    {
-        Show = true;
-    }
-
-    private void Draw()
-    {
-#if DEBUG
-        ImGui.SetNextWindowSize(new Vector2(830f, 600f), ImGuiCond.Appearing);
-#else
-        ImGui.SetNextWindowSize(new Vector2(830f, 600f), ImGuiCond.FirstUseEver);
-#endif
-
-        if (!Show || !Service.ClientState.IsLoggedIn)
-        {
-            return;
-        }
-
-        if (!ImGui.Begin(Plugin.Name, ref _show))
-        {
-            ImGui.End();
-            return;
-        }
-
-        filterManager.Draw();
-
-        ImGui.Separator();
+        if (!Service.ClientState.IsLoggedIn) return;
 
         var questManager = QuestManagerHelper.Instance;
         var state = filterManager.state;
 
         ImGui.Text($"Accepted Leves: {questManager.NumActiveLevequests}/16");
-        ImGui.SameLine();
+        if (ImGui.GetWindowSize().X > 720)
+        {
+            ImGui.SameLine();
+            ImGui.Text("•");
+            ImGui.SameLine();
+        }
         ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.neededAllowances} over {Math.Ceiling(state.numTotalLeves / 6f)} days, next in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
-        ImGui.SameLine();
-
+        if (ImGui.GetWindowSize().X > 720)
+        {
+            ImGui.SameLine();
+            ImGui.Text("•");
+            ImGui.SameLine();
+        }
         var percent = (state.numCompletedLeves / (float)state.numTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
         ImGui.Text($"Completion: {state.numCompletedLeves}/{state.numTotalLeves} ({percent}%%)");
 
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
         ImGui.Separator();
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
+
+        this.filterManager.Draw();
 
         if (!ImGui.BeginChild("LeveHelper_TableWrapper", new Vector2(-1), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            ImGui.EndChild();
-            ImGui.End();
+            ImGui.EndChild(); // LeveHelper_TableWrapper
+            ImGui.End(); // LeveHelper
             return;
         }
 
-        if (!ImGui.BeginTable("LeveHelper_Table", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Sortable | ImGuiTableFlags.NoSavedSettings, ImGui.GetContentRegionAvail()))
+        if (!ImGui.BeginTable("LeveHelper_Table", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Sortable | ImGuiTableFlags.Hideable, ImGui.GetContentRegionAvail()))
         {
-            ImGui.EndTable();
-            ImGui.EndChild();
-            ImGui.End();
+            ImGui.EndTable(); // LeveHelper_Table
+            ImGui.EndChild(); // LeveHelper_TableWrapper
             return;
-        }
-
-        var specs = ImGui.TableGetSortSpecs();
-        if (specs.NativePtr != null && specs.SpecsDirty)
-        {
-            state.sortColumnIndex = specs.Specs.ColumnIndex;
-            state.sortDirection = specs.Specs.SortDirection;
-            specs.SpecsDirty = false;
-            filterManager.Update();
         }
 
         ImGui.TableSetupColumn("Id");
@@ -137,6 +75,15 @@ public unsafe partial class PluginUi
         ImGui.TableSetupColumn("Allowance Cost");
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
+
+        var specs = ImGui.TableGetSortSpecs();
+        if (specs.NativePtr != null && specs.SpecsDirty)
+        {
+            state.sortColumnIndex = specs.Specs.ColumnIndex;
+            state.sortDirection = specs.Specs.SortDirection;
+            specs.SpecsDirty = false;
+            filterManager.Update();
+        }
 
         foreach (LeveRecord item in state.levesArray)
         {
@@ -221,40 +168,12 @@ public unsafe partial class PluginUi
             ImGui.Text(item.leve.AllowanceCost.ToString());
         }
 
-        ImGui.EndTable();
-        ImGui.EndChild();
-        ImGui.End();
-    }
-}
-
-public sealed partial class PluginUi : IDisposable
-{
-    private bool isDisposed;
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Dispose(true);
+        ImGui.EndTable(); // LeveHelper_Table
+        ImGui.EndChild(); // LeveHelper_TableWrapper
     }
 
-    private void Dispose(bool disposing)
+    void IDisposable.Dispose()
     {
-        if (isDisposed)
-            return;
-
-        if (disposing)
-        {
-            Show = false;
-
-            Service.ClientState.TerritoryChanged -= ClientState_TerritoryChanged;
-
-            Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfig;
-            Service.PluginInterface.UiBuilder.Draw -= Draw;
-
-            Service.Commands.RemoveHandler("/levehelper");
-            Service.Commands.RemoveHandler("/lh");
-        }
-
-        isDisposed = true;
+        IsOpen = false;
     }
 }

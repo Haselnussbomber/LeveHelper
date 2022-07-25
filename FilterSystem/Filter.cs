@@ -25,6 +25,4 @@ public abstract class Filter
             this.manager.state = value;
         }
     }
-
-    protected Plugin Plugin => manager.Plugin;
 }
