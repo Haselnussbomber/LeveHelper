@@ -56,7 +56,6 @@ public class PluginWindow : Window
         if (!ImGui.BeginChild("LeveHelper_TableWrapper", new Vector2(-1), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
             ImGui.EndChild(); // LeveHelper_TableWrapper
-            ImGui.End(); // LeveHelper
             return;
         }
 
