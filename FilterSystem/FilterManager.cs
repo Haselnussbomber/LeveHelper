@@ -58,6 +58,9 @@ public class FilterManager
             (4, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.LevemeteName),
             (4, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.LevemeteName),
 
+            (5, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.leve.AllowanceCost),
+            (5, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.AllowanceCost),
+
             _ => state.leves
         };
 

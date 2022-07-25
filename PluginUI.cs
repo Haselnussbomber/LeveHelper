@@ -72,9 +72,9 @@ public unsafe partial class PluginUi
     private void Draw()
     {
 #if DEBUG
-        ImGui.SetNextWindowSize(new Vector2(800f, 600f), ImGuiCond.Appearing);
+        ImGui.SetNextWindowSize(new Vector2(830f, 600f), ImGuiCond.Appearing);
 #else
-        ImGui.SetNextWindowSize(new Vector2(800f, 600f), ImGuiCond.FirstUseEver);
+        ImGui.SetNextWindowSize(new Vector2(830f, 600f), ImGuiCond.FirstUseEver);
 #endif
 
         if (!Show || !Service.ClientState.IsLoggedIn)
@@ -112,7 +112,7 @@ public unsafe partial class PluginUi
             return;
         }
 
-        if (!ImGui.BeginTable("LeveHelper_Table", 5, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Sortable | ImGuiTableFlags.NoSavedSettings, ImGui.GetContentRegionAvail()))
+        if (!ImGui.BeginTable("LeveHelper_Table", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Sortable | ImGuiTableFlags.NoSavedSettings, ImGui.GetContentRegionAvail()))
         {
             ImGui.EndTable();
             ImGui.EndChild();
@@ -134,6 +134,7 @@ public unsafe partial class PluginUi
         ImGui.TableSetupColumn("Name");
         ImGui.TableSetupColumn("Class");
         ImGui.TableSetupColumn("Levemete");
+        ImGui.TableSetupColumn("Allowance Cost");
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
 
@@ -214,6 +215,10 @@ public unsafe partial class PluginUi
             {
                 filterManager.SetValue<LevemeteFilter>(item.leve.LevelLevemete.Value!.Object);
             }
+
+            // AllowanceCost
+            ImGui.TableNextColumn();
+            ImGui.Text(item.leve.AllowanceCost.ToString());
         }
 
         ImGui.EndTable();
