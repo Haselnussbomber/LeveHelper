@@ -23,10 +23,13 @@ public class PluginWindow : Window
         };
     }
 
+    public override bool DrawConditions()
+    {
+        return Service.ClientState.IsLoggedIn;
+    }
+
     public unsafe override void Draw()
     {
-        if (!Service.ClientState.IsLoggedIn) return;
-
         var questManager = QuestManagerHelper.Instance;
         var state = filterManager.state;
 
