@@ -72,5 +72,7 @@ public class Plugin : IDalamudPlugin, IDisposable
         this.windowSystem.RemoveAllWindows();
 
         Service.Config.Save();
+
+        ((IDisposable)Service.PlaceNameService).Dispose();
     }
 }

@@ -7,7 +7,7 @@ using LeveHelper.Filters;
 
 namespace LeveHelper;
 
-public class PluginWindow : Window, IDisposable
+public class PluginWindow : Window
 {
     private readonly FilterManager filterManager = new();
 
@@ -170,10 +170,5 @@ public class PluginWindow : Window, IDisposable
 
         ImGui.EndTable(); // LeveHelper_Table
         ImGui.EndChild(); // LeveHelper_TableWrapper
-    }
-
-    void IDisposable.Dispose()
-    {
-        IsOpen = false;
     }
 }
