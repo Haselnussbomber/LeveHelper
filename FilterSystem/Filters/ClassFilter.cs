@@ -4,18 +4,18 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
+public class ClassFilterConfiguration
+{
+    public uint SelectedClass = 0;
+}
+
 public class ClassFilter : Filter
 {
     public ClassFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public Configuration Config => Service.Config.Filters.ClassFilter;
-
-    public class Configuration
-    {
-        public uint SelectedClass = 0;
-    }
+    public static ClassFilterConfiguration Config => Configuration.Instance.Filters.ClassFilter;
 
     public override void Reset()
     {
@@ -25,7 +25,7 @@ public class ClassFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedClass = (uint)value;
-        Service.Config.Save();
+        Configuration.Save();
     }
 
     public override void Draw()

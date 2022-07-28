@@ -77,7 +77,7 @@ public class FilterManager
             filter.Reset();
         }
 
-        Service.Config.Save();
+        Configuration.Save();
         Update();
     }
 

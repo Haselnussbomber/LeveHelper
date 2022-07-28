@@ -4,18 +4,18 @@ using ImGuiNET;
 
 namespace LeveHelper.Filters;
 
+public class NameFilterConfiguration
+{
+    public string CurrentName = "";
+}
+
 public class NameFilter : Filter
 {
     public NameFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public Configuration Config => Service.Config.Filters.NameFilter;
-
-    public class Configuration
-    {
-        public string CurrentName = "";
-    }
+    public static NameFilterConfiguration Config => Configuration.Instance.Filters.NameFilter;
 
     public override void Reset()
     {
@@ -25,7 +25,7 @@ public class NameFilter : Filter
     public override void Set(dynamic value)
     {
         Config.CurrentName = (string)value;
-        Service.Config.Save();
+        Configuration.Save();
     }
 
     public override void Draw()

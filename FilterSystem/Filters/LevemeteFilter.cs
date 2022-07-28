@@ -4,18 +4,18 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
+public class LevemeteFilterConfiguration
+{
+    public uint SelectedLevemete = 0;
+}
+
 public class LevemeteFilter : Filter
 {
     public LevemeteFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public Configuration Config => Service.Config.Filters.LevemeteFilter;
-
-    public class Configuration
-    {
-        public uint SelectedLevemete = 0;
-    }
+    public static LevemeteFilterConfiguration Config => Configuration.Instance.Filters.LevemeteFilter;
 
     public override void Reset()
     {
@@ -25,7 +25,7 @@ public class LevemeteFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLevemete = (uint)value;
-        Service.Config.Save();
+        Configuration.Save();
     }
 
     public override void Draw()

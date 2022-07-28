@@ -17,7 +17,7 @@ public class Plugin : IDalamudPlugin, IDisposable
     {
         pluginInterface.Create<Service>();
 
-        Service.Config = Configuration.Load();
+        Configuration.Load();
         Service.PlaceNameService = new PlaceNameService();
 
         this.pluginWindow = new PluginWindow();
@@ -71,8 +71,8 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         this.windowSystem.RemoveAllWindows();
 
-        Service.Config.Save();
+        Configuration.Save();
 
-        ((IDisposable)Service.PlaceNameService).Dispose();
+        ((IDisposable)Configuration.Instance).Dispose();
     }
 }

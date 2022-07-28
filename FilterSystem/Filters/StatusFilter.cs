@@ -11,18 +11,18 @@ public enum CompletedStatus
     Incomplete
 }
 
+public class StatusFilterConfiguration
+{
+    public CompletedStatus SelectedStatus = CompletedStatus.Any;
+}
+
 public class StatusFilter : Filter
 {
     public StatusFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public Configuration Config => Service.Config.Filters.StatusFilter;
-
-    public class Configuration
-    {
-        public CompletedStatus SelectedStatus = CompletedStatus.Any;
-    }
+    public static StatusFilterConfiguration Config => Configuration.Instance.Filters.StatusFilter;
 
     public override void Reset()
     {
@@ -32,7 +32,7 @@ public class StatusFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedStatus = (CompletedStatus)value;
-        Service.Config.Save();
+        Configuration.Save();
     }
 
     public override void Draw()

@@ -15,38 +15,45 @@ internal partial class Configuration : IPluginConfiguration
 
 internal class FilterConfigs
 {
-    public ClassFilter.Configuration ClassFilter { get; init; } = new();
-    public LevemeteFilter.Configuration LevemeteFilter { get; init; } = new();
-    public LocationFilter.Configuration LocationFilter { get; init; } = new();
-    public NameFilter.Configuration NameFilter { get; init; } = new();
-    public StatusFilter.Configuration StatusFilter { get; init; } = new();
+    public ClassFilterConfiguration ClassFilter { get; init; } = new();
+    public LevemeteFilterConfiguration LevemeteFilter { get; init; } = new();
+    public LocationFilterConfiguration LocationFilter { get; init; } = new();
+    public NameFilterConfiguration NameFilter { get; init; } = new();
+    public StatusFilterConfiguration StatusFilter { get; init; } = new();
 }
 
-internal partial class Configuration
+internal partial class Configuration : IDisposable
 {
+    private static Configuration instance = null!;
+    public static Configuration Instance => instance ??= Load();
+
     internal static Configuration Load()
     {
+        if (instance != null)
+            return instance;
+
         var configPath = Service.PluginInterface.ConfigFile.FullName;
 
         string? jsonData = File.Exists(configPath) ? File.ReadAllText(configPath) : null;
         if (string.IsNullOrEmpty(jsonData))
-            return new Configuration();
+            return instance = new Configuration();
 
-        var config = JObject.Parse(jsonData);
-        if (config == null)
-            return new Configuration();
+        var parsed = JObject.Parse(jsonData);
+        if (parsed == null)
+            return instance = new Configuration();
 
         // migrations here
 
-        var configuration = config.ToObject<Configuration>();
-        if (configuration == null)
-            return new Configuration();
-
-        return configuration;
+        return instance = parsed.ToObject<Configuration>() ?? new Configuration();
     }
 
-    internal void Save()
+    internal static void Save()
     {
-        Service.PluginInterface.SavePluginConfig(this);
+        Service.PluginInterface.SavePluginConfig(instance);
+    }
+
+    void IDisposable.Dispose()
+    {
+        instance = null!;
     }
 }

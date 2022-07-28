@@ -4,18 +4,18 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
+public class LocationFilterConfiguration
+{
+    public uint SelectedLocation = 0;
+}
+
 public class LocationFilter : Filter
 {
     public LocationFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public Configuration Config => Service.Config.Filters.LocationFilter;
-
-    public class Configuration
-    {
-        public uint SelectedLocation = 0;
-    }
+    public static LocationFilterConfiguration Config => Configuration.Instance.Filters.LocationFilter;
 
     public override void Reset()
     {
@@ -25,7 +25,7 @@ public class LocationFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLocation = (uint)value;
-        Service.Config.Save();
+        Configuration.Save();
     }
 
     public override void Draw()
