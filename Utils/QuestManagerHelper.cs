@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace LeveHelper;
 
-public unsafe class QuestManagerHelper
+public unsafe class QuestManagerHelper : IDisposable
 {
     private static QuestManagerHelper instance = null!;
     public static QuestManagerHelper Instance => instance ??= new();
@@ -34,4 +34,9 @@ public unsafe class QuestManagerHelper
     [Signature("E8 ?? ?? ?? ?? 41 8D 75 01")]
     private readonly delegate* unmanaged<long> _getNextAllowancesTimestamp;
     public DateTime NextAllowances => DateTimeOffset.FromUnixTimeSeconds(_getNextAllowancesTimestamp() * 60).LocalDateTime;
+
+    void IDisposable.Dispose()
+    {
+        instance = null!;
+    }
 }

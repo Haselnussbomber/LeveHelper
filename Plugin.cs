@@ -75,5 +75,6 @@ public class Plugin : IDalamudPlugin, IDisposable
         PlaceNameHelper.Disconnect();
 
         ((IDisposable)Configuration.Instance).Dispose();
+        ((IDisposable)QuestManagerHelper.Instance).Dispose();
     }
 }
