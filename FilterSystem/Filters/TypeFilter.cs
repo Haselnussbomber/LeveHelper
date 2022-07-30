@@ -19,28 +19,16 @@ public class TypeFilter : Filter
     public static TypeFilterConfiguration Config => Configuration.Instance.Filters.TypeFilter;
 
     private Dictionary<string, Dictionary<uint, string>>? Groups = null;
-    private string SelectedText = string.Empty;
 
     public override void Reset()
     {
         Config.SelectedType = 0;
-        UpdateSelectedText();
     }
 
     public override void Set(dynamic value)
     {
         Config.SelectedType = (uint)value;
         Configuration.Save();
-        UpdateSelectedText();
-    }
-
-    private void UpdateSelectedText()
-    {
-        SelectedText = Config.SelectedType switch
-        {
-            0 => "All",
-            _ => StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")
-        };
     }
 
     public override void Draw()
@@ -50,7 +38,7 @@ public class TypeFilter : Filter
 
         ImGui.TableNextColumn();
 
-        if (!ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", SelectedText))
+        if (!ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
         {
             return;
         }
@@ -127,11 +115,6 @@ public class TypeFilter : Filter
             // HowTo#218 => Temple Leves -- no leve is assigned to these
             // { StringUtil.GetText("HowTo", 218), CreateGroup(13, 14, 15) }
         };
-
-        if (string.IsNullOrEmpty(SelectedText))
-        {
-            UpdateSelectedText();
-        }
 
         if (Config.SelectedType == 0)
         {
