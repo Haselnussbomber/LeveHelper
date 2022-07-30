@@ -93,7 +93,14 @@ public class LevemeteFilter : Filter
             return false;
         }
 
-        state.Leves = state.Leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        var selection = state.Leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        if (selection.Count() == 0)
+        {
+            Config.SelectedLevemete = 0;
+            return false;
+        }
+
+        state.Leves = selection;
 
         return true;
     }

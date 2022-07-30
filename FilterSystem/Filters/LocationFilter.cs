@@ -99,7 +99,14 @@ public class LocationFilter : Filter
             return false;
         }
 
-        state.Leves = state.Leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
+        var selection = state.Leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
+        if (selection.Count() == 0)
+        {
+            Config.SelectedLocation = 0;
+            return false;
+        }
+
+        state.Leves = selection;
 
         return true;
     }
