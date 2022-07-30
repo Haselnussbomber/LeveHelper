@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
 using LeveHelper.Utils;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
@@ -18,7 +19,7 @@ public class TypeFilter : Filter
 
     public static TypeFilterConfiguration Config => Configuration.Instance.Filters.TypeFilter;
 
-    private Dictionary<string, Dictionary<uint, string>>? Groups = null;
+    private Dictionary<string, Dictionary<uint, (string, int)>>? Groups = null;
 
     public override void Reset()
     {
@@ -37,7 +38,6 @@ public class TypeFilter : Filter
         ImGui.Text("Type:");
 
         ImGui.TableNextColumn();
-
         if (!ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
         {
             return;
@@ -53,6 +53,8 @@ public class TypeFilter : Filter
             ImGui.SetItemDefaultFocus();
         }
 
+        ImGuiUtils.DrawIcon(62501, 20, 20);
+        ImGui.SameLine();
         if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
         {
             Set(1);
@@ -75,7 +77,17 @@ public class TypeFilter : Filter
 
             foreach (var type in group.Value)
             {
-                if (ImGui.Selectable($"    {type.Value}##LeveHelper_TypeFilter_Combo_{type.Key}", Config.SelectedType == type.Key))
+                var indent = "    ";
+
+                if (type.Value.Item2 != 0)
+                {
+                    ImGuiUtils.DrawIcon(type.Value.Item2, 20, 20);
+                    ImGui.SameLine();
+                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
+                    indent = "";
+                }
+
+                if (ImGui.Selectable($"{indent}{type.Value.Item1}##LeveHelper_TypeFilter_Combo_{type.Key}", Config.SelectedType == type.Key))
                 {
                     Set(type.Key);
                     manager.Update();
@@ -91,12 +103,13 @@ public class TypeFilter : Filter
         ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
     }
 
-    private Dictionary<uint, string> CreateGroup(params uint[] ids)
+    private Dictionary<uint, (string, int)> CreateGroup(params uint[] ids)
     {
+        var sheet = Service.Data.GetExcelSheet<LeveAssignmentType>();
         return ids
-            .Select(key => (Id: key, Title: StringUtil.GetText("LeveAssignmentType", key)))
+            .Select(key => (Id: key, Icon: sheet?.GetRow(key)?.Icon ?? 0, Title: StringUtil.GetText("LeveAssignmentType", key)))
             .OrderBy(entry => entry.Title)
-            .ToDictionary(entry => entry.Id, entry => entry.Title);
+            .ToDictionary(entry => entry.Id, entry => (entry.Title, entry.Icon));
     }
 
     public override bool Run()
