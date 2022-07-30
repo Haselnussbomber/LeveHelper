@@ -11,7 +11,7 @@ public class PluginWindow : Window
 {
     private FilterManager? filterManager;
 
-    private const int TextWrapBreakpoint = 830;
+    private const int TextWrapBreakpoint = 829;
 
     public PluginWindow() : base("LeveHelper")
     {
