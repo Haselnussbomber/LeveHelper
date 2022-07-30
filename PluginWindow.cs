@@ -11,6 +11,8 @@ public class PluginWindow : Window
 {
     private FilterManager? filterManager;
 
+    private const int TextWrapBreakpoint = 830;
+
     public PluginWindow() : base("LeveHelper")
     {
         base.Size = new Vector2(830, 600);
@@ -18,7 +20,7 @@ public class PluginWindow : Window
 
         base.SizeConstraints = new()
         {
-            MinimumSize = new Vector2(400, 400),
+            MinimumSize = new Vector2(490, 400),
             MaximumSize = new Vector2(4096, 2160)
         };
     }
@@ -36,21 +38,32 @@ public class PluginWindow : Window
         var state = filterManager.state;
 
         ImGui.Text($"Accepted Leves: {questManager.NumActiveLevequests}/16");
-        if (ImGui.GetWindowSize().X > 720)
+        if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
         {
             ImGui.SameLine();
             ImGui.Text("•");
             ImGui.SameLine();
         }
-        ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.NeededAllowances} over {Math.Ceiling(state.NumTotalLeves / 6f)} days, next in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
-        if (ImGui.GetWindowSize().X > 720)
+
+        var missing = state.NeededAllowances - questManager.NumAllowances;
+        var missingText = missing > 0
+            ? $", {missing} missing, {Math.Floor(missing / 6f)} days total"
+            : "";
+
+        ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.NeededAllowances}{missingText}, next 3 in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
+
+        if (state.NumTotalLeves > 0)
         {
-            ImGui.SameLine();
-            ImGui.Text("•");
-            ImGui.SameLine();
+            if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
+            {
+                ImGui.SameLine();
+                ImGui.Text("•");
+                ImGui.SameLine();
+            }
+
+            var percent = (state.NumCompletedLeves / (float)state.NumTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
+            ImGui.Text($"Completion: {state.NumCompletedLeves}/{state.NumTotalLeves} ({percent}%%)");
         }
-        var percent = (state.NumCompletedLeves / (float)state.NumTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
-        ImGui.Text($"Completion: {state.NumCompletedLeves}/{state.NumTotalLeves} ({percent}%%)");
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
         ImGui.Separator();
