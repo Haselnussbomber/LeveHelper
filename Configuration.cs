@@ -15,7 +15,7 @@ internal partial class Configuration : IPluginConfiguration
 
 internal class FilterConfigs
 {
-    public ClassFilterConfiguration ClassFilter { get; init; } = new();
+    public TypeFilterConfiguration TypeFilter { get; init; } = new();
     public LevemeteFilterConfiguration LevemeteFilter { get; init; } = new();
     public LocationFilterConfiguration LocationFilter { get; init; } = new();
     public NameFilterConfiguration NameFilter { get; init; } = new();

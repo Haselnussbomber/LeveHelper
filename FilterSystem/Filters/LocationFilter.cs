@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
@@ -17,6 +18,8 @@ public class LocationFilter : Filter
 
     public static LocationFilterConfiguration Config => Configuration.Instance.Filters.LocationFilter;
 
+    private Dictionary<uint, string>? Locations = null;
+
     public override void Reset()
     {
         Config.SelectedLocation = 0;
@@ -30,31 +33,40 @@ public class LocationFilter : Filter
 
     public override void Draw()
     {
+        if (Locations == null)
+        {
+            return;
+        }
+
         ImGui.TableNextColumn();
         ImGui.Text("Location:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", state.locations.ContainsKey(Config.SelectedLocation) ? state.locations[Config.SelectedLocation] : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", Locations.ContainsKey(Config.SelectedLocation) ? Locations[Config.SelectedLocation] : "All"))
         {
-            if (ImGui.Selectable("All##LeveHelper_LocationFilter_Combo", Config.SelectedLocation == 0))
+            if (ImGui.Selectable("All##LeveHelper_LocationFilter_Combo_0", Config.SelectedLocation == 0))
             {
                 Set(0);
                 manager.Update();
             }
 
             if (Config.SelectedLocation == 0)
-                ImGui.SetItemDefaultFocus();
-
-            foreach (var kv in state.locations)
             {
-                if (ImGui.Selectable(kv.Value + "##LeveHelper_LocationFilter_Combo", Config.SelectedLocation == kv.Key))
+                ImGui.SetItemDefaultFocus();
+            }
+
+            foreach (var kv in Locations)
+            {
+                if (ImGui.Selectable($"{kv.Value}##LeveHelper_LocationFilter_Combo_{kv.Key}", Config.SelectedLocation == kv.Key))
                 {
                     Set(kv.Key);
                     manager.Update();
                 }
 
                 if (Config.SelectedLocation == kv.Key)
+                {
                     ImGui.SetItemDefaultFocus();
+                }
             }
 
             ImGui.EndCombo();
@@ -72,7 +84,7 @@ public class LocationFilter : Filter
 
     public override bool Run()
     {
-        state.locations = state.leves
+        Locations = state.Leves
             .Select(row => row.leve.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()
@@ -83,9 +95,11 @@ public class LocationFilter : Filter
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLocation == 0)
+        {
             return false;
+        }
 
-        state.leves = state.leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
+        state.Leves = state.Leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
 
         return true;
     }

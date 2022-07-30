@@ -9,7 +9,7 @@ namespace LeveHelper;
 
 public class PluginWindow : Window
 {
-    private readonly FilterManager filterManager = new();
+    private FilterManager? filterManager;
 
     public PluginWindow() : base("LeveHelper")
     {
@@ -30,6 +30,8 @@ public class PluginWindow : Window
 
     public unsafe override void Draw()
     {
+        filterManager ??= new();
+
         var questManager = QuestManagerHelper.Instance;
         var state = filterManager.state;
 
@@ -40,15 +42,15 @@ public class PluginWindow : Window
             ImGui.Text("•");
             ImGui.SameLine();
         }
-        ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.neededAllowances} over {Math.Ceiling(state.numTotalLeves / 6f)} days, next in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
+        ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.NeededAllowances} over {Math.Ceiling(state.NumTotalLeves / 6f)} days, next in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
         if (ImGui.GetWindowSize().X > 720)
         {
             ImGui.SameLine();
             ImGui.Text("•");
             ImGui.SameLine();
         }
-        var percent = (state.numCompletedLeves / (float)state.numTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
-        ImGui.Text($"Completion: {state.numCompletedLeves}/{state.numTotalLeves} ({percent}%%)");
+        var percent = (state.NumCompletedLeves / (float)state.NumTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
+        ImGui.Text($"Completion: {state.NumCompletedLeves}/{state.NumTotalLeves} ({percent}%%)");
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
         ImGui.Separator();
@@ -72,7 +74,7 @@ public class PluginWindow : Window
         ImGui.TableSetupColumn("Id");
         ImGui.TableSetupColumn("Level");
         ImGui.TableSetupColumn("Name");
-        ImGui.TableSetupColumn("Class");
+        ImGui.TableSetupColumn("Type");
         ImGui.TableSetupColumn("Levemete");
         ImGui.TableSetupColumn("Allowance Cost");
         ImGui.TableSetupScrollFreeze(0, 1);
@@ -81,13 +83,13 @@ public class PluginWindow : Window
         var specs = ImGui.TableGetSortSpecs();
         if (specs.NativePtr != null && specs.SpecsDirty)
         {
-            state.sortColumnIndex = specs.Specs.ColumnIndex;
-            state.sortDirection = specs.Specs.SortDirection;
+            state.SortColumnIndex = specs.Specs.ColumnIndex;
+            state.SortDirection = specs.Specs.SortDirection;
             specs.SpecsDirty = false;
             filterManager.Update();
         }
 
-        foreach (LeveRecord item in state.levesArray)
+        foreach (LeveRecord item in state.LevesArray)
         {
             ImGui.TableNextRow();
 
@@ -130,19 +132,19 @@ public class PluginWindow : Window
                 }
             }
 
-            // Class
+            // Type
             ImGui.TableNextColumn();
-            ImGui.Text(item.ClassName);
+            ImGui.Text(item.TypeName);
 
             if (ImGui.IsItemHovered())
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.SetTooltip("Right Click: Filter by Class");
+                ImGui.SetTooltip("Right Click: Filter by Type");
             }
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                filterManager.SetValue<ClassFilter>((uint)item.leve.Unknown4);
+                filterManager.SetValue<TypeFilter>((uint)item.leve.Unknown4);
             }
 
             // Levemete

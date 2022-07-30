@@ -9,7 +9,7 @@ public record LeveRecord
     public readonly string Name;
     public readonly string ClassJobLevel;
     public readonly string? LevemeteName;
-    public readonly string ClassName;
+    public readonly string TypeName;
     public readonly string TownName;
     public readonly bool TownLocked;
 
@@ -27,7 +27,7 @@ public record LeveRecord
             this.LevemeteName = npc?.Singular.ClearString();
         }
 
-        this.ClassName = Service.Data.GetExcelSheet<LeveAssignmentType>()!.GetRow((uint)leve.Unknown4)!.Name.ClearString();
+        this.TypeName = Service.Data.GetExcelSheet<LeveAssignmentType>()!.GetRow((uint)leve.Unknown4)!.Name.ClearString();
         this.TownName = leve.Town.Value?.Name.ClearString() ?? "???";
         this.TownLocked = leve.RowId == 546 || leve.RowId == 556 || leve.RowId == 566;
     }

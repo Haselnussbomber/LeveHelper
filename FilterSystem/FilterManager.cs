@@ -17,8 +17,8 @@ public class FilterManager
         {
             new NameFilter(this),
             new StatusFilter(this),
+            new TypeFilter(this),
             new LocationFilter(this),
-            new ClassFilter(this),
             new LevemeteFilter(this),
         };
 
@@ -27,7 +27,7 @@ public class FilterManager
 
     public void Update()
     {
-        state.leves = state.AllLeves;
+        state.Leves = state.AllLeves;
 
         foreach (var filter in filters)
         {
@@ -37,34 +37,34 @@ public class FilterManager
             }
         }
 
-        state.leves = (state.sortColumnIndex, state.sortDirection) switch
+        state.Leves = (state.SortColumnIndex, state.SortDirection) switch
         {
             //(0, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.value.RowId),
-            (0, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.RowId),
+            (0, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.leve.RowId),
 
-            (1, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.leve.ClassJobLevel),
-            (1, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.ClassJobLevel),
+            (1, ImGuiSortDirection.Ascending) => state.Leves.OrderBy(item => item.leve.ClassJobLevel),
+            (1, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.leve.ClassJobLevel),
 
-            (2, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.Name),
-            (2, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.Name),
+            (2, ImGuiSortDirection.Ascending) => state.Leves.OrderBy(item => item.Name),
+            (2, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.Name),
 
-            (3, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.ClassName),
-            (3, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.ClassName),
+            (3, ImGuiSortDirection.Ascending) => state.Leves.OrderBy(item => item.TypeName),
+            (3, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.TypeName),
 
-            (4, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.LevemeteName),
-            (4, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.LevemeteName),
+            (4, ImGuiSortDirection.Ascending) => state.Leves.OrderBy(item => item.LevemeteName),
+            (4, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.LevemeteName),
 
-            (5, ImGuiSortDirection.Ascending) => state.leves.OrderBy(item => item.leve.AllowanceCost),
-            (5, ImGuiSortDirection.Descending) => state.leves.OrderByDescending(item => item.leve.AllowanceCost),
+            (5, ImGuiSortDirection.Ascending) => state.Leves.OrderBy(item => item.leve.AllowanceCost),
+            (5, ImGuiSortDirection.Descending) => state.Leves.OrderByDescending(item => item.leve.AllowanceCost),
 
-            _ => state.leves
+            _ => state.Leves
         };
 
-        state.levesArray = state.leves.ToArray();
+        state.LevesArray = state.Leves.ToArray();
 
-        state.numCompletedLeves = state.leves.Where(row => row.IsComplete).Count();
-        state.numTotalLeves = state.leves.Count();
-        state.neededAllowances = state.leves
+        state.NumCompletedLeves = state.Leves.Where(row => row.IsComplete).Count();
+        state.NumTotalLeves = state.Leves.Count();
+        state.NeededAllowances = state.Leves
             .Where(row => !row.IsComplete)
             .Select(item => (int)item.leve.AllowanceCost)
             .Aggregate(0, (total, cost) => total + cost);
@@ -88,56 +88,33 @@ public class FilterManager
 
     public void SetValue<T>(dynamic value)
     {
-        GetFilter<LevemeteFilter>()?.Set(value);
+        GetFilter<T>()?.Set(value);
         Update();
-    }
-
-    private void MoveFilter(Filter filter, int direction = 0)
-    {
-        var oldIndex = filters.IndexOf(filter);
-        if (oldIndex == -1) return;
-
-        filters.RemoveAt(oldIndex);
-        filters.Insert(oldIndex + direction, filter);
-        Update();
-    }
-
-    private void ResetOrder()
-    {
-        var move = (Filter filter, int newIndex) =>
-        {
-            var oldIndex = filters.IndexOf(filter);
-            if (oldIndex == -1) return;
-
-            filters.RemoveAt(oldIndex);
-            filters.Insert(newIndex, filter);
-        };
-
-        move(GetFilter<NameFilter>()!, 0);
-        move(GetFilter<StatusFilter>()!, 1);
-        move(GetFilter<LocationFilter>()!, 2);
-        move(GetFilter<ClassFilter>()!, 3);
-        move(GetFilter<LevemeteFilter>()!, 4);
     }
 
     public void Draw()
     {
-        if (ImGui.BeginTable("filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoSavedSettings))
+        if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoSavedSettings))
         {
-            foreach (var filter in filters)
-            {
-                filter.Draw();
-            }
-
-            ImGui.TableNextColumn();
-            ImGui.TableNextColumn();
-
-            if (ImGui.Button("Clear Filters"))
-            {
-                Reset();
-            }
+            // ImGui.EndTable(); // LeveHelper_Filters  ??
+            return;
         }
 
-        ImGui.EndTable();
+        foreach (var filter in filters)
+        {
+            ImGui.TableNextRow();
+            filter.Draw();
+        }
+
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableNextColumn();
+
+        if (ImGui.Button("Clear Filters"))
+        {
+            Reset();
+        }
+
+        ImGui.EndTable(); // LeveHelper_Filters
     }
 }

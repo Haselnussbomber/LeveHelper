@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
@@ -17,6 +18,8 @@ public class LevemeteFilter : Filter
 
     public static LevemeteFilterConfiguration Config => Configuration.Instance.Filters.LevemeteFilter;
 
+    private Dictionary<uint, string>? Levemetes = null;
+
     public override void Reset()
     {
         Config.SelectedLevemete = 0;
@@ -30,31 +33,40 @@ public class LevemeteFilter : Filter
 
     public override void Draw()
     {
+        if (Levemetes == null)
+        {
+            return;
+        }
+
         ImGui.TableNextColumn();
         ImGui.Text("Levemete:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", state.levemetes.ContainsKey(Config.SelectedLevemete) ? state.levemetes[Config.SelectedLevemete] : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", Levemetes.ContainsKey(Config.SelectedLevemete) ? Levemetes[Config.SelectedLevemete] : "All"))
         {
-            if (ImGui.Selectable("All##LeveHelper_LevemeteFilter_Combo", Config.SelectedLevemete == 0))
+            if (ImGui.Selectable("All##LeveHelper_LevemeteFilter_Combo_0", Config.SelectedLevemete == 0))
             {
                 Set(0);
                 manager.Update();
             }
 
             if (Config.SelectedLevemete == 0)
-                ImGui.SetItemDefaultFocus();
-
-            foreach (var kv in state.levemetes)
             {
-                if (ImGui.Selectable(kv.Value + "##LeveHelper_LevemeteFilter_Combo", Config.SelectedLevemete == kv.Key))
+                ImGui.SetItemDefaultFocus();
+            }
+
+            foreach (var kv in Levemetes)
+            {
+                if (ImGui.Selectable($"{kv.Value}##LeveHelper_LevemeteFilter_Combo_{kv.Key}", Config.SelectedLevemete == kv.Key))
                 {
                     Set(kv.Key);
                     manager.Update();
                 }
 
                 if (Config.SelectedLevemete == kv.Key)
+                {
                     ImGui.SetItemDefaultFocus();
+                }
             }
 
             ImGui.EndCombo();
@@ -64,7 +76,7 @@ public class LevemeteFilter : Filter
     public override bool Run()
     {
         var ENpcResidentSheet = Service.Data.GetExcelSheet<ENpcResident>();
-        state.levemetes = state.leves
+        Levemetes = state.Leves
             .Select(row => row.leve.LevelLevemete.Value?.Object)
             .Where(item => item != null)
             .Cast<uint>()
@@ -77,9 +89,11 @@ public class LevemeteFilter : Filter
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLevemete == 0)
+        {
             return false;
+        }
 
-        state.leves = state.leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        state.Leves = state.Leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
 
         return true;
     }

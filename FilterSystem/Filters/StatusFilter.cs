@@ -54,7 +54,9 @@ public class StatusFilter : Filter
             }
 
             if (i < values.Length)
+            {
                 ImGui.SameLine();
+            }
         }
     }
 
@@ -62,12 +64,12 @@ public class StatusFilter : Filter
     {
         if (Config.SelectedStatus == CompletedStatus.Complete)
         {
-            state.leves = state.leves.Where(item => item.IsComplete);
+            state.Leves = state.Leves.Where(item => item.IsComplete);
             return true;
         }
         else if (Config.SelectedStatus == CompletedStatus.Incomplete)
         {
-            state.leves = state.leves.Where(item => !item.IsComplete);
+            state.Leves = state.Leves.Where(item => !item.IsComplete);
             return true;
         }
 

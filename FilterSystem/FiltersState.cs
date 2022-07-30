@@ -10,18 +10,15 @@ public class FiltersState
     public readonly LeveRecord[] AllLeves = null!;
     public readonly uint[] AllLocations = null!;
 
-    public IEnumerable<LeveRecord> leves = null!;
-    public LeveRecord[] levesArray = null!;
-    public Dictionary<uint, string> locations = null!;
-    public Dictionary<uint, string> classes = null!;
-    public Dictionary<uint, string> levemetes = null!;
+    public IEnumerable<LeveRecord> Leves = null!;
+    public LeveRecord[] LevesArray = null!;
 
-    public short sortColumnIndex { get; set; }
-    public ImGuiSortDirection sortDirection { get; set; }
+    public short SortColumnIndex;
+    public ImGuiSortDirection SortDirection;
 
-    public int numCompletedLeves = 0;
-    public int numTotalLeves = 0;
-    public int neededAllowances = 0;
+    public int NumCompletedLeves = 0;
+    public int NumTotalLeves = 0;
+    public int NeededAllowances = 0;
 
     // data from a certain Levequests Checklist spreadsheet
     // seem to be unused test levequests

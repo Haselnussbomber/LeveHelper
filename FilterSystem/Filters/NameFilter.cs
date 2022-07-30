@@ -45,9 +45,11 @@ public class NameFilter : Filter
     public override bool Run()
     {
         if (string.IsNullOrWhiteSpace(Config.CurrentName))
+        {
             return false;
+        }
 
-        state.leves = state.leves.Where(row => row.Name.Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
+        state.Leves = state.Leves.Where(row => row.Name.Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
 
         return true;
     }
