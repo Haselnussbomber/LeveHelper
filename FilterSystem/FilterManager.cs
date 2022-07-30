@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
@@ -94,7 +95,7 @@ public class FilterManager
 
     public void Draw()
     {
-        if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.NoSavedSettings))
+        if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100)))
         {
             // ImGui.EndTable(); // LeveHelper_Filters  ??
             return;
