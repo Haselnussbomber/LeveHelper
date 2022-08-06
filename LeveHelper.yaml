@@ -2,3 +2,4 @@ name: LeveHelper
 author: Haselnussbomber
 punchline: A little helper for Levequests.
 description: A little helper to check which Levequests have been completed and which are missing.
+repo_url: https://github.com/Haselnussbomber/LeveHelper
