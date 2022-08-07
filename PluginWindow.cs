@@ -30,7 +30,7 @@ public class PluginWindow : Window
         return Service.ClientState.IsLoggedIn;
     }
 
-    public unsafe override void Draw()
+    public override unsafe void Draw()
     {
         filterManager ??= new();
 
@@ -68,7 +68,7 @@ public class PluginWindow : Window
         ImGui.Separator();
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
 
-        this.filterManager.Draw();
+        filterManager.Draw();
 
         if (!ImGui.BeginChild("LeveHelper_TableWrapper", new Vector2(-1), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
@@ -101,7 +101,7 @@ public class PluginWindow : Window
             filterManager.Update();
         }
 
-        foreach (LeveRecord item in state.LevesArray)
+        foreach (var item in state.LevesArray)
         {
             ImGui.TableNextRow();
 

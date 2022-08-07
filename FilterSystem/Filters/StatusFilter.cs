@@ -43,7 +43,7 @@ public class StatusFilter : Filter
         ImGui.TableNextColumn();
         var values = Enum.GetValues<CompletedStatus>();
 
-        for (int i = 0; i < values.Length; i++)
+        for (var i = 0; i < values.Length; i++)
         {
             var value = values[i];
             var radio = Config.SelectedStatus == value;

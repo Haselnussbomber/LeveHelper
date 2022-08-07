@@ -6,7 +6,7 @@ namespace LeveHelper.Utils;
 
 internal class StringUtil
 {
-    private static Dictionary<(string, uint), string> cache = new();
+    private static readonly Dictionary<(string, uint), string> cache = new();
 
     public static string GetText(string sheet, uint rowId, string? fallback = null)
     {

@@ -10,8 +10,8 @@ public class Plugin : IDalamudPlugin, IDisposable
 {
     public string Name => "LeveHelper";
 
-    private readonly WindowSystem windowSystem = new("LeveHelper");
-    private readonly PluginWindow pluginWindow;
+    private readonly WindowSystem WindowSystem = new("LeveHelper");
+    private readonly PluginWindow PluginWindow;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
@@ -21,13 +21,13 @@ public class Plugin : IDalamudPlugin, IDisposable
         Configuration.Load();
         PlaceNameHelper.Connect();
 
-        this.pluginWindow = new PluginWindow();
-        this.windowSystem.AddWindow(this.pluginWindow);
+        PluginWindow = new PluginWindow();
+        WindowSystem.AddWindow(PluginWindow);
 
-        Service.PluginInterface.UiBuilder.Draw += this.OnDraw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += this.OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.Draw += OnDraw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
 
-        var commandInfo = new CommandInfo(this.OnCommand)
+        var commandInfo = new CommandInfo(OnCommand)
         {
             HelpMessage = "Show Window"
         };
@@ -36,7 +36,7 @@ public class Plugin : IDalamudPlugin, IDisposable
         Service.Commands.AddHandler("/lh", commandInfo);
 
 #if DEBUG
-        this.windowSystem.GetWindow("LeveHelper")?.Toggle();
+        WindowSystem.GetWindow("LeveHelper")?.Toggle();
 #endif
     }
 
@@ -44,7 +44,7 @@ public class Plugin : IDalamudPlugin, IDisposable
     {
         try
         {
-            this.windowSystem.Draw();
+            WindowSystem.Draw();
         }
         catch (Exception ex)
         {
@@ -54,23 +54,23 @@ public class Plugin : IDalamudPlugin, IDisposable
 
     private void OnCommand(string command, string args)
     {
-        this.pluginWindow.Toggle();
+        PluginWindow.Toggle();
     }
 
     private void OnOpenConfigUi()
     {
-        this.pluginWindow.Toggle();
+        PluginWindow.Toggle();
     }
 
     void IDisposable.Dispose()
     {
-        Service.PluginInterface.UiBuilder.Draw -= this.OnDraw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.Draw -= OnDraw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
 
         Service.Commands.RemoveHandler("/levehelper");
         Service.Commands.RemoveHandler("/lh");
 
-        this.windowSystem.RemoveAllWindows();
+        WindowSystem.RemoveAllWindows();
 
         Configuration.Save();
         PlaceNameHelper.Disconnect();

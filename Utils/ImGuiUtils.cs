@@ -21,7 +21,7 @@ public static class ImGuiUtils
 
     public static Vector4 ColorGroup = new(216f / 255f, 187f / 255f, 125f / 255f, 1f); // #D8BB7D
 
-    private static Dictionary<int, TextureWrap> icons = new();
+    private static readonly Dictionary<int, TextureWrap> icons = new();
 
     public static void DrawIcon(int iconId, int width = -1, int height = -1)
     {
