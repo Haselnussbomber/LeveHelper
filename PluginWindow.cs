@@ -34,10 +34,9 @@ public class PluginWindow : Window
     {
         filterManager ??= new();
 
-        var questManager = QuestManagerHelper.Instance;
         var state = filterManager.state;
 
-        ImGui.Text($"Accepted Leves: {questManager.NumActiveLevequests}/16");
+        ImGui.Text($"Accepted Leves: {Service.GameFunctions.NumActiveLevequests}/16");
         if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
         {
             ImGui.SameLine();
@@ -45,12 +44,12 @@ public class PluginWindow : Window
             ImGui.SameLine();
         }
 
-        var missing = state.NeededAllowances - questManager.NumAllowances;
+        var missing = state.NeededAllowances - Service.GameFunctions.NumAllowances;
         var missingText = missing > 0
             ? $", {missing} missing, {Math.Floor(missing / 6f)} days total"
             : "";
 
-        ImGui.Text($"Allowances: {questManager.NumAllowances}/100 (need {state.NeededAllowances}{missingText}, next 3 in {questManager.NextAllowances - DateTime.Now:hh':'mm':'ss})");
+        ImGui.Text($"Allowances: {Service.GameFunctions.NumAllowances}/100 (need {state.NeededAllowances}{missingText}, next 3 in {Service.GameFunctions.NextAllowances - DateTime.Now:hh':'mm':'ss})");
 
         if (state.NumTotalLeves > 0)
         {

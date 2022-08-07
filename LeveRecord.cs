@@ -1,3 +1,4 @@
+using FFXIVClientStructs.FFXIV.Client.Game;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
@@ -32,5 +33,5 @@ public record LeveRecord
         this.TownLocked = leve.RowId == 546 || leve.RowId == 556 || leve.RowId == 566;
     }
 
-    public bool IsComplete => QuestManagerHelper.Instance.IsLevequestCompleted((ushort)leve.RowId);
+    public unsafe bool IsComplete => Service.GameFunctions.IsLevequestCompleted(QuestManager.Instance(), (ushort)leve.RowId);
 }

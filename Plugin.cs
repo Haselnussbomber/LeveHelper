@@ -16,6 +16,7 @@ public class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
+        Service.GameFunctions = new();
 
         Configuration.Load();
         PlaceNameHelper.Connect();
@@ -75,6 +76,5 @@ public class Plugin : IDalamudPlugin, IDisposable
         PlaceNameHelper.Disconnect();
 
         ((IDisposable)Configuration.Instance).Dispose();
-        ((IDisposable)QuestManagerHelper.Instance).Dispose();
     }
 }
