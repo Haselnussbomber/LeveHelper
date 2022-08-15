@@ -45,12 +45,16 @@ jobs:
         with:
           path: bin/*
 
+      - run: mv bin/LeveHelper/LeveHelper.json bin/LeveHelper/manifest.json
+
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
           name: LeveHelper ${{ github.ref_name }}
-          files: bin/LeveHelper/latest.zip
+          files: |
+            bin/LeveHelper/latest.zip
+            bin/LeveHelper/manifest.json
 
       - name: Trigger Repo Update
         if: startsWith(github.ref, 'refs/tags/v')
