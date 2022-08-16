@@ -24,8 +24,7 @@ public record LeveRecord
         var levemeteLevel = leve.LevelLevemete.Value;
         if (levemeteLevel?.Type == 8) // Type: NPC?!?
         {
-            var npc = Service.Data.GetExcelSheet<ENpcResident>()!.GetRow(levemeteLevel.Object);
-            LevemeteName = npc?.Singular.ClearString();
+            LevemeteName = Service.GameFunctions.GetENpcResidentName(levemeteLevel.Object);
         }
 
         TypeName = Service.Data.GetExcelSheet<LeveAssignmentType>()!.GetRow((uint)leve.Unknown4)!.Name.ClearString();

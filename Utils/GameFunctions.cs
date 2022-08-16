@@ -1,5 +1,6 @@
 #pragma warning disable 0649
 using System;
+using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game;
 
@@ -25,4 +26,13 @@ public unsafe class GameFunctions
 
     // see: 48 FF 0D ?? ?? ?? ?? 48 8D 4C 24
     public byte NumActiveLevequests => *(byte*)((IntPtr)QuestManager.Instance() + 0xEB0);
+
+    [Signature("E9 ?? ?? ?? ?? 48 8D 47 30")]
+    private readonly FormatObjectStringDelegate FormatObjectString = null!; // how do you expect me to name things i have no clue about
+    private delegate IntPtr FormatObjectStringDelegate(int mode, uint id, uint idConversionMode, uint a4);
+
+    public string GetENpcResidentName(uint npcId)
+    {
+        return MemoryHelper.ReadSeStringNullTerminated(Service.GameFunctions.FormatObjectString(0, npcId, 3, 1)).ToString();
+    }
 }
