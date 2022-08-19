@@ -3,7 +3,7 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public static class LevelExtention
+public static class LevelExtension
 {
     public static void OpenMapLocation(this Level level)
     {
