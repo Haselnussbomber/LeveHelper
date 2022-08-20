@@ -5,7 +5,8 @@ namespace LeveHelper;
 public class PlaceNameHelper
 {
     private static bool subscribed;
-    public static uint PlaceNameId;
+
+    public static uint PlaceNameId { get; private set; }
 
     public static void Connect()
     {

@@ -10,19 +10,22 @@ public class Plugin : IDalamudPlugin, IDisposable
 {
     public string Name => "LeveHelper";
 
-    private readonly WindowSystem WindowSystem = new("LeveHelper");
-    private readonly PluginWindow PluginWindow;
+    internal readonly WindowSystem WindowSystem = new("LeveHelper");
+    internal readonly PluginWindow PluginWindow;
+    internal readonly ConfigWindow ConfigWindow;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
         Service.GameFunctions = new();
+        Service.DirectorHelper = new();
 
         Configuration.Load();
         PlaceNameHelper.Connect();
+        Scanner.Connect();
 
-        PluginWindow = new PluginWindow();
-        WindowSystem.AddWindow(PluginWindow);
+        WindowSystem.AddWindow(PluginWindow = new PluginWindow(this));
+        WindowSystem.AddWindow(ConfigWindow = new ConfigWindow(this));
 
         Service.PluginInterface.UiBuilder.Draw += OnDraw;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
@@ -54,7 +57,14 @@ public class Plugin : IDalamudPlugin, IDisposable
 
     private void OnCommand(string command, string args)
     {
-        PluginWindow.Toggle();
+        if (args.ToLowerInvariant() == "config")
+        {
+            ConfigWindow.Toggle();
+        }
+        else
+        {
+            PluginWindow.Toggle();
+        }
     }
 
     private void OnOpenConfigUi()
@@ -74,6 +84,7 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         Configuration.Save();
         PlaceNameHelper.Disconnect();
+        Scanner.Disconnect();
 
         ((IDisposable)Configuration.Instance).Dispose();
     }

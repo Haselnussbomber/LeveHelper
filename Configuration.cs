@@ -11,6 +11,8 @@ internal partial class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 1;
     public FilterConfigs Filters { get; init; } = new();
+    public bool NotifyWantedTarget { get; set; } = true;
+    public bool NotifyTreasure { get; set; } = true;
 }
 
 internal class FilterConfigs
