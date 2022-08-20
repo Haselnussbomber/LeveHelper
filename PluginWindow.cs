@@ -12,7 +12,7 @@ namespace LeveHelper;
 public class PluginWindow : Window
 {
     private readonly Plugin Plugin;
-    private readonly FilterManager FilterManager;
+    private FilterManager? FilterManager = null!;
 
     private const int TextWrapBreakpoint = 829;
 
@@ -30,8 +30,11 @@ public class PluginWindow : Window
             MinimumSize = new Vector2(490, 400),
             MaximumSize = new Vector2(4096, 2160)
         };
+    }
 
-        FilterManager = new();
+    public override void OnOpen()
+    {
+        FilterManager ??= new();
     }
 
     public override void OnClose()
@@ -52,7 +55,7 @@ public class PluginWindow : Window
         DrawConfigurationButton();
         DrawInfoBar();
 
-        FilterManager.Draw();
+        FilterManager!.Draw();
 
         DrawTable();
     }
@@ -79,7 +82,7 @@ public class PluginWindow : Window
 
     private void DrawInfoBar()
     {
-        var state = FilterManager.state;
+        var state = FilterManager!.state;
 
         ImGui.Text($"Accepted Leves: {Service.GameFunctions.NumActiveLevequests}/16");
         if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
@@ -129,7 +132,7 @@ public class PluginWindow : Window
             return;
         }
 
-        var state = FilterManager.state;
+        var state = FilterManager!.state;
 
         ImGui.TableSetupColumn("Id");
         ImGui.TableSetupColumn("Level");
