@@ -1,5 +1,6 @@
 #pragma warning disable 0649
 using System;
+using System.Collections.Generic;
 using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -31,8 +32,18 @@ public unsafe class GameFunctions
     private readonly FormatObjectStringDelegate FormatObjectString = null!; // how do you expect me to name things i have no clue about
     private delegate IntPtr FormatObjectStringDelegate(int mode, uint id, uint idConversionMode, uint a4);
 
+    private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
     public string GetENpcResidentName(uint npcId)
     {
-        return MemoryHelper.ReadSeStringNullTerminated(Service.GameFunctions.FormatObjectString(0, npcId, 3, 1)).ToString();
+        if (ENpcResidentNameCache.ContainsKey(npcId))
+        {
+            return ENpcResidentNameCache[npcId];
+        }
+
+        var ret = MemoryHelper.ReadSeStringNullTerminated(FormatObjectString(0, npcId, 3, 1)).ToString();
+
+        ENpcResidentNameCache.Add(npcId, ret.ToString());
+
+        return ret;
     }
 }
