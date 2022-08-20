@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Lumina.Excel.GeneratedSheets;
 
-namespace LeveHelper.Utils;
+namespace LeveHelper;
 
 internal class StringUtil
 {

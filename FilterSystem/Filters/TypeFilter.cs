@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
-using LeveHelper.Utils;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
