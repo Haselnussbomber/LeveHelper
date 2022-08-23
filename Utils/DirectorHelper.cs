@@ -46,7 +46,7 @@ public unsafe class DirectorHelper
     public readonly DirectorGetLevelDelegate Director_GetLevel = null!;
     public delegate int DirectorGetLevelDelegate(IntPtr directorPtr);
 
-    [Signature("48 8B 09 48 8B 01 48 FF A0 A0 07 00 00")]
+    [Signature("48 8B 09 48 8B 01 48 FF A0 A8 07 00 00")]
     public readonly DirectorHasTimerDelegate Director_HasTimer = null!;
     public delegate bool DirectorHasTimerDelegate(IntPtr directorPtr);
 
@@ -73,7 +73,7 @@ public unsafe class DirectorHelper
     */
 
     /* no clue
-    [Signature("48 8B 09 48 8B 01 48 FF A0 C8 07 00 00 ")]
+    [Signature("48 8B 09 48 8B 01 48 FF A0 C8 07 00 00")]
     public readonly DirectorGetLuaEventHandlerVf258Delegate Director_GetLuaEventHandlerVf258 = null!;
     public delegate long DirectorGetLuaEventHandlerVf258Delegate(IntPtr directorPtr);
     */
