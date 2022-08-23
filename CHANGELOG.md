@@ -1,8 +1,12 @@
 # Changelog
 
+## [0.1.2] (2022-08-23)
+
+- Updated for Patch 6.2 (Updated Signatures)
+
 ## [0.1.1] (2022-08-23)
 
-- Updated for Patch 6.2
+- Preliminary updated for Patch 6.2 (Dalamud changes: .NET 6 and API 7)
 
 ## [0.1.0] (2022-08-20)
 
@@ -38,7 +42,8 @@ Please report if you found something is not working or if you discover a wanted 
 
 First release! 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.0.4...v0.0.5
