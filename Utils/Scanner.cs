@@ -4,6 +4,7 @@ using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
@@ -58,7 +59,7 @@ public static class Scanner
     private static readonly List<uint> FoundWantedTargets = new();
     private static readonly List<uint> FoundTreasures = new();
 
-    public static void Connect()
+    public static unsafe void Connect()
     {
         if (subscribed) return;
         Service.DirectorHelper.DirectorChanged += OnDirectorChanged;
@@ -66,14 +67,14 @@ public static class Scanner
         subscribed = true;
     }
 
-    public static void Disconnect()
+    public static unsafe void Disconnect()
     {
         Service.DirectorHelper.DirectorChanged -= OnDirectorChanged;
         Service.Framework.Update -= Framework_Update;
         subscribed = false;
     }
 
-    private static void OnDirectorChanged(IntPtr currentLeveDirector)
+    private static unsafe void OnDirectorChanged(Director* NewDirector)
     {
         FoundWantedTargets.Clear();
         FoundTreasures.Clear();
