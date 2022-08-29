@@ -45,6 +45,7 @@ public static class Scanner
         1764, // Skadi
         1765, // Great White Torama
         1776, // Gorn the Garrgh
+        3716, // Zaghnal
         3717, // Mighty Mackerel
         3718, // The Scarlet Lector
         3719, // Xexeu

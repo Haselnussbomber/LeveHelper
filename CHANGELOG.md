@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Wanted Targets
+
+- **Added:** Zaghnal
+
 ## [0.1.2] (2022-08-23)
 
 - Updated for Patch 6.2 (Updated Signatures)
