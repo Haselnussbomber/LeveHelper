@@ -13,16 +13,9 @@ public static class Scanner
 {
     private static bool subscribed;
 
+    // name ids (= rowid of BNpcName sheet)
     private static readonly List<uint> WantedTargetIds = new()
     {
-        /* not sure if data ids are more accurate. these are the ones i confirmed:
-        4926, // Mighty Mackerel
-        4927, // The Scarlet Lector
-        4928, // Xexeu
-        */
-
-        // name ids (= rowid of BNpcName sheet)
-        // based on a website
         471, // Angry Sow
         472, // Rotting Sentinel
         473, // Mischief-maker Imp
@@ -52,9 +45,6 @@ public static class Scanner
         3720, // Tcaridyi
         7169, // Sabotender Corrido
     };
-
-    // not sure if this is the only one, but i found this twice
-    // private readonly uint TreasureId = 489;
 
     private static DateTime LastCheck = DateTime.Now;
     private static readonly List<uint> FoundWantedTargets = new();

@@ -37,10 +37,6 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         Service.Commands.AddHandler("/levehelper", commandInfo);
         Service.Commands.AddHandler("/lh", commandInfo);
-
-#if DEBUG
-        WindowSystem.GetWindow("LeveHelper")?.Toggle();
-#endif
     }
 
     private void OnDraw()
