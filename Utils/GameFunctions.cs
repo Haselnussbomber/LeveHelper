@@ -22,11 +22,13 @@ public unsafe class GameFunctions
     private readonly delegate* unmanaged<long> _getNextAllowancesTimestamp;
     public DateTime NextAllowances => DateTimeOffset.FromUnixTimeSeconds(_getNextAllowancesTimestamp() * 60).LocalDateTime;
 
-    // see: 88 05 ?? ?? ?? ?? 0F B7 41 06
-    public byte NumAllowances => *(byte*)((IntPtr)QuestManager.Instance() + 0xDB8);
+    [Signature("88 05 ?? ?? ?? ?? 0F B7 41 06", ScanType = ScanType.StaticAddress)]
+    public readonly byte* NumAllowancesPtr = null!;
+    public byte NumAllowances => *NumAllowancesPtr;
 
-    // see: 48 FF 0D ?? ?? ?? ?? 48 8D 4C 24
-    public byte NumActiveLevequests => *(byte*)((IntPtr)QuestManager.Instance() + 0xEB0);
+    [Signature("48 FF 0D ?? ?? ?? ?? 48 8D 4C 24", ScanType = ScanType.StaticAddress)]
+    public readonly byte* NumActiveLevequestsPtr = null!;
+    public byte NumActiveLevequests => *NumActiveLevequestsPtr;
 
     [Signature("E9 ?? ?? ?? ?? 48 8D 47 30")]
     private readonly FormatObjectStringDelegate FormatObjectString = null!; // how do you expect me to name things i have no clue about
