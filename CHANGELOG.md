@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] (2023-01-13)
+
+Preliminary update for Patch 6.3 Hotfix 1.
+
+- **Fixed:** Future-proofed reading the number of allowances and active levequests.
+
 ## [0.1.4] (2023-01-12)
 
 Preliminary update for Patch 6.3.
