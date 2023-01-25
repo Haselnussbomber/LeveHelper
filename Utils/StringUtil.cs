@@ -11,25 +11,27 @@ internal class StringUtil
     public static string GetText(string sheet, uint rowId, string? fallback = null)
     {
         var key = (sheet, rowId);
-        if (cache.ContainsKey(key))
+
+        if (!cache.TryGetValue(key, out var value))
         {
-            return cache[key];
+            var text = sheet switch
+            {
+                "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ClearString(),
+                "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ClearString(),
+                "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ClearString(),
+                "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ClearString(),
+                _ => null
+            };
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                text = fallback ?? "";
+            }
+
+            value = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text);
+            cache.Add(key, value);
         }
 
-        var text = sheet switch
-        {
-            "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ClearString(),
-            "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ClearString(),
-            "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ClearString(),
-            "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ClearString(),
-            _ => null
-        };
-
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            text = fallback ?? "";
-        }
-
-        return cache[key] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text);
+        return value;
     }
 }

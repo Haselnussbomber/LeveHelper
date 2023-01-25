@@ -37,15 +37,12 @@ public unsafe class GameFunctions
     private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
     public string GetENpcResidentName(uint npcId)
     {
-        if (ENpcResidentNameCache.ContainsKey(npcId))
+        if (!ENpcResidentNameCache.TryGetValue(npcId, out var name))
         {
-            return ENpcResidentNameCache[npcId];
+            name = MemoryHelper.ReadSeStringNullTerminated(FormatObjectString(0, npcId, 3, 1)).ToString();
+            ENpcResidentNameCache.Add(npcId, name);
         }
 
-        var ret = MemoryHelper.ReadSeStringNullTerminated(FormatObjectString(0, npcId, 3, 1)).ToString();
-
-        ENpcResidentNameCache.Add(npcId, ret.ToString());
-
-        return ret;
+        return name;
     }
 }

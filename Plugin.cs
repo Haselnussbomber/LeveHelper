@@ -18,7 +18,6 @@ public class Plugin : IDalamudPlugin, IDisposable
     {
         pluginInterface.Create<Service>();
         Service.GameFunctions = new();
-        Service.DirectorHelper = new();
 
         Configuration.Load();
         PlaceNameHelper.Connect();

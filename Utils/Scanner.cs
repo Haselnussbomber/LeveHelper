@@ -53,14 +53,14 @@ public static class Scanner
     public static unsafe void Connect()
     {
         if (subscribed) return;
-        Service.DirectorHelper.DirectorChanged += OnDirectorChanged;
+        DirectorHelper.DirectorChanged += OnDirectorChanged;
         Service.Framework.Update += Framework_Update;
         subscribed = true;
     }
 
     public static unsafe void Disconnect()
     {
-        Service.DirectorHelper.DirectorChanged -= OnDirectorChanged;
+        DirectorHelper.DirectorChanged -= OnDirectorChanged;
         Service.Framework.Update -= Framework_Update;
         subscribed = false;
     }
@@ -87,9 +87,9 @@ public static class Scanner
 
         LastCheck = DateTime.Now;
 
-        Service.DirectorHelper.Update();
+        DirectorHelper.Update();
 
-        if (!Service.DirectorHelper.IsDirectorActive || !Service.DirectorHelper.IsBattleLeveDirector)
+        if (!DirectorHelper.IsBattleLeveDirectorActive)
         {
             return;
         }
