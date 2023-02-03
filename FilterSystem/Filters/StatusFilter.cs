@@ -8,7 +8,8 @@ public enum CompletedStatus
 {
     Any,
     Complete,
-    Incomplete
+    Incomplete,
+    Accepted
 }
 
 public class StatusFilterConfiguration
@@ -70,6 +71,11 @@ public class StatusFilter : Filter
         else if (Config.SelectedStatus == CompletedStatus.Incomplete)
         {
             state.Leves = state.Leves.Where(item => !item.IsComplete);
+            return true;
+        }
+        else if (Config.SelectedStatus == CompletedStatus.Accepted)
+        {
+            state.Leves = state.Leves.Where(item => item.IsAccepted);
             return true;
         }
 

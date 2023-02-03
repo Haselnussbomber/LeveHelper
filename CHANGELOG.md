@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** Added the option to filter for Accepted levequests to the "Status" filter.
+
 ## [0.1.6] (2023-02-03)
 
 - **Added:** Accepted levequests will now be shown in yellow text.
