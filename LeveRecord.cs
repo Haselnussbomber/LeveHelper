@@ -1,3 +1,7 @@
+using System;
+using System.Runtime.CompilerServices;
+using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Lumina.Excel.GeneratedSheets;
 
@@ -33,4 +37,18 @@ public record LeveRecord
     }
 
     public unsafe bool IsComplete => Service.GameFunctions.IsLevequestCompleted(QuestManager.Instance(), (ushort)leve.RowId);
+    public unsafe bool IsAccepted
+    {
+        get
+        {
+            var ptr = (LeveWork*)((nint)QuestManager.Instance() + 0xC80); // Patch 6.31
+            var LeveQuestsSpan = new Span<LeveWork>(Unsafe.AsPointer(ref ptr[0]), 16);
+            foreach (var leveQuest in LeveQuestsSpan)
+            {
+                if (leveQuest.LeveId == leve.RowId)
+                    return true;
+            }
+            return false;
+        }
+    }
 }

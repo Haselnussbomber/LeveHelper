@@ -13,6 +13,7 @@ public static class ImGuiUtils
     public static Vector4 ColorTransparent = new(0f, 0f, 0f, 0f);
 
     public static Vector4 ColorRed = new(1f, 0f, 0f, 1f);
+    public static Vector4 ColorYellow = new(1f, 1f, 0f, 1f);
     public static Vector4 ColorGreen = new(0f, 1f, 0f, 1f);
 
     public static Vector4 ColorMaelstorm = new(129f / 255f, 19f / 255f, 1f / 255f, 1f); // #811301

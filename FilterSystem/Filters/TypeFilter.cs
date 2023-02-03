@@ -37,69 +37,99 @@ public class TypeFilter : Filter
         ImGui.Text("Type:");
 
         ImGui.TableNextColumn();
-        if (!ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
+        if (ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
         {
-            return;
-        }
-
-        if (ImGui.Selectable("All##LeveHelper_TypeFilter_Combo_0", Config.SelectedType == 0))
-        {
-            Set(0);
-            manager.Update();
-        }
-        if (Config.SelectedType == 0)
-        {
-            ImGui.SetItemDefaultFocus();
-        }
-
-        ImGuiUtils.DrawIcon(62501, 20, 20);
-        ImGui.SameLine();
-        if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
-        {
-            Set(1);
-            manager.Update();
-        }
-        if (Config.SelectedType == 1)
-        {
-            ImGui.SetItemDefaultFocus();
-        }
-
-        if (Groups == null)
-        {
-            ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
-            return;
-        }
-
-        foreach (var group in Groups)
-        {
-            ImGui.TextColored(ImGuiUtils.ColorGroup, group.Key);
-
-            foreach (var type in group.Value)
+            if (ImGui.Selectable("All##LeveHelper_TypeFilter_Combo_0", Config.SelectedType == 0))
             {
-                var indent = "    ";
+                Set(0);
+                manager.Update();
+            }
+            if (Config.SelectedType == 0)
+            {
+                ImGui.SetItemDefaultFocus();
+            }
 
-                if (type.Value.Item2 != 0)
-                {
-                    ImGuiUtils.DrawIcon(type.Value.Item2, 20, 20);
-                    ImGui.SameLine();
-                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
-                    indent = "";
-                }
+            ImGuiUtils.DrawIcon(62501, 20, 20);
+            ImGui.SameLine();
+            if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
+            {
+                Set(1);
+                manager.Update();
+            }
+            if (Config.SelectedType == 1)
+            {
+                ImGui.SetItemDefaultFocus();
+            }
 
-                if (ImGui.Selectable($"{indent}{type.Value.Item1}##LeveHelper_TypeFilter_Combo_{type.Key}", Config.SelectedType == type.Key))
-                {
-                    Set(type.Key);
-                    manager.Update();
-                }
+            if (Groups == null)
+            {
+                ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
+                return;
+            }
 
-                if (Config.SelectedType == type.Key)
+            foreach (var group in Groups)
+            {
+                ImGui.TextColored(ImGuiUtils.ColorGroup, group.Key);
+
+                foreach (var type in group.Value)
                 {
-                    ImGui.SetItemDefaultFocus();
+                    var indent = "    ";
+
+                    if (type.Value.Item2 != 0)
+                    {
+                        ImGuiUtils.DrawIcon(type.Value.Item2, 20, 20);
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
+                        indent = "";
+                    }
+
+                    if (ImGui.Selectable($"{indent}{type.Value.Item1}##LeveHelper_TypeFilter_Combo_{type.Key}", Config.SelectedType == type.Key))
+                    {
+                        Set(type.Key);
+                        manager.Update();
+                    }
+
+                    if (Config.SelectedType == type.Key)
+                    {
+                        ImGui.SetItemDefaultFocus();
+                    }
                 }
             }
+
+            ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
         }
 
-        ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
+        ImGui.SameLine();
+
+        var suggestedType = Service.ClientState.LocalPlayer?.ClassJob.Id switch
+        {
+            16 => 2, // Miner
+            17 => 3, // Botanist
+            18 => 4, // Fisher
+
+            8 => 5, // Carpenter
+            9 => 6, // Blacksmith
+            10 => 7, // Armorer
+            11 => 8, // Goldsmith
+            12 => 9, // Leatherworker
+            13 => 10, // Weaver
+            14 => 11, // Alchemist
+            15 => 12, // Culinarian
+
+            _ => 1, // Battlecraft -> any other job
+        };
+
+        if (Config.SelectedType != suggestedType)
+        {
+            var suggestedName = suggestedType == 1 
+                ? StringUtil.GetText("LeveAssignmentType", 1)
+                : Service.ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
+            if (suggestedName != null && ImGui.Button($"Set {suggestedName}"))
+            {
+                Config.SelectedType = (uint)suggestedType;
+                manager.Update();
+            }
+        }
     }
 
     private Dictionary<uint, (string, int)> CreateGroup(params uint[] ids)

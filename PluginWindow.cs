@@ -134,8 +134,8 @@ public class PluginWindow : Window
 
         var state = FilterManager!.state;
 
-        ImGui.TableSetupColumn("Id");
-        ImGui.TableSetupColumn("Level");
+        ImGui.TableSetupColumn("Id", ImGuiTableColumnFlags.WidthFixed, 50);
+        ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Name");
         ImGui.TableSetupColumn("Type");
         ImGui.TableSetupColumn("Levemete");
@@ -182,19 +182,52 @@ public class PluginWindow : Window
             ImGui.TableNextColumn();
             if (item.TownLocked)
             {
-                ImGui.Text("*");
-                ImGui.SameLine();
-            }
+                ImGui.Text("*  ");
 
-            ImGui.TextColored(item.IsComplete ? ImGuiUtils.ColorGreen : ImGuiUtils.ColorRed, item.Name);
-
-            if (item.TownLocked)
-            {
                 if (ImGui.IsItemHovered())
                 {
-                    ImGui.BeginTooltip();
-                    ImGui.Text($"Only available to Characters that started in {item.TownName}.");
-                    ImGui.EndTooltip();
+                    ImGui.SetTooltip($"Only available to Characters that started in {item.TownName}.");
+                }
+
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, default(Vector2));
+                ImGui.SameLine();
+                ImGui.PopStyleVar();
+            }
+
+            if (item.IsComplete)
+            {
+                ImGui.TextColored(ImGuiUtils.ColorGreen, item.Name);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("You've completed this Levequest.");
+                }
+            }
+            else if (item.IsAccepted)
+            {
+                ImGui.TextColored(ImGuiUtils.ColorYellow, item.Name);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("You've accepted this Levequest.");
+                }
+            }
+            else if (item.TownLocked)
+            {
+                ImGui.TextColored(ImGuiUtils.ColorRed, item.Name);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip($"Only available to Characters that started in {item.TownName}.");
+                }
+            }
+            else
+            {
+                ImGui.TextColored(ImGuiUtils.ColorRed, item.Name);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("You've not accepted or completed this Levequest.");
                 }
             }
 

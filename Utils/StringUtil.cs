@@ -17,6 +17,7 @@ internal class StringUtil
             var text = sheet switch
             {
                 "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ClearString(),
+                "ClassJob" => Service.Data.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ClearString(),
                 "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ClearString(),
                 "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ClearString(),
                 "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ClearString(),

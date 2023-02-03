@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.6] (2023-02-03)
+
+- **Added:** Accepted levequests will now be shown in yellow text.
+- **Added:** A button to quickly set the filter "Type" to the current players job.
+- **Changed:** The button to set the filter "Location" to the current zone will now only show when the zone is different.
+
 ## [0.1.5] (2023-01-13)
 
 Preliminary update for Patch 6.3 Hotfix 1.
@@ -58,7 +64,9 @@ Please report if you found something is not working or if you discover a wanted 
 
 First release! 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.1...v0.1.2

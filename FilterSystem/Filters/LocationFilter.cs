@@ -75,7 +75,7 @@ public class LocationFilter : Filter
         ImGui.SameLine();
 
         var placeNameId = PlaceNameHelper.PlaceNameId;
-        if (placeNameId != 0 && state.AllLocations.Contains(placeNameId) && ImGui.Button("Set Current Zone"))
+        if (placeNameId != 0 && Config.SelectedLocation != placeNameId && Locations.ContainsKey(placeNameId) && ImGui.Button("Set Current Zone"))
         {
             Config.SelectedLocation = placeNameId;
             manager.Update();

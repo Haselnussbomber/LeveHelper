@@ -31,7 +31,7 @@ public unsafe class GameFunctions
     public byte NumActiveLevequests => *NumActiveLevequestsPtr;
 
     [Signature("E9 ?? ?? ?? ?? 48 8D 47 30")]
-    private readonly FormatObjectStringDelegate FormatObjectString = null!; // how do you expect me to name things i have no clue about
+    private readonly FormatObjectStringDelegate FormatObjectString = null!;
     private delegate IntPtr FormatObjectStringDelegate(int mode, uint id, uint idConversionMode, uint a4);
 
     private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
