@@ -23,7 +23,7 @@ public class CraftingHelperWindow : Window
 
     private RequiredItem[] Crystals = Array.Empty<RequiredItem>();
     private RequiredItem[] Gatherable = Array.Empty<RequiredItem>();
-    private RequiredItem[] Buyable = Array.Empty<RequiredItem>();
+    private RequiredItem[] Fishable = Array.Empty<RequiredItem>();
     private RequiredItem[] OtherSources = Array.Empty<RequiredItem>();
     private RequiredItem[] Craftable = Array.Empty<RequiredItem>();
 
@@ -82,9 +82,9 @@ public class CraftingHelperWindow : Window
         };
 
         addItems(Crystals);
-        addItems(Buyable);
-        addItems(OtherSources);
         addItems(Gatherable);
+        addItems(Fishable);
+        addItems(OtherSources);
         addItems(Craftable);
         addItems(RequiredItems);
 
@@ -155,7 +155,6 @@ public class CraftingHelperWindow : Window
             RequiredItems = sorted.Values
                 .OrderByDescending(entry => entry.Item.IsCrystal)
                 .ThenByDescending(entry => entry.Item.IsGatherable)
-                .ThenByDescending(entry => entry.Item.IsSoldByVendor)
                 .ThenByDescending(entry => !entry.Item.IsCraftable)
                 .ToArray();
 
@@ -164,19 +163,19 @@ public class CraftingHelperWindow : Window
                 .ToArray();
 
             Gatherable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && entry.Item.IsGatherable/* && !entry.Item.IsSoldByVendor*/ && !entry.Item.IsCraftable)
+                .Where(entry => !entry.Item.IsCrystal && entry.Item.IsGatherable && entry.Item.FishingSpot == null && !entry.Item.IsCraftable)
                 .ToArray();
 
-            Buyable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.IsSoldByVendor && !entry.Item.IsCraftable)
+            Fishable = RequiredItems
+                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot != null && !entry.Item.IsCraftable)
                 .ToArray();
 
             OtherSources = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable/* && !entry.Item.IsSoldByVendor*/ && !entry.Item.IsCraftable)
+                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot == null && !entry.Item.IsCraftable)
                 .ToArray();
 
             Craftable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable/* && !entry.Item.IsSoldByVendor*/ && entry.Item.IsCraftable)
+                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot == null && entry.Item.IsCraftable)
                 .ToArray();
 
             // add items required for leves last
@@ -318,10 +317,20 @@ public class CraftingHelperWindow : Window
                 }
             }
 
-            if (Buyable.Any())
+            if (Gatherable.Any())
             {
-                ImGui.Text("Buy:");
-                foreach (var entry in Buyable)
+                ImGui.Text("Gather:");
+                foreach (var entry in Gatherable)
+                {
+                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    i++;
+                }
+            }
+
+            if (Fishable.Any())
+            {
+                ImGui.Text("Fish:");
+                foreach (var entry in Fishable)
                 {
                     DrawItem(entry.Item, entry.Amount, $"Item{i}");
                     i++;
@@ -330,18 +339,8 @@ public class CraftingHelperWindow : Window
 
             if (OtherSources.Any())
             {
-                ImGui.Text("Unknown:");
+                ImGui.Text("Other:");
                 foreach (var entry in OtherSources)
-                {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
-                    i++;
-                }
-            }
-
-            if (Gatherable.Any())
-            {
-                ImGui.Text("Gather:");
-                foreach (var entry in Gatherable)
                 {
                     DrawItem(entry.Item, entry.Amount, $"Item{i}");
                     i++;
@@ -386,11 +385,11 @@ public class CraftingHelperWindow : Window
         ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}##{key}_Selectable");
         ImGui.PopStyleColor();
 
-        if (ImGui.IsItemHovered() && (item.IsCraftable || item.IsGatherable || item.FishingSpot != null || item.IsSoldByVendor))
+        if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
 
-            // TODO: info about what leve needs this?
+            // TODO: info about what leve/recipe needs this?
 
             if (item.IsCraftable)
             {
@@ -404,9 +403,9 @@ public class CraftingHelperWindow : Window
             {
                 ImGui.SetTooltip("Show Fishing Spot");
             }
-            else if (item.IsSoldByVendor)
+            else
             {
-                ImGui.SetTooltip("Search for Vendors");
+                ImGui.SetTooltip("Open on GarlandTools");
             }
         }
 
@@ -433,16 +432,9 @@ public class CraftingHelperWindow : Window
             {
                 Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
             }
-            else if (item.IsSoldByVendor)
+            else
             {
-                if (Plugin.VendorListWindow == null)
-                {
-                    Plugin.VendorListWindow = new VendorListWindow();
-                    Plugin.WindowSystem.AddWindow(Plugin.VendorListWindow);
-                }
-
-                Plugin.VendorListWindow.Item = item;
-                Plugin.VendorListWindow.IsOpen = true;
+                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
             }
         }
 
@@ -484,20 +476,6 @@ public class CraftingHelperWindow : Window
                 {
                     Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
                 }
-
-                showSeparator = true;
-            }
-
-            if (item.IsSoldByVendor && ImGui.Selectable("Search for Vendors"))
-            {
-                if (Plugin.VendorListWindow == null)
-                {
-                    Plugin.VendorListWindow = new VendorListWindow();
-                    Plugin.WindowSystem.AddWindow(Plugin.VendorListWindow);
-                }
-
-                Plugin.VendorListWindow.Item = item;
-                Plugin.VendorListWindow.IsOpen = true;
 
                 showSeparator = true;
             }

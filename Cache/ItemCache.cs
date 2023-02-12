@@ -48,7 +48,6 @@ public record CachedItem
     private Recipe? recipe { get; set; } = null;
     private bool? isGatherable { get; set; } = null;
     private FishingSpot? fishingSpot { get; set; } = null;
-    private uint[]? vendors { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
     private int? quantityOwned { get; set; } = null;
     private DateTime quantityOwnedLastUpdate { get; set; }
@@ -98,43 +97,6 @@ public record CachedItem
 
     public FishingSpot? FishingSpot
         => fishingSpot ??= Service.Data.GetExcelSheet<FishingSpot>()?.FirstOrDefault(row => row.Item.Any(i => i.Row == ItemId));
-
-    public bool IsSoldByVendor
-        => Vendors.Any();
-
-    public uint[] Vendors
-    {
-        get
-        {
-            if (vendors != null)
-                return vendors;
-
-            /*
-            var list = new List<uint>();
-
-            var GilShopItems = Service.Data.GetExcelSheet<GilShopItem>()?.Where(row => row.Item.Row == ItemId);
-            if (GilShopItems != null && GilShopItems.Any())
-            {
-                var shopIds = GilShopItems!.GroupBy(row => row.RowId).Select(group => group.Key);
-                foreach (var shopId in shopIds)
-                {
-                    var npcs = NpcCache.GetByGilShop(shopId);
-                    foreach (var npc in npcs)
-                    {
-                        if (npc.Level != null)
-                        {
-                            list.Add(npc.NpcId);
-                        }
-                    }
-                }
-            }
-
-            return vendors = list.ToArray();
-            */
-
-            return vendors = Array.Empty<uint>();
-        }
-    }
 
     public RequiredItem[] Ingredients
     {

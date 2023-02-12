@@ -14,7 +14,6 @@ public class Plugin : IDalamudPlugin, IDisposable
     internal static PluginWindow PluginWindow = null!;
     internal static ConfigWindow ConfigWindow = null!;
     internal static CraftingHelperWindow? CraftingHelperWindow;
-    internal static VendorListWindow? VendorListWindow;
 
     internal static Configuration Config = null!;
     internal static FilterManager FilterManager = null!;
@@ -100,7 +99,6 @@ public class Plugin : IDalamudPlugin, IDisposable
         PluginWindow = null!;
         ConfigWindow = null!;
         CraftingHelperWindow = null!;
-        VendorListWindow = null!;
         FilterManager = null!;
         Config = null!;
     }
