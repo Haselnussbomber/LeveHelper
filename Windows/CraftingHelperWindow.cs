@@ -17,6 +17,7 @@ public class CraftingHelperWindow : Window
     private readonly AddonObserver SynthesisObserver = new("Synthesis");
     private readonly AddonObserver SynthesisSimpleObserver = new("SynthesisSimple");
     private readonly AddonObserver GatheringObserver = new("Gathering");
+    private readonly AddonObserver ShopObserver = new("Shop");
 
     private RequiredItem[] LeveRequiredItems = Array.Empty<RequiredItem>();
     private RequiredItem[] RequiredItems = Array.Empty<RequiredItem>();
@@ -53,6 +54,7 @@ public class CraftingHelperWindow : Window
         SynthesisObserver.OnClose += Refresh;
         SynthesisSimpleObserver.OnClose += Refresh;
         GatheringObserver.OnClose += Refresh;
+        ShopObserver.OnClose += Refresh;
     }
 
     public override unsafe void OnClose()
@@ -61,6 +63,7 @@ public class CraftingHelperWindow : Window
         SynthesisObserver.OnClose -= Refresh;
         SynthesisSimpleObserver.OnClose -= Refresh;
         GatheringObserver.OnClose -= Refresh;
+        ShopObserver.OnClose -= Refresh;
     }
 
     private unsafe void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
@@ -98,6 +101,7 @@ public class CraftingHelperWindow : Window
         SynthesisObserver.Update();
         SynthesisSimpleObserver.Update();
         GatheringObserver.Update();
+        ShopObserver.Update();
 
         var activeLevequestIds = Service.GameFunctions.ActiveLevequestsIds;
         if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
