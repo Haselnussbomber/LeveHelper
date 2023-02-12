@@ -130,6 +130,8 @@ public class CraftingHelperWindow : Window
 
             var sorted = new Dictionary<uint, RequiredItem>();
 
+            // TODO: this is wrong.
+
             foreach (var leve in acceptedCraftLeves)
             {
                 if (leve.RequiredItems == null)
@@ -211,7 +213,7 @@ public class CraftingHelperWindow : Window
     {
         var result = new List<RequiredItem>();
 
-        if (root.Item.IsCraftable && root.Item.QuantityOwned < root.Amount)
+        if (root.Item.IsCraftable)
         {
             foreach (var ingredient in root.Item.Ingredients!)
             {
