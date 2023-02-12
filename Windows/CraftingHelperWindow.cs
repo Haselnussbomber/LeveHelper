@@ -139,8 +139,6 @@ public class CraftingHelperWindow : Window
                     {
                         var items = GetItemsAtDepth(entry, 1, level, entry.Amount);
 
-                        // TODO: filter out finished items
-
                         foreach (var item in items)
                         {
                             if (!sorted.ContainsKey(item.Item.ItemId))
@@ -211,7 +209,7 @@ public class CraftingHelperWindow : Window
     {
         var result = new List<RequiredItem>();
 
-        if (root.Item.IsCraftable)
+        if (root.Item.IsCraftable && root.Item.QuantityOwned < root.Amount)
         {
             foreach (var ingredient in root.Item.Ingredients!)
             {
