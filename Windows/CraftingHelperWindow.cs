@@ -156,11 +156,7 @@ public class CraftingHelperWindow : Window
                 }
             }
 
-            RequiredItems = sorted.Values
-                .OrderByDescending(entry => entry.Item.IsCrystal)
-                .ThenByDescending(entry => entry.Item.IsGatherable)
-                .ThenByDescending(entry => !entry.Item.IsCraftable)
-                .ToArray();
+            RequiredItems = sorted.Values.ToArray();
 
             Crystals = RequiredItems
                 .Where(entry => entry.Item.IsCrystal && entry.Item.QuantityOwned < entry.Amount)
