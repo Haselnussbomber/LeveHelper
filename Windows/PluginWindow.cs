@@ -6,6 +6,7 @@ using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Filters;
+using static LeveHelper.ImGuiUtils;
 
 namespace LeveHelper;
 
@@ -78,7 +79,7 @@ public class PluginWindow : Window
         ImGui.SetCursorPosY(cursorStartPos.Y - 3);
         ImGui.SetCursorPosX(ImGui.GetWindowSize().X - 30 - 30);
 
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.ShoppingCart))
+        if (ImGuiComponents.IconButton(FontAwesomeIcon.List))
         {
             Plugin.ConfigWindow.IsOpen = false;
 
@@ -215,7 +216,7 @@ public class PluginWindow : Window
 
             if (item.IsComplete)
             {
-                ImGui.TextColored(ImGuiUtils.ColorGreen, item.Name);
+                ImGui.TextColored(ColorGreen, item.Name);
 
                 if (ImGui.IsItemHovered())
                 {
@@ -224,7 +225,7 @@ public class PluginWindow : Window
             }
             else if (item.IsAccepted)
             {
-                ImGui.TextColored(ImGuiUtils.ColorYellow, item.Name);
+                ImGui.TextColored(ColorYellow, item.Name);
 
                 if (ImGui.IsItemHovered())
                 {
@@ -233,7 +234,7 @@ public class PluginWindow : Window
             }
             else if (item.TownLocked)
             {
-                ImGui.TextColored(ImGuiUtils.ColorRed, item.Name);
+                ImGui.TextColored(ColorRed, item.Name);
 
                 if (ImGui.IsItemHovered())
                 {
@@ -242,11 +243,27 @@ public class PluginWindow : Window
             }
             else
             {
-                ImGui.TextColored(ImGuiUtils.ColorRed, item.Name);
+                ImGui.TextColored(ColorRed, item.Name);
 
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetTooltip("You've not accepted or completed this Levequest.");
+                }
+            }
+
+            if (item.IsCraftLeve && item.RequiredItems != null)
+            {
+                if (Plugin.Config.ShowInlineRecipeTree && (!Plugin.Config.ShowInlineRecipeTreeForAcceptedOnly || (Plugin.Config.ShowInlineRecipeTreeForAcceptedOnly && item.IsAccepted)))
+                {
+                    if (Plugin.Config.ShowInlineResultItemOnly)
+                    {
+                        foreach (var req in item.RequiredItems)
+                            DrawItem(req.Item, req.Amount, $"InlineRecipeTree_{item.LeveId}_Item");
+                    }
+                    else
+                    {
+                        DrawIngredients($"InlineRecipeTree_{item.LeveId}", item.RequiredItems, 1);
+                    }
                 }
             }
 

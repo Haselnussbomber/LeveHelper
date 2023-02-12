@@ -5,9 +5,9 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using static LeveHelper.ImGuiUtils;
 
 namespace LeveHelper;
 
@@ -93,6 +93,8 @@ public class CraftingHelperWindow : Window
 
         foreach (var item in arr.Values)
             item.UpdateQuantityOwned();
+
+        // TODO: cooldown?
     }
 
     public override void PreDraw()
@@ -245,6 +247,28 @@ public class CraftingHelperWindow : Window
 
     public override void Draw()
     {
+        if (ImGuiComponents.IconButton(FontAwesomeIcon.StickyNote))
+        {
+            Plugin.PluginWindow.IsOpen = true;
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            ImGui.SetTooltip("Show LeveHelper");
+        }
+
+        ImGui.SameLine();
+
+        if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
+        {
+            RefreshQuantities();
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            ImGui.SetTooltip("Refresh quantities");
+        }
+
         if (ImGui.BeginTabBar("##TabBar"))
         {
             if (ImGui.BeginTabItem("Queue"))
@@ -263,48 +287,12 @@ public class CraftingHelperWindow : Window
         }
     }
 
-    private void DrawIngredients(string key, RequiredItem[] ingredients, uint parentCount = 1, int depth = 0)
-    {
-        if (depth > 0)
-            ImGui.Indent();
-
-        foreach (var entry in ingredients)
-        {
-            var ingredient = entry.Item;
-            var ingredientCount = entry.Amount * parentCount;
-
-            if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientCount)
-                continue;
-
-            DrawItem(ingredient, ingredientCount, $"{key}_{ingredient.ItemId}");
-
-            if (ingredient.Ingredients.Any())
-            {
-                DrawIngredients($"{key}_{ingredient.ItemId}", ingredient.Ingredients, entry.Amount, depth + 1);
-            }
-        }
-
-        if (depth > 0)
-            ImGui.Unindent();
-    }
-
     private void DrawQueue()
     {
         var i = 0;
 
         if (RequiredItems.Any())
         {
-            if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
-            {
-                RefreshQuantities();
-                // TODO: cooldown?
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.SetTooltip("Refresh Inventory");
-            }
-
             if (Crystals.Any())
             {
                 ImGui.Text("Needed Crystals:");
@@ -362,143 +350,6 @@ public class CraftingHelperWindow : Window
                 DrawItem(entry.Item, entry.Amount, $"Item{i}");
                 i++;
             }
-        }
-    }
-
-    private void DrawItem(CachedItem item, uint neededCount, string key = "Item")
-    {
-        ImGuiUtils.DrawIcon(item.Icon, 20, 20);
-        ImGui.SameLine();
-
-        // draw icons to the right: Gather, Vendor..
-
-        var color = ImGuiUtils.ColorWhite;
-
-        if (item.QuantityOwned >= neededCount)
-            color = ImGuiUtils.ColorGreen;
-        else if (item.QuantityOwned < neededCount || !item.HasAllIngredients)
-            color = ImGuiUtils.ColorGrey;
-
-        ImGui.PushStyleColor(ImGuiCol.Text, color);
-        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}##{key}_Selectable");
-        ImGui.PopStyleColor();
-
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-
-            // TODO: info about what leve/recipe needs this?
-
-            if (item.IsCraftable)
-            {
-                ImGui.SetTooltip(StringUtil.GetAddonText(1414)); // "Search for Item by Crafting Method"
-            }
-            else if (item.IsGatherable)
-            {
-                ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
-            }
-            else if (item.FishingSpot != null)
-            {
-                ImGui.SetTooltip("Show Fishing Spot");
-            }
-            else
-            {
-                ImGui.SetTooltip("Open on GarlandTools");
-            }
-        }
-
-        if (ImGui.IsItemClicked())
-        {
-            if (item.IsCraftable)
-            {
-                unsafe
-                {
-                    var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                    agent->OpenRecipeByItemId(item.ItemId);
-                }
-            }
-            // TODO: preferance setting?
-            else if (item.IsGatherable)
-            {
-                unsafe
-                {
-                    var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
-                    agent->OpenGatherableByItemId((ushort)item.ItemId);
-                }
-            }
-            else if (item.FishingSpot != null)
-            {
-                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
-            }
-            else
-            {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
-            }
-        }
-
-        if (ImGui.BeginPopupContextItem($"ItemContextMenu##{key}_Tooltip"))
-        {
-            var showSeparator = false;
-
-            if (item.IsCraftable)
-            {
-                if (ImGui.Selectable(StringUtil.GetAddonText(1414))) // "Search for Item by Crafting Method"
-                {
-                    unsafe
-                    {
-                        var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                        agent->OpenRecipeByItemId(item.ItemId);
-                    }
-                }
-
-                showSeparator = true;
-            }
-
-            if (item.IsGatherable)
-            {
-                if (ImGui.Selectable(StringUtil.GetAddonText(1472))) // "Search for Item by Gathering Method"
-                {
-                    unsafe
-                    {
-                        var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
-                        agent->OpenGatherableByItemId((ushort)item.ItemId);
-                    }
-                }
-
-                showSeparator = true;
-            }
-
-            if (item.FishingSpot != null)
-            {
-                if (ImGui.Selectable("Show Fishing Spot"))
-                {
-                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
-                }
-
-                showSeparator = true;
-            }
-
-            if (showSeparator)
-                ImGui.Separator();
-
-            if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
-            {
-                Service.GameFunctions.SearchForItem(item.ItemId);
-            }
-
-            if (ImGui.Selectable(StringUtil.GetAddonText(159))) // "Copy Item Name"
-            {
-                ImGui.SetClipboardText(item.ItemName);
-            }
-
-            if (ImGui.Selectable("Open on GarlandTools"))
-            {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
-            }
-
-            // TODO: search on market
-
-            ImGui.EndPopup();
         }
     }
 }

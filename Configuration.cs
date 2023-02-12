@@ -13,6 +13,9 @@ internal partial class Configuration : IPluginConfiguration
     public FilterConfigs Filters { get; init; } = new();
     public bool NotifyWantedTarget { get; set; } = true;
     public bool NotifyTreasure { get; set; } = true;
+    public bool ShowInlineRecipeTree { get; set; } = true;
+    public bool ShowInlineRecipeTreeForAcceptedOnly { get; set; } = true;
+    public bool ShowInlineResultItemOnly { get; set; } = true;
 }
 
 internal class FilterConfigs
