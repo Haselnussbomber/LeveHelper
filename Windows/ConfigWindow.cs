@@ -6,12 +6,8 @@ namespace LeveHelper;
 
 public class ConfigWindow : Window
 {
-    private readonly Plugin Plugin;
-
-    public ConfigWindow(Plugin plugin) : base("LeveHelper Config")
+    public ConfigWindow() : base("LeveHelper Config")
     {
-        Plugin = plugin;
-
         base.Flags |= ImGuiWindowFlags.NoSavedSettings;
         base.Flags |= ImGuiWindowFlags.NoResize;
         base.Flags |= ImGuiWindowFlags.NoMove;
@@ -26,20 +22,20 @@ public class ConfigWindow : Window
 
     public override void Draw()
     {
-        var config = Configuration.Instance;
+        var config = Plugin.Config;
 
         var notifyWantedTarget = config.NotifyWantedTarget;
         if (ImGui.Checkbox("Notify when Wanted Target is found", ref notifyWantedTarget))
         {
             config.NotifyWantedTarget = notifyWantedTarget;
-            Configuration.Save();
+            config.Save();
         }
 
         var notifyTreasure = config.NotifyTreasure;
         if (ImGui.Checkbox("Notify when Treasure is found", ref notifyTreasure))
         {
             config.NotifyTreasure = notifyTreasure;
-            Configuration.Save();
+            config.Save();
         }
     }
 }

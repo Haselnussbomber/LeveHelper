@@ -16,7 +16,7 @@ public abstract class Filter
 
     protected FiltersState state
     {
-        get => manager.state;
-        set => manager.state = value;
+        get => manager.State;
+        set => manager.State = value;
     }
 }

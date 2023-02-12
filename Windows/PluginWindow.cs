@@ -11,18 +11,13 @@ namespace LeveHelper;
 
 public class PluginWindow : Window
 {
-    private readonly Plugin Plugin;
-    private FilterManager? FilterManager = null!;
-
-    private const int TextWrapBreakpoint = 829;
+    private const int TextWrapBreakpoint = 865;
 
     public Vector2 MyPosition { get; private set; }
     public Vector2 MySize { get; private set; }
 
-    public PluginWindow(Plugin plugin) : base("LeveHelper")
+    public PluginWindow() : base("LeveHelper")
     {
-        Plugin = plugin;
-
         base.Size = new Vector2(830, 600);
         base.SizeCondition = ImGuiCond.FirstUseEver;
         base.SizeConstraints = new()
@@ -34,7 +29,7 @@ public class PluginWindow : Window
 
     public override void OnOpen()
     {
-        FilterManager ??= new();
+        Plugin.FilterManager ??= new();
     }
 
     public override void OnClose()
@@ -52,15 +47,15 @@ public class PluginWindow : Window
         MyPosition = ImGui.GetWindowPos();
         MySize = ImGui.GetWindowSize();
 
-        DrawConfigurationButton();
+        DrawButtons();
         DrawInfoBar();
 
-        FilterManager!.Draw();
+        Plugin.FilterManager.Draw();
 
         DrawTable();
     }
 
-    private void DrawConfigurationButton()
+    private void DrawButtons()
     {
         var cursorStartPos = ImGui.GetCursorPos();
 
@@ -69,7 +64,10 @@ public class PluginWindow : Window
 
         if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
         {
-            Plugin.ConfigWindow.Toggle();
+            if (Plugin.CraftingHelperWindow != null && Plugin.CraftingHelperWindow.IsOpen)
+                Plugin.CraftingHelperWindow.IsOpen = false;
+
+            Plugin.ConfigWindow.IsOpen = true;
         }
 
         if (ImGui.IsItemHovered())
@@ -77,12 +75,33 @@ public class PluginWindow : Window
             ImGui.SetTooltip((Plugin.ConfigWindow.IsOpen ? "Close" : "Open") + " Configuration");
         }
 
+        ImGui.SetCursorPosY(cursorStartPos.Y - 3);
+        ImGui.SetCursorPosX(ImGui.GetWindowSize().X - 30 - 30);
+
+        if (ImGuiComponents.IconButton(FontAwesomeIcon.ShoppingCart))
+        {
+            Plugin.ConfigWindow.IsOpen = false;
+
+            if (Plugin.CraftingHelperWindow == null)
+            {
+                Plugin.CraftingHelperWindow = new CraftingHelperWindow();
+                Plugin.WindowSystem.AddWindow(Plugin.CraftingHelperWindow);
+            }
+
+            Plugin.CraftingHelperWindow.IsOpen = true;
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip((Plugin.ConfigWindow.IsOpen ? "Close" : "Open") + " Crafting Helper");
+        }
+
         ImGui.SetCursorPos(cursorStartPos);
     }
 
     private void DrawInfoBar()
     {
-        var state = FilterManager!.state;
+        var state = Plugin.FilterManager.State;
 
         ImGui.Text($"Accepted Leves: {Service.GameFunctions.NumActiveLevequests}/16");
         if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
@@ -132,7 +151,7 @@ public class PluginWindow : Window
             return;
         }
 
-        var state = FilterManager!.state;
+        var state = Plugin.FilterManager.State;
 
         ImGui.TableSetupColumn("Id", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
@@ -151,7 +170,7 @@ public class PluginWindow : Window
                 state.SortColumnIndex = specs.Specs.ColumnIndex;
                 state.SortDirection = specs.Specs.SortDirection;
                 specs.SpecsDirty = false;
-                FilterManager.Update();
+                Plugin.FilterManager.Update();
             }
         }
 
@@ -161,7 +180,7 @@ public class PluginWindow : Window
 
             // Id
             ImGui.TableNextColumn();
-            ImGui.Text(item.RowId);
+            ImGui.Text(item.LeveId.ToString());
 
             if (ImGui.IsItemHovered())
             {
@@ -171,12 +190,12 @@ public class PluginWindow : Window
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.RowId}");
+                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}");
             }
 
             // Level
             ImGui.TableNextColumn();
-            ImGui.Text(item.ClassJobLevel);
+            ImGui.Text(item.ClassJobLevel.ToString());
 
             // Name
             ImGui.TableNextColumn();
@@ -243,7 +262,7 @@ public class PluginWindow : Window
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                FilterManager.SetValue<TypeFilter>((uint)item.leve.Unknown4);
+                Plugin.FilterManager.SetValue<TypeFilter>((uint)(item.Leve?.Unknown4 ?? 0));
             }
 
             // Levemete
@@ -258,17 +277,17 @@ public class PluginWindow : Window
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                item.leve.LevelLevemete.Value?.OpenMapLocation();
+                item.Leve?.LevelLevemete.Value?.OpenMapLocation();
             }
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                FilterManager.SetValue<LevemeteFilter>(item.leve.LevelLevemete.Value!.Object);
+                Plugin.FilterManager.SetValue<LevemeteFilter>(item.Leve?.LevelLevemete.Value?.Object ?? 0);
             }
 
             // AllowanceCost
             ImGui.TableNextColumn();
-            ImGui.Text(item.leve.AllowanceCost.ToString());
+            ImGui.Text(item.Leve?.AllowanceCost.ToString());
         }
 
         ImGui.EndTable(); // LeveHelper_Table

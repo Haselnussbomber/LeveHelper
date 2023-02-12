@@ -73,7 +73,7 @@ public static class Scanner
 
     private static void Framework_Update(Dalamud.Game.Framework framework)
     {
-        var config = Configuration.Instance;
+        var config = Plugin.Config;
 
         if (!config.NotifyTreasure && !config.NotifyWantedTarget)
         {

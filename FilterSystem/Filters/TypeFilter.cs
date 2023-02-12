@@ -16,7 +16,7 @@ public class TypeFilter : Filter
     {
     }
 
-    public static TypeFilterConfiguration Config => Configuration.Instance.Filters.TypeFilter;
+    public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
     private Dictionary<string, Dictionary<uint, (string, int)>>? Groups = null;
 
@@ -28,7 +28,7 @@ public class TypeFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedType = (uint)value;
-        Configuration.Save();
+        Plugin.Config.Save();
     }
 
     public override void Draw()
@@ -121,7 +121,7 @@ public class TypeFilter : Filter
 
         if (Config.SelectedType != suggestedType)
         {
-            var suggestedName = suggestedType == 1 
+            var suggestedName = suggestedType == 1
                 ? StringUtil.GetText("LeveAssignmentType", 1)
                 : Service.ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
             if (suggestedName != null && ImGui.Button($"Set {suggestedName}"))
@@ -159,11 +159,9 @@ public class TypeFilter : Filter
         };
 
         if (Config.SelectedType == 0)
-        {
             return false;
-        }
 
-        state.Leves = state.Leves.Where(item => item.leve.Unknown4 == Config.SelectedType);
+        state.Leves = state.Leves.Where(item => item.Leve?.Unknown4 == Config.SelectedType);
 
         return true;
     }

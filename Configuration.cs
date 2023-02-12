@@ -24,38 +24,27 @@ internal class FilterConfigs
     public StatusFilterConfiguration StatusFilter { get; init; } = new();
 }
 
-internal partial class Configuration : IDisposable
+internal partial class Configuration
 {
-    private static Configuration instance = null!;
-    public static Configuration Instance => instance ??= Load();
-
     internal static Configuration Load()
     {
-        if (instance != null)
-            return instance;
-
         var configPath = Service.PluginInterface.ConfigFile.FullName;
 
         var jsonData = File.Exists(configPath) ? File.ReadAllText(configPath) : null;
         if (string.IsNullOrEmpty(jsonData))
-            return instance = new Configuration();
+            return new();
 
         var parsed = JObject.Parse(jsonData);
         if (parsed == null)
-            return instance = new Configuration();
+            return new();
 
         // migrations here
 
-        return instance = parsed.ToObject<Configuration>() ?? new Configuration();
+        return parsed.ToObject<Configuration>() ?? new();
     }
 
-    internal static void Save()
+    internal void Save()
     {
-        Service.PluginInterface.SavePluginConfig(instance);
-    }
-
-    void IDisposable.Dispose()
-    {
-        instance = null!;
+        Service.PluginInterface.SavePluginConfig(this);
     }
 }

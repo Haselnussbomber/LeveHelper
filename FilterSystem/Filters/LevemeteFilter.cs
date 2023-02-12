@@ -16,7 +16,7 @@ public class LevemeteFilter : Filter
     {
     }
 
-    public static LevemeteFilterConfiguration Config => Configuration.Instance.Filters.LevemeteFilter;
+    public static LevemeteFilterConfiguration Config => Plugin.Config.Filters.LevemeteFilter;
 
     private Dictionary<uint, string>? Levemetes = null;
 
@@ -28,15 +28,13 @@ public class LevemeteFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLevemete = (uint)value;
-        Configuration.Save();
+        Plugin.Config.Save();
     }
 
     public override void Draw()
     {
         if (Levemetes == null)
-        {
             return;
-        }
 
         ImGui.TableNextColumn();
         ImGui.Text("Levemete:");
@@ -77,7 +75,7 @@ public class LevemeteFilter : Filter
     {
         var ENpcResidentSheet = Service.Data.GetExcelSheet<ENpcResident>();
         Levemetes = state.Leves
-            .Select(row => row.leve.LevelLevemete.Value?.Object)
+            .Select(row => row.Leve?.LevelLevemete.Value?.Object)
             .Where(item => item != null)
             .Cast<uint>()
             .GroupBy(item => item)
@@ -89,12 +87,10 @@ public class LevemeteFilter : Filter
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLevemete == 0)
-        {
             return false;
-        }
 
-        var selection = state.Leves.Where(item => item.leve.LevelLevemete.Value?.Object == Config.SelectedLevemete);
-        if (selection.Count() == 0)
+        var selection = state.Leves.Where(item => item.Leve?.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        if (!selection.Any())
         {
             Config.SelectedLevemete = 0;
             return false;

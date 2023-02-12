@@ -7,22 +7,21 @@ namespace LeveHelper;
 
 public class FiltersState
 {
-    public readonly LeveRecord[] AllLeves = null!;
-    public readonly uint[] AllLocations = null!;
+    public CachedLeve[] AllLeves { get; init; }
 
-    public IEnumerable<LeveRecord> Leves = null!;
-    public LeveRecord[] LevesArray = null!;
+    public IEnumerable<CachedLeve> Leves { get; set; } = null!;
+    public CachedLeve[] LevesArray { get; set; } = null!;
 
-    public short SortColumnIndex;
-    public ImGuiSortDirection SortDirection;
+    public short SortColumnIndex { get; set; }
+    public ImGuiSortDirection SortDirection { get; set; }
 
-    public int NumCompletedLeves = 0;
-    public int NumTotalLeves = 0;
-    public int NeededAllowances = 0;
+    public int NumCompletedLeves { get; set; }
+    public int NumTotalLeves { get; set; }
+    public int NeededAllowances { get; set; }
 
     // data from a certain Levequests Checklist spreadsheet
     // seem to be unused test levequests
-    public readonly uint[] ExcludedLeves = {
+    public static readonly uint[] ExcludedLeves = {
         502, 508, 514, 519, 525,
         531, 542, 544, 552, 554,
         562, 564, 582, 597, 822,
@@ -33,15 +32,7 @@ public class FiltersState
     {
         AllLeves = Service.Data.GetExcelSheet<Leve>()!
             .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))
-            .Select(row => new LeveRecord(row))
-            .ToArray();
-
-        AllLocations = AllLeves
-            .Select(row => row.leve.PlaceNameStartZone.Value)
-            .Where(item => item != null)
-            .Cast<PlaceName>()
-            .GroupBy(item => item.RowId)
-            .Select(group => group.First().RowId)
+            .Select(LeveCache.Get)
             .ToArray();
     }
 }

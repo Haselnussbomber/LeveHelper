@@ -10,21 +10,26 @@ public class Plugin : IDalamudPlugin, IDisposable
 {
     public string Name => "LeveHelper";
 
-    internal readonly WindowSystem WindowSystem = new("LeveHelper");
-    internal readonly PluginWindow PluginWindow;
-    internal readonly ConfigWindow ConfigWindow;
+    internal static WindowSystem WindowSystem = new("LeveHelper");
+    internal static PluginWindow PluginWindow = null!;
+    internal static ConfigWindow ConfigWindow = null!;
+    internal static CraftingHelperWindow? CraftingHelperWindow;
+    internal static VendorListWindow? VendorListWindow;
+
+    internal static Configuration Config = null!;
+    internal static FilterManager FilterManager = null!;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
         Service.GameFunctions = new();
 
-        Configuration.Load();
+        Config = Configuration.Load();
         PlaceNameHelper.Connect();
         Scanner.Connect();
 
-        WindowSystem.AddWindow(PluginWindow = new PluginWindow(this));
-        WindowSystem.AddWindow(ConfigWindow = new ConfigWindow(this));
+        WindowSystem.AddWindow(PluginWindow = new PluginWindow());
+        WindowSystem.AddWindow(ConfigWindow = new ConfigWindow());
 
         Service.PluginInterface.UiBuilder.Draw += OnDraw;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
@@ -56,6 +61,16 @@ public class Plugin : IDalamudPlugin, IDisposable
         {
             ConfigWindow.Toggle();
         }
+        else if (args.ToLowerInvariant() == "c")
+        {
+            if (CraftingHelperWindow == null)
+            {
+                CraftingHelperWindow = new CraftingHelperWindow();
+                WindowSystem.AddWindow(CraftingHelperWindow);
+            }
+
+            CraftingHelperWindow.IsOpen = true;
+        }
         else
         {
             PluginWindow.Toggle();
@@ -77,10 +92,16 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         WindowSystem.RemoveAllWindows();
 
-        Configuration.Save();
+        Config.Save();
         PlaceNameHelper.Disconnect();
         Scanner.Disconnect();
 
-        ((IDisposable)Configuration.Instance).Dispose();
+        WindowSystem = null!;
+        PluginWindow = null!;
+        ConfigWindow = null!;
+        CraftingHelperWindow = null!;
+        VendorListWindow = null!;
+        FilterManager = null!;
+        Config = null!;
     }
 }

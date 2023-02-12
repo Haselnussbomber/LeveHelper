@@ -23,7 +23,7 @@ public class StatusFilter : Filter
     {
     }
 
-    public static StatusFilterConfiguration Config => Configuration.Instance.Filters.StatusFilter;
+    public static StatusFilterConfiguration Config => Plugin.Config.Filters.StatusFilter;
 
     public override void Reset()
     {
@@ -33,7 +33,7 @@ public class StatusFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedStatus = (CompletedStatus)value;
-        Configuration.Save();
+        Plugin.Config.Save();
     }
 
     public override void Draw()
@@ -75,7 +75,7 @@ public class StatusFilter : Filter
         }
         else if (Config.SelectedStatus == CompletedStatus.Accepted)
         {
-            state.Leves = state.Leves.Where(item => item.IsAccepted);
+            state.Leves = Service.GameFunctions.ActiveLevequests;
             return true;
         }
 

@@ -15,7 +15,7 @@ public class NameFilter : Filter
     {
     }
 
-    public static NameFilterConfiguration Config => Configuration.Instance.Filters.NameFilter;
+    public static NameFilterConfiguration Config => Plugin.Config.Filters.NameFilter;
 
     public override void Reset()
     {
@@ -25,7 +25,7 @@ public class NameFilter : Filter
     public override void Set(dynamic value)
     {
         Config.CurrentName = (string)value;
-        Configuration.Save();
+        Plugin.Config.Save();
     }
 
     public override void Draw()
@@ -45,9 +45,7 @@ public class NameFilter : Filter
     public override bool Run()
     {
         if (string.IsNullOrWhiteSpace(Config.CurrentName))
-        {
             return false;
-        }
 
         state.Leves = state.Leves.Where(row => row.Name.Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
 

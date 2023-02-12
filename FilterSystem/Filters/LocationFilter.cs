@@ -16,7 +16,7 @@ public class LocationFilter : Filter
     {
     }
 
-    public static LocationFilterConfiguration Config => Configuration.Instance.Filters.LocationFilter;
+    public static LocationFilterConfiguration Config => Plugin.Config.Filters.LocationFilter;
 
     private Dictionary<uint, string>? Locations = null;
 
@@ -28,15 +28,13 @@ public class LocationFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLocation = (uint)value;
-        Configuration.Save();
+        Plugin.Config.Save();
     }
 
     public override void Draw()
     {
         if (Locations == null)
-        {
             return;
-        }
 
         ImGui.TableNextColumn();
         ImGui.Text("Location:");
@@ -85,7 +83,7 @@ public class LocationFilter : Filter
     public override bool Run()
     {
         Locations = state.Leves
-            .Select(row => row.leve.PlaceNameStartZone.Value)
+            .Select(row => row.Leve?.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
@@ -95,12 +93,10 @@ public class LocationFilter : Filter
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLocation == 0)
-        {
             return false;
-        }
 
-        var selection = state.Leves.Where(item => item.leve.PlaceNameStartZone.Row == Config.SelectedLocation);
-        if (selection.Count() == 0)
+        var selection = state.Leves.Where(item => item.Leve?.PlaceNameStartZone.Row == Config.SelectedLocation);
+        if (!selection.Any())
         {
             Config.SelectedLocation = 0;
             return false;
