@@ -130,15 +130,8 @@ public record CachedItem
         var inventoryManager = InventoryManager.Instance();
 
         quantityOwned = 0
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory1)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory1, true)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory2)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory2, true)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory3)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory3, true)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory4)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Inventory4, true)
-            + inventoryManager->GetItemCountInContainer(ItemId, InventoryType.Crystals);
+            + inventoryManager->GetInventoryItemCount(ItemId)
+            + inventoryManager->GetInventoryItemCount(ItemId, true);
 
         return (int)quantityOwned;
     }
