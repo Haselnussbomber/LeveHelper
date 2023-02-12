@@ -380,10 +380,10 @@ public class CraftingHelperWindow : Window
 
         var color = ImGuiUtils.ColorWhite;
 
-        if (item.QuantityOwned < neededCount || !item.HasAllIngredients)
-            color = ImGuiUtils.ColorGrey;
-        else if (item.QuantityOwned >= neededCount)
+        if (item.QuantityOwned >= neededCount)
             color = ImGuiUtils.ColorGreen;
+        else if (item.QuantityOwned < neededCount || !item.HasAllIngredients)
+            color = ImGuiUtils.ColorGrey;
 
         ImGui.PushStyleColor(ImGuiCol.Text, color);
         ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}##{key}_Selectable");
