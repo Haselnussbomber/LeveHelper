@@ -56,8 +56,8 @@ public static class ImGuiUtils
             var ingredient = entry.Item;
             var ingredientCount = entry.Amount * parentCount;
 
-            if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientCount)
-                continue;
+            //if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientCount)
+            //    continue;
 
             DrawItem(ingredient, ingredientCount, $"{key}_{ingredient.ItemId}");
 
@@ -106,7 +106,7 @@ public static class ImGuiUtils
             {
                 ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
             }
-            else if (item.FishingSpot != null)
+            else if (item.IsFishable)
             {
                 ImGui.SetTooltip("Show Fishing Spot");
             }
@@ -135,13 +135,13 @@ public static class ImGuiUtils
                     agent->OpenGatherableByItemId((ushort)item.ItemId);
                 }
             }
-            else if (item.FishingSpot != null)
+            else if (item.IsFishable)
             {
-                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
+                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First());
             }
             else
             {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
             }
         }
 
@@ -177,11 +177,11 @@ public static class ImGuiUtils
                 showSeparator = true;
             }
 
-            if (item.FishingSpot != null)
+            if (item.IsFishable)
             {
                 if (ImGui.Selectable("Show Fishing Spot"))
                 {
-                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpot);
+                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First());
                 }
 
                 showSeparator = true;
@@ -202,7 +202,7 @@ public static class ImGuiUtils
 
             if (ImGui.Selectable("Open on GarlandTools"))
             {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
             }
 
             // TODO: search on market

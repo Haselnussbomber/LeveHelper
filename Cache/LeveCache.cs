@@ -143,6 +143,25 @@ public record RequiredItem
     }
 
     public CachedItem Item { get; init; }
-
     public uint Amount { get; set; }
+}
+
+public record QueuedItem
+{
+    public QueuedItem(CachedItem Item, uint Amount)
+    {
+        this.Item = Item;
+        AmountTotal = Amount;
+        AmountLeft = Amount;
+    }
+
+    public CachedItem Item { get; init; }
+    public uint AmountTotal { get; set; }
+    public uint AmountLeft { get; set; }
+
+    public void AddAmount(uint amount)
+    {
+        AmountTotal += amount;
+        AmountLeft += amount;
+    }
 }

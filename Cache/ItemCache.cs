@@ -46,7 +46,8 @@ public record CachedItem
     private string itemName { get; set; } = "";
     private Recipe? recipe { get; set; } = null;
     private bool? isGatherable { get; set; } = null;
-    private FishingSpot? fishingSpot { get; set; } = null;
+    private GatheringPoint[]? gatheringPoints { get; set; } = null;
+    private FishingSpot[]? fishingSpots { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
     private uint? quantityOwned { get; set; } = null;
     private DateTime quantityOwnedLastUpdate { get; set; }
@@ -82,20 +83,56 @@ public record CachedItem
     public int Icon
         => Item?.Icon ?? 0;
 
-    public Recipe? Recipe
-        => recipe ??= Service.Data.GetExcelSheet<Recipe>()?.FirstOrDefault(recipe => recipe.ItemResult.Value?.RowId == ItemId);
-
     public bool IsCrystal
         => Item?.ItemUICategory.Row == 59;
 
-    public bool IsGatherable
-        => (isGatherable ??= Service.Data.GetExcelSheet<GatheringItem>()?.Any(row => row.Item == ItemId)) ?? false;
+    public Recipe? Recipe
+        => recipe ??= Service.Data.GetExcelSheet<Recipe>()?.FirstOrDefault(recipe => recipe.ItemResult.Value?.RowId == ItemId);
 
     public bool IsCraftable
         => Recipe != null;
 
-    public FishingSpot? FishingSpot
-        => fishingSpot ??= Service.Data.GetExcelSheet<FishingSpot>()?.FirstOrDefault(row => row.Item.Any(i => i.Row == ItemId));
+    /* endless loop?
+    public GatheringPoint[] GatheringPoints
+    {
+        get
+        {
+            if (gatheringPoints != null)
+                return gatheringPoints;
+
+            var itemRowIds = Service.Data.GetExcelSheet<GatheringItem>()?
+                .Where(row => row.Item == ItemId)
+                .Select(row => row.RowId);
+
+            if (itemRowIds == null || !itemRowIds.Any())
+                return gatheringPoints ??= Array.Empty<GatheringPoint>();
+
+            var pointBases = Service.Data.GetExcelSheet<GatheringPointBase>()?
+                .Where(row => row.Item.Any(itemId => itemRowIds.Any(rowId => rowId == itemId)))
+                .Select(row => row.RowId);
+
+            if (pointBases == null || !pointBases.Any())
+                return gatheringPoints ??= Array.Empty<GatheringPoint>();
+
+            gatheringPoints ??= Service.Data.GetExcelSheet<GatheringPoint>()?
+                .Where(row => pointBases.Any(pointBaseRowId => row.GatheringPointBase.Row == pointBaseRowId))
+                .ToArray();
+
+            gatheringPoints ??= Array.Empty<GatheringPoint>();
+
+            return gatheringPoints;
+        }
+    }
+    */
+
+    public bool IsGatherable
+        => (isGatherable ??= Service.Data.GetExcelSheet<GatheringItem>()?.Any(row => row.Item == ItemId)) ?? false;
+
+    public FishingSpot[] FishingSpots
+        => fishingSpots ??= Service.Data.GetExcelSheet<FishingSpot>()?.Where(row => row.Item.Any(i => i.Row == ItemId)).ToArray() ?? Array.Empty<FishingSpot>();
+
+    public bool IsFishable
+        => FishingSpots.Any();
 
     public RequiredItem[] Ingredients
     {
@@ -136,7 +173,7 @@ public record CachedItem
     }
 
     public bool HasAllIngredients
-        => Ingredients != null && Ingredients.All(ingredient => ingredient.Item.QuantityOwned > ingredient.Amount);
+        => Ingredients.All(ingredient => ingredient.Item.QuantityOwned > ingredient.Amount);
 
     public ItemQueueCategory QueueCategory
     {
@@ -149,7 +186,7 @@ public record CachedItem
             if (IsGatherable)
                 return ItemQueueCategory.Gatherable;
 
-            if (FishingSpot != null)
+            if (IsFishable)
                 return ItemQueueCategory.Fishable;
 
             if (IsCraftable)

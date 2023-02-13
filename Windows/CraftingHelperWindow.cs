@@ -21,13 +21,13 @@ public class CraftingHelperWindow : Window
     private readonly AddonObserver ShopObserver = new("Shop");
 
     private RequiredItem[] LeveRequiredItems = Array.Empty<RequiredItem>();
-    private RequiredItem[] RequiredItems = Array.Empty<RequiredItem>();
+    private QueuedItem[] RequiredItems = Array.Empty<QueuedItem>();
 
-    private RequiredItem[] Crystals = Array.Empty<RequiredItem>();
-    private RequiredItem[] Gatherable = Array.Empty<RequiredItem>();
-    private RequiredItem[] Fishable = Array.Empty<RequiredItem>();
-    private RequiredItem[] OtherSources = Array.Empty<RequiredItem>();
-    private RequiredItem[] Craftable = Array.Empty<RequiredItem>();
+    private QueuedItem[] Crystals = Array.Empty<QueuedItem>();
+    private QueuedItem[] Gatherable = Array.Empty<QueuedItem>();
+    private QueuedItem[] Fishable = Array.Empty<QueuedItem>();
+    private QueuedItem[] OtherSources = Array.Empty<QueuedItem>();
+    private QueuedItem[] Craftable = Array.Empty<QueuedItem>();
 
     private ushort[] LastActiveLevequestIds = Array.Empty<ushort>();
 
@@ -91,7 +91,7 @@ public class CraftingHelperWindow : Window
 
     public override bool DrawConditions()
     {
-        return Service.GameFunctions.ActiveLevequestsIds.Length > 0;
+        return Service.GameFunctions.ActiveLevequestsIds.Length > 0; // TODO: add this to settings (auto show/hide)
     }
 
     private void UpdateList()
@@ -105,12 +105,12 @@ public class CraftingHelperWindow : Window
             .ToArray();
 
         // step 2: gather a list of all items
-        var allItems = new Dictionary<uint, RequiredItem>();
+        var allItems = new Dictionary<uint, QueuedItem>();
         foreach (var leve in acceptedCraftLeves)
         {
             foreach (var entry in leve.RequiredItems!)
             {
-                GetItemsRecursive(allItems, entry, entry.Amount);
+                GetItemsRecursive(allItems, entry, 1);
             }
         }
 
@@ -120,13 +120,12 @@ public class CraftingHelperWindow : Window
             foreach (var entry in leve.RequiredItems!)
             {
                 FilterItem(allItems, entry);
-                PluginLog.Log("====next entry====");
             }
         }
 
         RequiredItems = allItems
             .Values
-            .Where(entry => entry.Amount > 0) // step 4: filter every completed item
+            .Where(entry => entry.AmountLeft > 0) // step 4: filter every completed item
             .ToArray();
 
         // step 4: categorize
@@ -151,44 +150,41 @@ public class CraftingHelperWindow : Window
             .ToArray();
     }
 
-    private void GetItemsRecursive(Dictionary<uint, RequiredItem> dict, RequiredItem node, uint parentTotalAmount)
+    private void GetItemsRecursive(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentTotalAmount)
     {
         var nodeAmount = node.Amount * parentTotalAmount;
+        var resultAmount = (uint)(nodeAmount / (double)(node.Item.Recipe?.AmountResult ?? 1));
 
         // process ingredients
         if (node.Item.IsCraftable)
         {
             foreach (var ingredient in node.Item.Ingredients!)
             {
-                GetItemsRecursive(dict, ingredient, nodeAmount);
+                GetItemsRecursive(dict, ingredient, resultAmount);
             }
         }
 
         // add node to list
         if (dict.TryGetValue(node.Item.ItemId, out var item))
         {
-            item.Amount += nodeAmount;
+            item.AddAmount(resultAmount);
         }
         else
         {
-            dict.Add(node.Item.ItemId, new RequiredItem(node.Item, nodeAmount));
+            dict.Add(node.Item.ItemId, new QueuedItem(node.Item, resultAmount));
             node.Item.UpdateQuantityOwned();
         }
     }
 
-    private void FilterItem(Dictionary<uint, RequiredItem> dict, RequiredItem node)
+    private void FilterItem(Dictionary<uint, QueuedItem> dict, RequiredItem node)
     {
-        PluginLog.Log($"Visiting {node.Item.ItemName}: {node.Amount} >= {node.Item.QuantityOwned}?");
-
         // do we have enough?
         if (node.Item.QuantityOwned >= node.Amount)
         {
-            PluginLog.Log($"yep, removing");
-
             // then subtract it from out list
             if (dict.TryGetValue(node.Item.ItemId, out var item))
             {
-                item.Amount -= node.Amount;
+                item.AmountLeft -= node.Amount;
             }
 
             // and reduce needed ingredients count
@@ -199,8 +195,6 @@ public class CraftingHelperWindow : Window
         }
         else
         {
-            PluginLog.Log($"nop, filtering ingredients");
-
             foreach (var ingredient in node.Item.Ingredients)
             {
                 FilterItem(dict, ingredient);
@@ -208,13 +202,11 @@ public class CraftingHelperWindow : Window
         }
     }
 
-    private void DecreaseIngredientsRecursive(Dictionary<uint, RequiredItem> dict, RequiredItem node, uint parentAmount)
+    private void DecreaseIngredientsRecursive(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentAmount)
     {
-        PluginLog.Log($"Visiting Ingredient {node.Item.ItemName}: {node.Amount} * {parentAmount} = {node.Amount * parentAmount}");
-
         if (dict.TryGetValue(node.Item.ItemId, out var item))
         {
-            item.Amount -= node.Amount * parentAmount; // TODO: handle ResultAmount
+            item.AmountLeft -= (uint)(node.Amount * parentAmount / (double)(node.Item.Recipe?.AmountResult ?? 1));
         }
 
         foreach (var ingredient in node.Item.Ingredients)
@@ -276,7 +268,7 @@ public class CraftingHelperWindow : Window
                 ImGui.Text("Crystals:");
                 foreach (var entry in Crystals)
                 {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i}");
                     i++;
                 }
             }
@@ -286,7 +278,8 @@ public class CraftingHelperWindow : Window
                 ImGui.Text("Gather:");
                 foreach (var entry in Gatherable)
                 {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i}");
+                    //entry.Item.IsGatherable
                     i++;
                 }
             }
@@ -296,7 +289,7 @@ public class CraftingHelperWindow : Window
                 ImGui.Text("Fish:");
                 foreach (var entry in Fishable)
                 {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i}");
                     i++;
                 }
             }
@@ -306,7 +299,7 @@ public class CraftingHelperWindow : Window
                 ImGui.Text("Other:");
                 foreach (var entry in OtherSources)
                 {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i}");
                     i++;
                 }
             }
@@ -316,7 +309,7 @@ public class CraftingHelperWindow : Window
                 ImGui.Text("Craft:");
                 foreach (var entry in Craftable)
                 {
-                    DrawItem(entry.Item, entry.Amount, $"Item{i}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i}");
                     i++;
                 }
             }
