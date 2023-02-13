@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Logging;
 using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
@@ -49,7 +48,7 @@ public record CachedItem
     private bool? isGatherable { get; set; } = null;
     private FishingSpot? fishingSpot { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
-    private int? quantityOwned { get; set; } = null;
+    private uint? quantityOwned { get; set; } = null;
     private DateTime quantityOwnedLastUpdate { get; set; }
 
     public uint ItemId { get; init; }
@@ -122,20 +121,52 @@ public record CachedItem
         }
     }
 
-    public int QuantityOwned
+    public uint QuantityOwned
         => quantityOwned ?? UpdateQuantityOwned();
 
-    public unsafe int UpdateQuantityOwned()
+    public unsafe uint UpdateQuantityOwned()
     {
         var inventoryManager = InventoryManager.Instance();
 
         quantityOwned = 0
-            + inventoryManager->GetInventoryItemCount(ItemId)
-            + inventoryManager->GetInventoryItemCount(ItemId, true);
+            + (uint)inventoryManager->GetInventoryItemCount(ItemId)
+            + (uint)inventoryManager->GetInventoryItemCount(ItemId, true);
 
-        return (int)quantityOwned;
+        return (uint)quantityOwned;
     }
 
     public bool HasAllIngredients
         => Ingredients != null && Ingredients.All(ingredient => ingredient.Item.QuantityOwned > ingredient.Amount);
+
+    public ItemQueueCategory QueueCategory
+    {
+        get
+        {
+#pragma warning disable IDE0046
+            if (IsCrystal)
+                return ItemQueueCategory.Crystals;
+            
+            if (IsGatherable)
+                return ItemQueueCategory.Gatherable;
+
+            if (FishingSpot != null)
+                return ItemQueueCategory.Fishable;
+
+            if (IsCraftable)
+                return ItemQueueCategory.Craftable;
+
+            return ItemQueueCategory.OtherSources;
+#pragma warning restore IDE0046
+        }
+    }
+}
+
+public enum ItemQueueCategory
+{
+    None,
+    Crystals,
+    Gatherable,
+    Fishable,
+    OtherSources,
+    Craftable,
 }

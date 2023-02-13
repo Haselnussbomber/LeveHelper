@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using static LeveHelper.ImGuiUtils;
@@ -68,33 +69,7 @@ public class CraftingHelperWindow : Window
 
     private unsafe void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
     {
-        RefreshQuantities();
-    }
-
-    private void RefreshQuantities()
-    {
-        var arr = new Dictionary<uint, CachedItem>();
-
-        var addItems = (RequiredItem[] items) =>
-        {
-            foreach (var entry in items)
-            {
-                if (!arr.ContainsKey(entry.Item.ItemId))
-                    arr.Add(entry.Item.ItemId, entry.Item);
-            }
-        };
-
-        addItems(Crystals);
-        addItems(Gatherable);
-        addItems(Fishable);
-        addItems(OtherSources);
-        addItems(Craftable);
-        addItems(RequiredItems);
-
-        foreach (var item in arr.Values)
-            item.UpdateQuantityOwned();
-
-        // TODO: cooldown?
+        UpdateList();
     }
 
     public override void PreDraw()
@@ -110,140 +85,141 @@ public class CraftingHelperWindow : Window
         {
             LastActiveLevequestIds = activeLevequestIds;
 
-            var acceptedCraftLeves = Service.GameFunctions.ActiveLevequests
-                .Where(leve => leve.IsCraftLeve);
-
-            var deepestDepth = 0;
-
-            foreach (var leve in acceptedCraftLeves)
-            {
-                if (leve.RequiredItems == null)
-                    continue;
-
-                foreach (var entry in leve.RequiredItems)
-                {
-                    var depth = CalculateDepth(entry, 0);
-                    if (deepestDepth < depth)
-                        deepestDepth = depth;
-                }
-            }
-
-            var sorted = new Dictionary<uint, RequiredItem>();
-
-            // TODO: this is wrong.
-
-            foreach (var leve in acceptedCraftLeves)
-            {
-                if (leve.RequiredItems == null)
-                    continue;
-
-                foreach (var entry in leve.RequiredItems)
-                {
-                    for (var level = deepestDepth; level > 0; level--)
-                    {
-                        var items = GetItemsAtDepth(entry, 1, level, entry.Amount);
-
-                        foreach (var item in items)
-                        {
-                            if (!sorted.ContainsKey(item.Item.ItemId))
-                            {
-                                sorted.Add(item.Item.ItemId, new(item.Item, item.Amount));
-                            }
-                            else
-                            {
-                                sorted[item.Item.ItemId].Amount += item.Amount;
-                            }
-                        }
-                    }
-                }
-            }
-
-            RequiredItems = sorted.Values.ToArray();
-
-            Crystals = RequiredItems
-                .Where(entry => entry.Item.IsCrystal && entry.Item.QuantityOwned < entry.Amount)
-                .ToArray();
-
-            Gatherable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && entry.Item.IsGatherable && entry.Item.FishingSpot == null && !entry.Item.IsCraftable)
-                .ToArray();
-
-            Fishable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot != null && !entry.Item.IsCraftable)
-                .ToArray();
-
-            OtherSources = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot == null && !entry.Item.IsCraftable)
-                .ToArray();
-
-            Craftable = RequiredItems
-                .Where(entry => !entry.Item.IsCrystal && !entry.Item.IsGatherable && entry.Item.FishingSpot == null && entry.Item.IsCraftable)
-                .ToArray();
-
-            // add items required for leves last
-            var leveRequiredItems = new List<RequiredItem>();
-            foreach (var leve in acceptedCraftLeves)
-            {
-                if (leve.RequiredItems == null)
-                    continue;
-
-                foreach (var entry in leve.RequiredItems)
-                {
-                    leveRequiredItems.Add(entry);
-                }
-            }
-            LeveRequiredItems = leveRequiredItems.ToArray();
+            UpdateList();
         }
     }
 
-    public static int CalculateDepth(RequiredItem root, int depth)
+    public override bool DrawConditions()
     {
-        var result = depth + 1;
-
-        if (root.Item.IsCraftable)
-        {
-            foreach (var node in root.Item.Ingredients!)
-                result = Math.Max(result, CalculateDepth(node, depth + 1));
-        }
-
-        return result;
+        return Service.GameFunctions.ActiveLevequestsIds.Length > 0;
     }
 
-    private List<RequiredItem> GetItemsAtDepth(RequiredItem root, int depth, int neededDepth, uint parentAmount)
+    private void UpdateList()
     {
-        var result = new List<RequiredItem>();
+        var acceptedCraftLeves = Service.GameFunctions.ActiveLevequests
+            .Where(leve => leve.IsCraftLeve && leve.RequiredItems != null);
 
-        if (root.Item.IsCraftable)
+        // step 1: list all items required for craftleves
+        LeveRequiredItems = acceptedCraftLeves
+            .SelectMany(leve => leve.RequiredItems!)
+            .ToArray();
+
+        // step 2: gather a list of all items
+        var allItems = new Dictionary<uint, RequiredItem>();
+        foreach (var leve in acceptedCraftLeves)
         {
-            foreach (var ingredient in root.Item.Ingredients!)
+            foreach (var entry in leve.RequiredItems!)
             {
-                if (depth == neededDepth)
-                {
-                    result.Add(new RequiredItem(ingredient.Item, ingredient.Amount * parentAmount));
-                }
-                else if (ingredient.Item.IsCraftable)
-                {
-                    result.AddRange(GetItemsAtDepth(ingredient, depth + 1, neededDepth, (uint)Math.Ceiling(ingredient.Amount * parentAmount / (double)(ingredient.Item.Recipe?.AmountResult ?? 1))));
-                }
+                GetItemsRecursive(allItems, entry, entry.Amount);
             }
         }
 
-        return result;
+        // step 3: decrease amount out ingredients for completed items
+        foreach (var leve in acceptedCraftLeves)
+        {
+            foreach (var entry in leve.RequiredItems!)
+            {
+                FilterItem(allItems, entry);
+                PluginLog.Log("====next entry====");
+            }
+        }
+
+        RequiredItems = allItems
+            .Values
+            .Where(entry => entry.Amount > 0) // step 4: filter every completed item
+            .ToArray();
+
+        // step 4: categorize
+        Crystals = RequiredItems
+            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Crystals)
+            .ToArray();
+
+        Gatherable = RequiredItems
+            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Gatherable) // TODO: sort by zones
+            .ToArray();
+
+        Fishable = RequiredItems
+            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Fishable)
+            .ToArray();
+
+        OtherSources = RequiredItems
+            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.OtherSources)
+            .ToArray();
+
+        Craftable = RequiredItems
+            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Craftable)
+            .ToArray();
     }
 
-    private void ProcessIngredients(RequiredItem req, HashSet<uint> visited, List<RequiredItem> sorted)
+    private void GetItemsRecursive(Dictionary<uint, RequiredItem> dict, RequiredItem node, uint parentTotalAmount)
     {
-        if (!visited.Contains(req.Item.ItemId))
-        {
-            visited.Add(req.Item.ItemId);
+        var nodeAmount = node.Amount * parentTotalAmount;
 
-            if (req.Item.Ingredients != null)
+        // process ingredients
+        if (node.Item.IsCraftable)
+        {
+            foreach (var ingredient in node.Item.Ingredients!)
             {
-                foreach (var dep in req.Item.Ingredients)
-                    ProcessIngredients(dep, visited, sorted);
+                GetItemsRecursive(dict, ingredient, nodeAmount);
+            }
+        }
+
+        // add node to list
+        if (dict.TryGetValue(node.Item.ItemId, out var item))
+        {
+            item.Amount += nodeAmount;
+        }
+        else
+        {
+            dict.Add(node.Item.ItemId, new RequiredItem(node.Item, nodeAmount));
+            node.Item.UpdateQuantityOwned();
+        }
+    }
+
+    private void FilterItem(Dictionary<uint, RequiredItem> dict, RequiredItem node)
+    {
+        PluginLog.Log($"Visiting {node.Item.ItemName}: {node.Amount} >= {node.Item.QuantityOwned}?");
+
+        // do we have enough?
+        if (node.Item.QuantityOwned >= node.Amount)
+        {
+            PluginLog.Log($"yep, removing");
+
+            // then subtract it from out list
+            if (dict.TryGetValue(node.Item.ItemId, out var item))
+            {
+                item.Amount -= node.Amount;
             }
 
-            sorted.Add(req);
+            // and reduce needed ingredients count
+            foreach (var ingredient in node.Item.Ingredients)
+            {
+                DecreaseIngredientsRecursive(dict, ingredient, node.Amount);
+            }
+        }
+        else
+        {
+            PluginLog.Log($"nop, filtering ingredients");
+
+            foreach (var ingredient in node.Item.Ingredients)
+            {
+                FilterItem(dict, ingredient);
+            }
+        }
+    }
+
+    private void DecreaseIngredientsRecursive(Dictionary<uint, RequiredItem> dict, RequiredItem node, uint parentAmount)
+    {
+        PluginLog.Log($"Visiting Ingredient {node.Item.ItemName}: {node.Amount} * {parentAmount} = {node.Amount * parentAmount}");
+
+        if (dict.TryGetValue(node.Item.ItemId, out var item))
+        {
+            item.Amount -= node.Amount * parentAmount; // TODO: handle ResultAmount
+        }
+
+        foreach (var ingredient in node.Item.Ingredients)
+        {
+            DecreaseIngredientsRecursive(dict, ingredient, node.Amount * parentAmount);
         }
     }
 
@@ -263,12 +239,12 @@ public class CraftingHelperWindow : Window
 
         if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
         {
-            RefreshQuantities();
+            UpdateList();
         }
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            ImGui.SetTooltip("Refresh quantities");
+            ImGui.SetTooltip("Refresh");
         }
 
         if (ImGui.BeginTabBar("##TabBar"))
@@ -297,7 +273,7 @@ public class CraftingHelperWindow : Window
         {
             if (Crystals.Any())
             {
-                ImGui.Text("Needed Crystals:");
+                ImGui.Text("Crystals:");
                 foreach (var entry in Crystals)
                 {
                     DrawItem(entry.Item, entry.Amount, $"Item{i}");
