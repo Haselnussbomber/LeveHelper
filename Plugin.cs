@@ -13,8 +13,6 @@ public class Plugin : IDalamudPlugin, IDisposable
 
     internal static WindowSystem WindowSystem = new("LeveHelper");
     internal static PluginWindow PluginWindow = null!;
-    internal static ConfigWindow ConfigWindow = null!;
-    internal static CraftingHelperWindow? CraftingHelperWindow;
 
     internal static Configuration Config = null!;
     internal static FilterManager FilterManager = null!;
@@ -29,7 +27,6 @@ public class Plugin : IDalamudPlugin, IDisposable
         Scanner.Connect();
 
         WindowSystem.AddWindow(PluginWindow = new PluginWindow());
-        WindowSystem.AddWindow(ConfigWindow = new ConfigWindow());
 
         Service.PluginInterface.UiBuilder.Draw += OnDraw;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
@@ -62,24 +59,7 @@ public class Plugin : IDalamudPlugin, IDisposable
 
     private void OnCommand(string command, string args)
     {
-        if (args.ToLowerInvariant() == "config")
-        {
-            ConfigWindow.Toggle();
-        }
-        else if (args.ToLowerInvariant() == "c")
-        {
-            if (CraftingHelperWindow == null)
-            {
-                CraftingHelperWindow = new CraftingHelperWindow();
-                WindowSystem.AddWindow(CraftingHelperWindow);
-            }
-
-            CraftingHelperWindow.IsOpen = true;
-        }
-        else
-        {
-            PluginWindow.Toggle();
-        }
+        PluginWindow.Toggle();
     }
 
     private void OnOpenConfigUi()
@@ -103,8 +83,6 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         WindowSystem = null!;
         PluginWindow = null!;
-        ConfigWindow = null!;
-        CraftingHelperWindow = null!;
         FilterManager = null!;
         Config = null!;
     }

@@ -2,52 +2,57 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface;
-using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
-using static LeveHelper.ImGuiUtils;
 
 namespace LeveHelper;
 
-public class CraftingHelperWindow : Window
+public unsafe class PluginWindow : Window
 {
+    public const int TextWrapBreakpoint = 865;
+
+    public Vector2 MyPosition { get; private set; }
+    public Vector2 MySize { get; private set; }
+    public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
+    public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
+    public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
+    public (CachedTerritoryType, HashSet<QueuedItem>)[] Gatherable { get; private set; } = Array.Empty<(CachedTerritoryType, HashSet<QueuedItem>)>();
+    public QueuedItem[] Fishable { get; private set; } = Array.Empty<QueuedItem>();
+    public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
+    public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
+
+    private readonly QueueTab QueueTab;
+    private readonly ConfigurationTab ConfigurationTab;
+    private readonly RecipeTreeTab RecipeTreeTab;
+    private readonly ListTab ListTab;
+
     private readonly AddonObserver CatchObserver = new("Catch");
     private readonly AddonObserver SynthesisObserver = new("Synthesis");
     private readonly AddonObserver SynthesisSimpleObserver = new("SynthesisSimple");
     private readonly AddonObserver GatheringObserver = new("Gathering");
     private readonly AddonObserver ShopObserver = new("Shop");
 
-    private RequiredItem[] LeveRequiredItems = Array.Empty<RequiredItem>();
-    private QueuedItem[] RequiredItems = Array.Empty<QueuedItem>();
-
-    private QueuedItem[] Crystals = Array.Empty<QueuedItem>();
-    private (CachedTerritoryType, HashSet<QueuedItem>)[] Gatherable = Array.Empty<(CachedTerritoryType, HashSet<QueuedItem>)>();
-    private QueuedItem[] Fishable = Array.Empty<QueuedItem>();
-    private QueuedItem[] OtherSources = Array.Empty<QueuedItem>();
-    private QueuedItem[] Craftable = Array.Empty<QueuedItem>();
-
     private ushort[] LastActiveLevequestIds = Array.Empty<ushort>();
 
-    public CraftingHelperWindow() : base("LeveHelper - Crafting Helper")
+    public PluginWindow() : base("LeveHelper")
     {
-        base.RespectCloseHotkey = false;
-
-        base.Size = new Vector2(350, Plugin.PluginWindow.MySize.Y);
-        base.SizeCondition = ImGuiCond.Appearing;
+        base.Size = new Vector2(830, 600);
+        base.SizeCondition = ImGuiCond.FirstUseEver;
         base.SizeConstraints = new()
         {
-            MinimumSize = new Vector2(320, 400),
+            MinimumSize = new Vector2(330, 400),
             MaximumSize = new Vector2(4096, 2160)
         };
 
-        base.PositionCondition = ImGuiCond.FirstUseEver;
-        base.Position = Plugin.PluginWindow.MyPosition + new Vector2(Plugin.PluginWindow.MySize.X, 0);
+        QueueTab = new(this);
+        ConfigurationTab = new(this);
+        RecipeTreeTab = new(this);
+        ListTab = new(this);
     }
 
-    public override unsafe void OnOpen()
+    public override void OnOpen()
     {
         Plugin.FilterManager ??= new();
 
@@ -58,7 +63,7 @@ public class CraftingHelperWindow : Window
         ShopObserver.OnClose += Refresh;
     }
 
-    public override unsafe void OnClose()
+    public override void OnClose()
     {
         CatchObserver.OnOpen -= Refresh;
         SynthesisObserver.OnClose -= Refresh;
@@ -67,7 +72,7 @@ public class CraftingHelperWindow : Window
         ShopObserver.OnClose -= Refresh;
     }
 
-    private unsafe void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
+    private void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
     {
         UpdateList();
     }
@@ -91,10 +96,45 @@ public class CraftingHelperWindow : Window
 
     public override bool DrawConditions()
     {
-        return Service.GameFunctions.ActiveLevequestsIds.Length > 0; // TODO: add this to settings (auto show/hide)
+        return Service.ClientState.IsLoggedIn;
     }
 
-    private void UpdateList()
+    public override void Draw()
+    {
+        MyPosition = ImGui.GetWindowPos();
+        MySize = ImGui.GetWindowSize();
+
+        if (ImGui.BeginTabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
+        {
+            if (ImGui.BeginTabItem("Queue"))
+            {
+                QueueTab.Draw();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Recipe Tree"))
+            {
+                RecipeTreeTab.Draw();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Levequest List"))
+            {
+                ListTab.Draw();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Configuration"))
+            {
+                ConfigurationTab.Draw();
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
+        }
+    }
+
+    public void UpdateList()
     {
         var acceptedCraftLeves = Service.GameFunctions.ActiveLevequests
             .Where(leve => leve.IsCraftLeve && leve.RequiredItems != null);
@@ -121,6 +161,12 @@ public class CraftingHelperWindow : Window
             {
                 FilterItem(allItems, entry);
             }
+        }
+
+        PluginLog.Log("Step 3 results:");
+        foreach (var entry in allItems)
+        {
+            PluginLog.Log($"   {entry.Value.Item.ItemName} - {entry.Value.Item.QuantityOwned}/{entry.Value.AmountTotal} ({entry.Value.AmountLeft} needed)");
         }
 
         RequiredItems = allItems
@@ -261,103 +307,4 @@ public class CraftingHelperWindow : Window
         }
     }
 
-    public override void Draw()
-    {
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.StickyNote))
-        {
-            Plugin.PluginWindow.IsOpen = true;
-        }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            ImGui.SetTooltip("Show LeveHelper");
-        }
-
-        ImGui.SameLine();
-
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
-        {
-            UpdateList();
-        }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            ImGui.SetTooltip("Refresh");
-        }
-
-        if (ImGui.BeginTabBar("##TabBar"))
-        {
-            if (ImGui.BeginTabItem("Queue"))
-            {
-                DrawQueue();
-                ImGui.EndTabItem();
-            }
-
-            if (ImGui.BeginTabItem("Recipe Tree"))
-            {
-                DrawIngredients("RecipeTree", LeveRequiredItems, 1);
-                ImGui.EndTabItem();
-            }
-
-            ImGui.EndTabBar();
-        }
-    }
-
-    private void DrawQueue()
-    {
-        var i = 0;
-
-        if (RequiredItems.Any())
-        {
-            if (Crystals.Any())
-            {
-                ImGui.Text("Crystals:");
-                foreach (var entry in Crystals)
-                {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
-                }
-            }
-
-            if (Gatherable.Any())
-            {
-                ImGui.Text("Gather:");
-                foreach (var kv in Gatherable)
-                {
-                    ImGui.Text(kv.Item1.PlaceName);
-
-                    foreach (var entry in kv.Item2)
-                    {
-                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
-                    }
-                }
-            }
-
-            if (Fishable.Any())
-            {
-                ImGui.Text("Fish:");
-                foreach (var entry in Fishable)
-                {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
-                }
-            }
-
-            if (OtherSources.Any())
-            {
-                ImGui.Text("Other:");
-                foreach (var entry in OtherSources)
-                {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
-                }
-            }
-
-            if (Craftable.Any())
-            {
-                ImGui.Text("Craft:");
-                foreach (var entry in Craftable)
-                {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
-                }
-            }
-        }
-    }
 }

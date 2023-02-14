@@ -1,26 +1,17 @@
-using System.Numerics;
-using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
 namespace LeveHelper;
 
-public class ConfigWindow : Window
+public class ConfigurationTab
 {
-    public ConfigWindow() : base("LeveHelper Config")
+    public PluginWindow Window { get; }
+
+    public ConfigurationTab(PluginWindow window)
     {
-        base.Flags |= ImGuiWindowFlags.NoSavedSettings;
-        base.Flags |= ImGuiWindowFlags.NoResize;
-        base.Flags |= ImGuiWindowFlags.NoMove;
-        base.Flags |= ImGuiWindowFlags.NoCollapse;
-        base.Flags |= ImGuiWindowFlags.AlwaysAutoResize;
+        Window = window;
     }
 
-    public override void PreDraw()
-    {
-        base.Position = Plugin.PluginWindow.MyPosition + new Vector2(Plugin.PluginWindow.MySize.X, 0);
-    }
-
-    public override void Draw()
+    public void Draw()
     {
         var config = Plugin.Config;
 

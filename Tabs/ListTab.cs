@@ -1,103 +1,26 @@
 using System;
 using System.Globalization;
 using System.Numerics;
-using Dalamud.Interface;
-using Dalamud.Interface.Components;
-using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Filters;
 using static LeveHelper.ImGuiUtils;
 
 namespace LeveHelper;
 
-public class PluginWindow : Window
+public class ListTab
 {
-    private const int TextWrapBreakpoint = 865;
+    public PluginWindow Window { get; }
 
-    public Vector2 MyPosition { get; private set; }
-    public Vector2 MySize { get; private set; }
-
-    public PluginWindow() : base("LeveHelper")
+    public ListTab(PluginWindow window)
     {
-        base.Size = new Vector2(830, 600);
-        base.SizeCondition = ImGuiCond.FirstUseEver;
-        base.SizeConstraints = new()
-        {
-            MinimumSize = new Vector2(490, 400),
-            MaximumSize = new Vector2(4096, 2160)
-        };
+        Window = window;
     }
 
-    public override void OnOpen()
+    public void Draw()
     {
-        Plugin.FilterManager ??= new();
-    }
-
-    public override void OnClose()
-    {
-        Plugin.ConfigWindow.IsOpen = false;
-    }
-
-    public override bool DrawConditions()
-    {
-        return Service.ClientState.IsLoggedIn;
-    }
-
-    public override void Draw()
-    {
-        MyPosition = ImGui.GetWindowPos();
-        MySize = ImGui.GetWindowSize();
-
-        DrawButtons();
         DrawInfoBar();
-
         Plugin.FilterManager.Draw();
-
         DrawTable();
-    }
-
-    private void DrawButtons()
-    {
-        var cursorStartPos = ImGui.GetCursorPos();
-
-        ImGui.SetCursorPosY(cursorStartPos.Y - 3);
-        ImGui.SetCursorPosX(ImGui.GetWindowSize().X - 30);
-
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
-        {
-            if (Plugin.CraftingHelperWindow != null && Plugin.CraftingHelperWindow.IsOpen)
-                Plugin.CraftingHelperWindow.IsOpen = false;
-
-            Plugin.ConfigWindow.IsOpen = true;
-        }
-
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip((Plugin.ConfigWindow.IsOpen ? "Close" : "Open") + " Configuration");
-        }
-
-        ImGui.SetCursorPosY(cursorStartPos.Y - 3);
-        ImGui.SetCursorPosX(ImGui.GetWindowSize().X - 30 - 30);
-
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.List))
-        {
-            Plugin.ConfigWindow.IsOpen = false;
-
-            if (Plugin.CraftingHelperWindow == null)
-            {
-                Plugin.CraftingHelperWindow = new CraftingHelperWindow();
-                Plugin.WindowSystem.AddWindow(Plugin.CraftingHelperWindow);
-            }
-
-            Plugin.CraftingHelperWindow.IsOpen = true;
-        }
-
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip((Plugin.ConfigWindow.IsOpen ? "Close" : "Open") + " Crafting Helper");
-        }
-
-        ImGui.SetCursorPos(cursorStartPos);
     }
 
     private void DrawInfoBar()
@@ -105,7 +28,7 @@ public class PluginWindow : Window
         var state = Plugin.FilterManager.State;
 
         ImGui.Text($"Accepted Leves: {Service.GameFunctions.NumActiveLevequests}/16");
-        if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
+        if (ImGui.GetWindowSize().X > PluginWindow.TextWrapBreakpoint)
         {
             ImGui.SameLine();
             ImGui.Text("•");
@@ -121,7 +44,7 @@ public class PluginWindow : Window
 
         if (state.NumTotalLeves > 0)
         {
-            if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
+            if (ImGui.GetWindowSize().X > PluginWindow.TextWrapBreakpoint)
             {
                 ImGui.SameLine();
                 ImGui.Text("•");

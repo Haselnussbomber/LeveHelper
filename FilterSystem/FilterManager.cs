@@ -94,6 +94,8 @@ public class FilterManager
 
     public void Draw()
     {
+        // TODO: make filters collapsible
+
         if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100)))
             return;
 

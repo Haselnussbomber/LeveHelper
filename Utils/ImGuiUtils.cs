@@ -123,7 +123,7 @@ public static class ImGuiUtils
                 unsafe
                 {
                     var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                    agent->OpenRecipeByItemId(item.ItemId);
+                    agent->OpenRecipeByItemId(item.ItemId); // TODO: would be fancy to directly show the map. needs context (zone of gatheringpoint) though
                 }
             }
             // TODO: preferance setting?

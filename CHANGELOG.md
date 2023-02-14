@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** Tabs!
+  - **Levequest List:** This was the main plugin window listing all levequests in the game.
+  - *(new)* **Queue:** This tab lists items you need to gather, fish, buy and/or craft for your currently accepted leves.
+  - *(new)* **Recipe Tree:** This tab shows the recipe tree of each item required by your currently accepted craft leves.
+  - **Configuration:** Previously in its own window, the configuration now moved into its own tab.
+- **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
+
 ## [0.1.7] (2023-02-03)
 
 - **Added:** Added the option to filter for Accepted levequests to the "Status" filter.
