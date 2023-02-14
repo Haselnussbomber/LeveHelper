@@ -107,6 +107,10 @@ public unsafe class GameFunctions
         return false;
     }
 
+    [Signature("66 89 54 24 ?? 66 89 4C 24 ?? 53")]
+    public readonly CalculateTeleportCostDelegate CalculateTeleportCost = null!;
+    public delegate uint CalculateTeleportCostDelegate(uint fromTerritoryTypeId, uint toTerritoryTypeId, bool a3, bool a4, bool a5);
+
     [Signature("E8 ?? ?? ?? ?? EB 1D 83 F8 0D")]
     private readonly ItemFinderModuleSearchForItemDelegate ItemFinderModule_SearchForItem = null!;
     private delegate void* ItemFinderModuleSearchForItemDelegate(void* module, uint itemId, bool isHQ = false);

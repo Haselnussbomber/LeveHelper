@@ -19,14 +19,6 @@ public static class ItemCache
 
         return item;
     }
-
-    public static CachedItem Get(Item item)
-    {
-        if (!Cache.TryGetValue(item.RowId, out var cachedItem))
-            Cache.Add(item.RowId, cachedItem = new(item));
-
-        return cachedItem;
-    }
 }
 
 public record CachedItem
@@ -36,17 +28,11 @@ public record CachedItem
         ItemId = itemId;
     }
 
-    public CachedItem(Item item)
-    {
-        ItemId = item.RowId;
-        Item = item;
-    }
-
     private Item? item { get; set; } = null;
     private string itemName { get; set; } = "";
     private Recipe? recipe { get; set; } = null;
     private bool? isGatherable { get; set; } = null;
-    private GatheringPoint[]? gatheringPoints { get; set; } = null;
+    private CachedGatheringPoint[]? gatheringPoints { get; set; } = null;
     private FishingSpot[]? fishingSpots { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
     private uint? quantityOwned { get; set; } = null;
@@ -55,10 +41,7 @@ public record CachedItem
     public uint ItemId { get; init; }
 
     public Item? Item
-    {
-        get => item ??= Service.Data.GetExcelSheet<Item>()?.GetRow(ItemId);
-        private set => item = value;
-    }
+        => item ??= Service.Data.GetExcelSheet<Item>()?.GetRow(ItemId);
 
     public string ItemName
     {
@@ -92,38 +75,8 @@ public record CachedItem
     public bool IsCraftable
         => Recipe != null;
 
-    /* endless loop?
-    public GatheringPoint[] GatheringPoints
-    {
-        get
-        {
-            if (gatheringPoints != null)
-                return gatheringPoints;
-
-            var itemRowIds = Service.Data.GetExcelSheet<GatheringItem>()?
-                .Where(row => row.Item == ItemId)
-                .Select(row => row.RowId);
-
-            if (itemRowIds == null || !itemRowIds.Any())
-                return gatheringPoints ??= Array.Empty<GatheringPoint>();
-
-            var pointBases = Service.Data.GetExcelSheet<GatheringPointBase>()?
-                .Where(row => row.Item.Any(itemId => itemRowIds.Any(rowId => rowId == itemId)))
-                .Select(row => row.RowId);
-
-            if (pointBases == null || !pointBases.Any())
-                return gatheringPoints ??= Array.Empty<GatheringPoint>();
-
-            gatheringPoints ??= Service.Data.GetExcelSheet<GatheringPoint>()?
-                .Where(row => pointBases.Any(pointBaseRowId => row.GatheringPointBase.Row == pointBaseRowId))
-                .ToArray();
-
-            gatheringPoints ??= Array.Empty<GatheringPoint>();
-
-            return gatheringPoints;
-        }
-    }
-    */
+    public CachedGatheringPoint[] GatheringPoints
+        => gatheringPoints ??= GatheringPointCache.FindByItemId(ItemId) ?? Array.Empty<CachedGatheringPoint>();
 
     public bool IsGatherable
         => (isGatherable ??= Service.Data.GetExcelSheet<GatheringItem>()?.Any(row => row.Item == ItemId)) ?? false;
@@ -182,7 +135,7 @@ public record CachedItem
 #pragma warning disable IDE0046
             if (IsCrystal)
                 return ItemQueueCategory.Crystals;
-            
+
             if (IsGatherable)
                 return ItemQueueCategory.Gatherable;
 

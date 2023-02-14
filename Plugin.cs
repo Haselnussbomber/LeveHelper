@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
@@ -40,6 +41,11 @@ public class Plugin : IDalamudPlugin, IDisposable
 
         Service.Commands.AddHandler("/levehelper", commandInfo);
         Service.Commands.AddHandler("/lh", commandInfo);
+
+        Service.Framework.RunOnFrameworkThread(() =>
+        {
+            Task.Run(GatheringPointCache.Load);
+        });
     }
 
     private void OnDraw()
