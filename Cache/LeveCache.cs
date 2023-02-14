@@ -113,6 +113,9 @@ public record CachedLeve
     public bool IsCraftLeve
         => Leve?.LeveAssignmentType.Row is >= 5 and <= 12;
 
+    public bool IsGatherLeve
+        => Leve?.LeveAssignmentType.Row is >= 2 and <= 4;
+
     public RequiredItem[]? RequiredItems
     {
         get

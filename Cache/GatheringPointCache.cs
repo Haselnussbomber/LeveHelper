@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Logging;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
@@ -35,7 +34,6 @@ public static class GatheringPointCache
             foreach (var itemRowId in point.GatheringPointBase.Value.Item)
             {
                 if (itemRowId == 0) break;
-                PluginLog.Log($"{point.RowId}: {itemRowId}");
 
                 var itemRow = Service.Data.GetExcelSheet<GatheringItem>()?.GetRow((uint)itemRowId);
                 if (itemRow == null)
@@ -68,6 +66,7 @@ public record CachedGatheringPoint
     private uint? territoryTypeId { get; set; } = null;
     private uint? placeNameId { get; set; } = null;
     private string? placeName { get; set; } = null;
+    private uint? icon { get; set; } = null;
 
     public uint RowId { get; init; }
 
@@ -85,4 +84,14 @@ public record CachedGatheringPoint
 
     public string PlaceName
         => placeName ??= GatheringPoint?.TerritoryType.Value?.PlaceName.Value?.Name.ClearString() ?? "";
+
+    public uint Icon
+    {
+        get
+        {
+            var type = GatheringPoint?.Type == 0x01;
+            var gatheringType = GatheringPoint?.GatheringPointBase.Value?.GatheringType.Value;
+            return icon ??= (uint?)(type ? gatheringType?.IconMain : gatheringType?.IconOff) ?? 0;
+        }
+    }
 }

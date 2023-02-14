@@ -11,7 +11,7 @@ namespace LeveHelper;
 
 public unsafe class PluginWindow : Window
 {
-    public const int TextWrapBreakpoint = 865;
+    public const int TextWrapBreakpoint = 820;
 
     public Vector2 MyPosition { get; private set; }
     public Vector2 MySize { get; private set; }
@@ -19,7 +19,6 @@ public unsafe class PluginWindow : Window
     public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
     public (CachedTerritoryType, HashSet<QueuedItem>)[] Gatherable { get; private set; } = Array.Empty<(CachedTerritoryType, HashSet<QueuedItem>)>();
-    public QueuedItem[] Fishable { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
 
@@ -42,14 +41,14 @@ public unsafe class PluginWindow : Window
         base.SizeCondition = ImGuiCond.FirstUseEver;
         base.SizeConstraints = new()
         {
-            MinimumSize = new Vector2(330, 400),
+            MinimumSize = new Vector2(350, 400),
             MaximumSize = new Vector2(4096, 2160)
         };
 
-        QueueTab = new(this);
-        ConfigurationTab = new(this);
-        RecipeTreeTab = new(this);
         ListTab = new(this);
+        QueueTab = new(this);
+        RecipeTreeTab = new(this);
+        ConfigurationTab = new(this);
     }
 
     public override void OnOpen()
@@ -106,26 +105,34 @@ public unsafe class PluginWindow : Window
 
         if (ImGui.BeginTabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
         {
+            if (ImGui.BeginTabItem("Levequest List"))
+            {
+                RespectCloseHotkey = true;
+
+                ListTab.Draw();
+                ImGui.EndTabItem();
+            }
+
             if (ImGui.BeginTabItem("Queue"))
             {
+                RespectCloseHotkey = false;
+
                 QueueTab.Draw();
                 ImGui.EndTabItem();
             }
 
             if (ImGui.BeginTabItem("Recipe Tree"))
             {
-                RecipeTreeTab.Draw();
-                ImGui.EndTabItem();
-            }
+                RespectCloseHotkey = true;
 
-            if (ImGui.BeginTabItem("Levequest List"))
-            {
-                ListTab.Draw();
+                RecipeTreeTab.Draw();
                 ImGui.EndTabItem();
             }
 
             if (ImGui.BeginTabItem("Configuration"))
             {
+                RespectCloseHotkey = true;
+
                 ConfigurationTab.Draw();
                 ImGui.EndTabItem();
             }
@@ -136,17 +143,17 @@ public unsafe class PluginWindow : Window
 
     public void UpdateList()
     {
-        var acceptedCraftLeves = Service.GameFunctions.ActiveLevequests
-            .Where(leve => leve.IsCraftLeve && leve.RequiredItems != null);
+        var acceptedCraftAndGatherLeves = Service.GameFunctions.ActiveLevequests
+            .Where(leve => (leve.IsCraftLeve || leve.IsGatherLeve) && leve.RequiredItems != null);
 
         // step 1: list all items required for craftleves
-        LeveRequiredItems = acceptedCraftLeves
+        LeveRequiredItems = acceptedCraftAndGatherLeves
             .SelectMany(leve => leve.RequiredItems!)
             .ToArray();
 
         // step 2: gather a list of all items
         var allItems = new Dictionary<uint, QueuedItem>();
-        foreach (var leve in acceptedCraftLeves)
+        foreach (var leve in acceptedCraftAndGatherLeves)
         {
             foreach (var entry in leve.RequiredItems!)
             {
@@ -155,18 +162,12 @@ public unsafe class PluginWindow : Window
         }
 
         // step 3: decrease amount out ingredients for completed items
-        foreach (var leve in acceptedCraftLeves)
+        foreach (var leve in acceptedCraftAndGatherLeves)
         {
             foreach (var entry in leve.RequiredItems!)
             {
                 FilterItem(allItems, entry);
             }
-        }
-
-        PluginLog.Log("Step 3 results:");
-        foreach (var entry in allItems)
-        {
-            PluginLog.Log($"   {entry.Value.Item.ItemName} - {entry.Value.Item.QuantityOwned}/{entry.Value.AmountTotal} ({entry.Value.AmountLeft} needed)");
         }
 
         RequiredItems = allItems
@@ -200,6 +201,18 @@ public unsafe class PluginWindow : Window
                         zones.Add(point.TerritoryTypeId, new() { entry });
                     }
                 }
+
+                foreach (var spot in entry.Item.FishingSpots)
+                {
+                    if (zones.TryGetValue(spot.TerritoryTypeId, out var list))
+                    {
+                        list.Add(entry);
+                    }
+                    else
+                    {
+                        zones.Add(spot.TerritoryTypeId, new() { entry });
+                    }
+                }
             }
 
             // for each item, get the one zone with the most items in it
@@ -207,7 +220,7 @@ public unsafe class PluginWindow : Window
             foreach (var entry in gatherables)
             {
                 var zone = zones
-                    .Where(zone => zone.Value.Contains(entry))
+                    .Where(zone => zone.Value.Select(e => e.Item.ItemId).Contains(entry.Item.ItemId))
                     .OrderByDescending(zone => zone.Value.Count)
                     .First();
 
@@ -228,10 +241,6 @@ public unsafe class PluginWindow : Window
                 .Where(entry => entry.Item2.Count != 0) // remove starting point
                 .ToArray();
         }
-
-        Fishable = RequiredItems
-            .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Fishable)
-            .ToArray();
 
         OtherSources = RequiredItems
             .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.OtherSources)
@@ -306,5 +315,4 @@ public unsafe class PluginWindow : Window
             DecreaseIngredientsRecursive(dict, ingredient, node.Amount * parentAmount);
         }
     }
-
 }

@@ -22,6 +22,11 @@ public class NameFilter : Filter
         Config.CurrentName = "";
     }
 
+    public override bool HasValue()
+    {
+        return Config.CurrentName != "";
+    }
+
     public override void Set(dynamic value)
     {
         Config.CurrentName = (string)value;

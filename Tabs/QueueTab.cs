@@ -42,7 +42,7 @@ public class QueueTab
                 ImGui.Text("Crystals:");
                 foreach (var entry in Window.Crystals)
                 {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
                 }
             }
 
@@ -55,17 +55,8 @@ public class QueueTab
 
                     foreach (var entry in kv.Item2)
                     {
-                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
+                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
                     }
-                }
-            }
-
-            if (Window.Fishable.Any())
-            {
-                ImGui.Text("Fish:");
-                foreach (var entry in Window.Fishable)
-                {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
                 }
             }
 
@@ -74,7 +65,7 @@ public class QueueTab
                 ImGui.Text("Other:");
                 foreach (var entry in Window.OtherSources)
                 {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
                 }
             }
 
@@ -83,7 +74,7 @@ public class QueueTab
                 ImGui.Text("Craft:");
                 foreach (var entry in Window.Craftable)
                 {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
+                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
                 }
             }
         }

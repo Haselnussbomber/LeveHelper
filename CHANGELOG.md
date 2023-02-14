@@ -4,11 +4,16 @@
 
 - **Added:** Tabs!
   - **Levequest List:** This was the main plugin window listing all levequests in the game.
-  - *(new)* **Queue:** This tab lists items you need to gather, fish, buy and/or craft for your currently accepted leves.
-  - *(new)* **Recipe Tree:** This tab shows the recipe tree of each item required by your currently accepted craft leves.
+  - *(new)* **Queue:** This tab lists items you need to gather, fish and/or craft for your currently accepted leves.
+    - Gather: Gatherables grouped by zone and sorted by teleport cost.
+    - Other: These items may be drops or being sold by vendors. For now, check on GarlandTools DB.
+    - Craft: Items you need to craft. They are sorted by dependency, so you can easily work your way down the list.
+  - *(new)* **Recipe Tree:** This tab shows the recipe tree for all items required by your currently accepted craft leves.
   - **Configuration:** Previously in its own window, the configuration now moved into its own tab.
-- **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
+  - By the way, you can reorder the tabs by dragging them.
+- **Added:** Filters are now collapsible.
 - **Changed:** Removed allowance cost column as it only affects Grand Company Leves which already have an indicator in their name.
+- **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
 
 ## [0.1.7] (2023-02-03)
 

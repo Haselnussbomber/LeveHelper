@@ -25,6 +25,11 @@ public class TypeFilter : Filter
         Config.SelectedType = 0;
     }
 
+    public override bool HasValue()
+    {
+        return Config.SelectedType != 0;
+    }
+
     public override void Set(dynamic value)
     {
         Config.SelectedType = (uint)value;

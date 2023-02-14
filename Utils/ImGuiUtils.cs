@@ -56,9 +56,6 @@ public static class ImGuiUtils
             var ingredient = entry.Item;
             var ingredientCount = entry.Amount * parentCount;
 
-            //if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientCount)
-            //    continue;
-
             DrawItem(ingredient, ingredientCount, $"{key}_{ingredient.ItemId}");
 
             if (ingredient.QuantityOwned >= ingredientCount)
@@ -74,7 +71,7 @@ public static class ImGuiUtils
             ImGui.Unindent();
     }
 
-    public static void DrawItem(CachedItem item, uint neededCount, string key = "Item")
+    public static void DrawItem(CachedItem item, uint neededCount, string key = "Item", bool showIndicators = false)
     {
         DrawIcon(item.Icon, 20, 20);
         ImGui.SameLine();
@@ -106,7 +103,7 @@ public static class ImGuiUtils
             {
                 ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
             }
-            else if (item.IsFishable)
+            else if (item.IsFish)
             {
                 ImGui.SetTooltip("Show Fishing Spot");
             }
@@ -124,6 +121,7 @@ public static class ImGuiUtils
                 {
                     var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
                     agent->OpenRecipeByItemId(item.ItemId); // TODO: would be fancy to directly show the map. needs context (zone of gatheringpoint) though
+                    ImGui.SetWindowFocus(null);
                 }
             }
             // TODO: preferance setting?
@@ -133,11 +131,13 @@ public static class ImGuiUtils
                 {
                     var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
                     agent->OpenGatherableByItemId((ushort)item.ItemId);
+                    ImGui.SetWindowFocus(null);
                 }
             }
-            else if (item.IsFishable)
+            else if (item.IsFish)
             {
-                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First());
+                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First().FishingSpot);
+                ImGui.SetWindowFocus(null);
             }
             else
             {
@@ -157,6 +157,7 @@ public static class ImGuiUtils
                     {
                         var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
                         agent->OpenRecipeByItemId(item.ItemId);
+                        ImGui.SetWindowFocus(null);
                     }
                 }
 
@@ -171,17 +172,19 @@ public static class ImGuiUtils
                     {
                         var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
                         agent->OpenGatherableByItemId((ushort)item.ItemId);
+                        ImGui.SetWindowFocus(null);
                     }
                 }
 
                 showSeparator = true;
             }
 
-            if (item.IsFishable)
+            if (item.IsFish)
             {
                 if (ImGui.Selectable("Show Fishing Spot"))
                 {
-                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First());
+                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First().FishingSpot);
+                    ImGui.SetWindowFocus(null);
                 }
 
                 showSeparator = true;
@@ -193,6 +196,7 @@ public static class ImGuiUtils
             if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
             {
                 Service.GameFunctions.SearchForItem(item.ItemId);
+                ImGui.SetWindowFocus(null);
             }
 
             if (ImGui.Selectable(StringUtil.GetAddonText(159))) // "Copy Item Name"
@@ -208,6 +212,14 @@ public static class ImGuiUtils
             // TODO: search on market
 
             ImGui.EndPopup();
+        }
+
+        if (showIndicators && item.ClassJobIcon != null)
+        {
+            var pos = ImGui.GetCursorPos();
+            var availSize = ImGui.GetContentRegionAvail();
+            ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
+            DrawIcon((int)item.ClassJobIcon, 20, 20);
         }
     }
 }

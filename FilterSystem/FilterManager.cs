@@ -94,26 +94,31 @@ public class FilterManager
 
     public void Draw()
     {
-        // TODO: make filters collapsible
+        var someFilterSet = Filters.Any(filter => filter.HasValue());
 
-        if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100)))
-            return;
-
-        foreach (var filter in Filters)
+        if (ImGui.TreeNode("LeveHelper_Filters_TreeNode", "Filters" + (someFilterSet ? " (Active)" : "")))
         {
+            if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100)))
+                return;
+
+            foreach (var filter in Filters)
+            {
+                ImGui.TableNextRow();
+                filter.Draw();
+            }
+
             ImGui.TableNextRow();
-            filter.Draw();
+            ImGui.TableNextColumn();
+            ImGui.TableNextColumn();
+
+            if (ImGui.Button("Clear Filters"))
+            {
+                Reset();
+            }
+
+            ImGui.EndTable(); // LeveHelper_Filters
+
+            ImGui.TreePop();
         }
-
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableNextColumn();
-
-        if (ImGui.Button("Clear Filters"))
-        {
-            Reset();
-        }
-
-        ImGui.EndTable(); // LeveHelper_Filters
     }
 }

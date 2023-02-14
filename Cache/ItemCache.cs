@@ -31,9 +31,11 @@ public record CachedItem
     private Item? item { get; set; } = null;
     private string itemName { get; set; } = "";
     private Recipe? recipe { get; set; } = null;
+    private uint? classJobIcon { get; set; } = null;
     private bool? isGatherable { get; set; } = null;
+    private bool? isFish { get; set; } = null;
     private CachedGatheringPoint[]? gatheringPoints { get; set; } = null;
-    private FishingSpot[]? fishingSpots { get; set; } = null;
+    private CachedFishingSpot[]? fishingSpots { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
     private uint? quantityOwned { get; set; } = null;
     private DateTime quantityOwnedLastUpdate { get; set; }
@@ -75,17 +77,41 @@ public record CachedItem
     public bool IsCraftable
         => Recipe != null;
 
+    public uint? ClassJobIcon
+    {
+        get
+        {
+            if (classJobIcon != null)
+                return classJobIcon;
+
+            if (IsCraftable)
+            {
+                classJobIcon ??= 62008 + Recipe!.CraftType.Row;
+            }
+            else if (IsGatherable)
+            {
+                classJobIcon ??= GatheringPoints.First().Icon;
+            }
+            else if (IsFish)
+            {
+                classJobIcon ??= FishingSpots.First().Icon;
+            }
+
+            return classJobIcon;
+        }
+    }
+
     public CachedGatheringPoint[] GatheringPoints
         => gatheringPoints ??= GatheringPointCache.FindByItemId(ItemId) ?? Array.Empty<CachedGatheringPoint>();
 
     public bool IsGatherable
-        => (isGatherable ??= Service.Data.GetExcelSheet<GatheringItem>()?.Any(row => row.Item == ItemId)) ?? false;
+        => isGatherable ??= GatheringPoints.Any();
 
-    public FishingSpot[] FishingSpots
-        => fishingSpots ??= Service.Data.GetExcelSheet<FishingSpot>()?.Where(row => row.Item.Any(i => i.Row == ItemId)).ToArray() ?? Array.Empty<FishingSpot>();
+    public CachedFishingSpot[] FishingSpots
+        => fishingSpots ??= FishingSpotCache.FindByItemId(ItemId) ?? Array.Empty<CachedFishingSpot>();
 
-    public bool IsFishable
-        => FishingSpots.Any();
+    public bool IsFish
+        => isFish ??= FishingSpots.Any();
 
     public RequiredItem[] Ingredients
     {
@@ -136,11 +162,8 @@ public record CachedItem
             if (IsCrystal)
                 return ItemQueueCategory.Crystals;
 
-            if (IsGatherable)
+            if (IsGatherable || IsFish)
                 return ItemQueueCategory.Gatherable;
-
-            if (IsFishable)
-                return ItemQueueCategory.Fishable;
 
             if (IsCraftable)
                 return ItemQueueCategory.Craftable;
@@ -156,7 +179,6 @@ public enum ItemQueueCategory
     None,
     Crystals,
     Gatherable,
-    Fishable,
     OtherSources,
     Craftable,
 }

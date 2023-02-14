@@ -30,6 +30,11 @@ public class StatusFilter : Filter
         Config.SelectedStatus = CompletedStatus.Any;
     }
 
+    public override bool HasValue()
+    {
+        return Config.SelectedStatus != CompletedStatus.Any;
+    }
+
     public override void Set(dynamic value)
     {
         Config.SelectedStatus = (CompletedStatus)value;

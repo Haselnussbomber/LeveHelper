@@ -25,6 +25,11 @@ public class LocationFilter : Filter
         Config.SelectedLocation = 0;
     }
 
+    public override bool HasValue()
+    {
+        return Config.SelectedLocation != 0;
+    }
+
     public override void Set(dynamic value)
     {
         Config.SelectedLocation = (uint)value;

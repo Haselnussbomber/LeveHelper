@@ -25,6 +25,11 @@ public class LevemeteFilter : Filter
         Config.SelectedLevemete = 0;
     }
 
+    public override bool HasValue()
+    {
+        return Config.SelectedLevemete != 0;
+    }
+
     public override void Set(dynamic value)
     {
         Config.SelectedLevemete = (uint)value;
