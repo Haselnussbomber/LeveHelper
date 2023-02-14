@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
+using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
@@ -71,7 +73,7 @@ public static class ImGuiUtils
             ImGui.Unindent();
     }
 
-    public static void DrawItem(CachedItem item, uint neededCount, string key = "Item", bool showIndicators = false)
+    public static void DrawItem(CachedItem item, uint neededCount, string key = "Item", bool showIndicators = false, CachedTerritoryType? territoryType = null)
     {
         DrawIcon(item.Icon, 20, 20);
         ImGui.SameLine();
@@ -101,15 +103,35 @@ public static class ImGuiUtils
             }
             else if (item.IsGatherable)
             {
-                ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
+                if (territoryType != null)
+                {
+                    ImGui.SetTooltip(StringUtil.GetAddonText(8506)); // "Open Map"
+                }
+                else
+                {
+                    ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
+                }
             }
             else if (item.IsFish)
             {
-                ImGui.SetTooltip("Show Fishing Spot");
+                ImGui.SetTooltip(StringUtil.GetAddonText(8506)); // "Open Map"
             }
             else
             {
-                ImGui.SetTooltip("Open on GarlandTools");
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                ImGui.BeginTooltip();
+                ImGui.Text("Open on GarlandTools");
+
+                var pos = ImGui.GetCursorPos();
+                ImGui.GetWindowDrawList().AddText(
+                    UiBuilder.IconFont, 12,
+                    ImGui.GetWindowPos() + pos + new Vector2(2),
+                    ImGui.GetColorU32(ColorGrey),
+                    FontAwesomeIcon.ExternalLinkAlt.ToIconString()
+                );
+                ImGui.SetCursorPos(pos + new Vector2(20, 0));
+                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                ImGui.EndTooltip();
             }
         }
 
@@ -120,7 +142,7 @@ public static class ImGuiUtils
                 unsafe
                 {
                     var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                    agent->OpenRecipeByItemId(item.ItemId); // TODO: would be fancy to directly show the map. needs context (zone of gatheringpoint) though
+                    agent->OpenRecipeByItemId(item.ItemId);
                     ImGui.SetWindowFocus(null);
                 }
             }
@@ -129,19 +151,28 @@ public static class ImGuiUtils
             {
                 unsafe
                 {
-                    var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
-                    agent->OpenGatherableByItemId((ushort)item.ItemId);
+                    if (territoryType != null)
+                    {
+                        var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                    }
+                    else
+                    {
+                        var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
+                        agent->OpenGatherableByItemId((ushort)item.ItemId);
+                    }
+
                     ImGui.SetWindowFocus(null);
                 }
             }
             else if (item.IsFish)
             {
-                Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First().FishingSpot);
+                Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First().FishingSpot, item);
                 ImGui.SetWindowFocus(null);
             }
             else
             {
-                Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}"));
             }
         }
 
@@ -160,12 +191,30 @@ public static class ImGuiUtils
                         ImGui.SetWindowFocus(null);
                     }
                 }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                }
 
                 showSeparator = true;
             }
 
             if (item.IsGatherable)
             {
+                if (territoryType != null)
+                {
+                    if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
+                    {
+                        var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                        ImGui.SetWindowFocus(null);
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    }
+                }
+
                 if (ImGui.Selectable(StringUtil.GetAddonText(1472))) // "Search for Item by Gathering Method"
                 {
                     unsafe
@@ -175,16 +224,41 @@ public static class ImGuiUtils
                         ImGui.SetWindowFocus(null);
                     }
                 }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                }
 
                 showSeparator = true;
             }
 
             if (item.IsFish)
             {
-                if (ImGui.Selectable("Show Fishing Spot"))
+                if (territoryType != null)
                 {
-                    Service.GameFunctions.OpenMapWithGatheringPoint(item.FishingSpots.First().FishingSpot);
-                    ImGui.SetWindowFocus(null);
+                    if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
+                    {
+                        Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First().FishingSpot, item);
+                        ImGui.SetWindowFocus(null);
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    }
+                }
+
+                if (ImGui.Selectable("Open in Fish Guide"))
+                {
+                    unsafe
+                    {
+                        var agent = (nint)AgentModule.Instance()->GetAgentByInternalId(AgentId.FishGuide);
+                        Service.GameFunctions.AgentFishGuide_OpenForItemId(agent, item.ItemId, item.IsSpearfishing);
+                        ImGui.SetWindowFocus(null);
+                    }
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 }
 
                 showSeparator = true;
@@ -198,15 +272,39 @@ public static class ImGuiUtils
                 Service.GameFunctions.SearchForItem(item.ItemId);
                 ImGui.SetWindowFocus(null);
             }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            }
 
             if (ImGui.Selectable(StringUtil.GetAddonText(159))) // "Copy Item Name"
             {
                 ImGui.SetClipboardText(item.ItemName);
             }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            }
 
             if (ImGui.Selectable("Open on GarlandTools"))
             {
-                Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}"));
+            }
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                ImGui.BeginTooltip();
+
+                var pos = ImGui.GetCursorPos();
+                ImGui.GetWindowDrawList().AddText(
+                    UiBuilder.IconFont, 12,
+                    ImGui.GetWindowPos() + pos + new Vector2(2),
+                    ImGui.GetColorU32(ColorGrey),
+                    FontAwesomeIcon.ExternalLinkAlt.ToIconString()
+                );
+                ImGui.SetCursorPos(pos + new Vector2(20, 0));
+                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                ImGui.EndTooltip();
             }
 
             // TODO: search on market

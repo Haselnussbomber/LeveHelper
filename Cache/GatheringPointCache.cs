@@ -89,9 +89,15 @@ public record CachedGatheringPoint
     {
         get
         {
-            var type = GatheringPoint?.Type == 0x01;
-            var gatheringType = GatheringPoint?.GatheringPointBase.Value?.GatheringType.Value;
-            return icon ??= (uint?)(type ? gatheringType?.IconMain : gatheringType?.IconOff) ?? 0;
+            if (icon != null || GatheringPoint == null)
+                return icon ??= 0;
+
+            var gatheringType = GatheringPoint.GatheringPointBase.Value?.GatheringType.Value;
+            if (gatheringType == null)
+                return icon ??= 0;
+
+            var rare = !Service.GameFunctions.IsGatheringPointRare(GatheringPoint.Type);
+            return icon ??= rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
         }
     }
 }

@@ -34,6 +34,7 @@ public record CachedItem
     private uint? classJobIcon { get; set; } = null;
     private bool? isGatherable { get; set; } = null;
     private bool? isFish { get; set; } = null;
+    private bool? isSpearfishing { get; set; } = null;
     private CachedGatheringPoint[]? gatheringPoints { get; set; } = null;
     private CachedFishingSpot[]? fishingSpots { get; set; } = null;
     private RequiredItem[]? ingredients { get; set; } = null;
@@ -112,6 +113,9 @@ public record CachedItem
 
     public bool IsFish
         => isFish ??= FishingSpots.Any();
+
+    public bool IsSpearfishing
+        => isSpearfishing ??= Service.Data.GetExcelSheet<SpearfishingItem>()?.Any(row => row.Item.Row == ItemId) ?? false;
 
     public RequiredItem[] Ingredients
     {

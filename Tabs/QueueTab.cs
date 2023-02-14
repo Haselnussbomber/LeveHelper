@@ -55,7 +55,7 @@ public class QueueTab
 
                     foreach (var entry in kv.Item2)
                     {
-                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
+                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true, kv.Item1);
                     }
                 }
             }

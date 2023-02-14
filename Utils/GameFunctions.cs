@@ -1,13 +1,20 @@
 #pragma warning disable 0649
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using FFXIVClientStructs.FFXIV.Client.System.String;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
@@ -111,6 +118,22 @@ public unsafe class GameFunctions
     public readonly CalculateTeleportCostDelegate CalculateTeleportCost = null!;
     public delegate uint CalculateTeleportCostDelegate(uint fromTerritoryTypeId, uint toTerritoryTypeId, bool a3, bool a4, bool a5);
 
+    [Signature("80 F9 07 77 10")]
+    public readonly IsGatheringPointTypeOffDelegate IsGatheringPointRare = null!;
+    public delegate bool IsGatheringPointTypeOffDelegate(byte gatheringPointType);
+
+    [Signature("E8 ?? ?? ?? ?? 41 B0 07")]
+    public readonly FormatAddonTextDelegate FormatAddonText = null!;
+    public delegate byte* FormatAddonTextDelegate(RaptureTextModule* module, uint id, int value);
+
+    [Signature("E8 ?? ?? ?? ?? 4C 8B 05 ?? ?? ?? ?? 48 8D 8C 24 ?? ?? ?? ?? 48 8B D0 E8 ?? ?? ?? ?? 8B 4E 08")]
+    public readonly GetGatheringPointNameDelegate GetGatheringPointName = null!;
+    public delegate byte* GetGatheringPointNameDelegate(RaptureTextModule** module, byte gatheringType, byte gatheringPointType);
+
+    [Signature("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 0F B6 93 ?? ?? ?? ?? 48 8B CE")]
+    public readonly AgentFishGuide_OpenForItemIdDelegate AgentFishGuide_OpenForItemId = null!;
+    public delegate byte* AgentFishGuide_OpenForItemIdDelegate(nint agentFishGuide, uint itemId, bool isSpearfishing);
+
     [Signature("E8 ?? ?? ?? ?? EB 1D 83 F8 0D")]
     private readonly ItemFinderModuleSearchForItemDelegate ItemFinderModule_SearchForItem = null!;
     private delegate void* ItemFinderModuleSearchForItemDelegate(void* module, uint itemId, bool isHQ = false);
@@ -132,33 +155,172 @@ public unsafe class GameFunctions
         return name;
     }
 
-    public static bool OpenMapWithMapLink(Level level) => Service.GameGui.OpenMapWithMapLink(GetMapLink(level));
-    public static bool OpenMapWithMapLink(TerritoryType territoryType, float x, float y) =>
-        Service.GameGui.OpenMapWithMapLink(new MapLinkPayload(territoryType.RowId, territoryType.Map.Row, x, y, 0f));
+    public bool OpenMapWithGatheringPoint(GatheringPoint? gatheringPoint, CachedItem? item = null)
+    {
+        if (gatheringPoint == null)
+            return false;
 
-    public bool OpenMapWithGatheringPoint(FishingSpot? fishingSpot)
+        var territoryType = gatheringPoint.TerritoryType.Value;
+        if (territoryType == null)
+            return false;
+
+        var gatheringPointBase = gatheringPoint.GatheringPointBase.Value;
+        if (gatheringPointBase == null)
+            return false;
+
+        var exportedPoint = Service.Data.GetExcelSheet<ExportedGatheringPoint>()?.GetRow(gatheringPointBase.RowId);
+        if (exportedPoint == null)
+            return false;
+
+        var gatheringType = exportedPoint.GatheringType.Value;
+        if (gatheringType == null)
+            return false;
+
+        var raptureTextModule = Framework.Instance()->GetUiModule()->GetRaptureTextModule();
+
+        var levelText = gatheringPointBase.GatheringLevel == 1
+            ? raptureTextModule->GetAddonText(242) // "Lv. ???"
+            : FormatAddonText(raptureTextModule, 35, gatheringPointBase.GatheringLevel);
+        var space = MemoryUtils.FromString(" ");
+        var gatheringPointName = GetGatheringPointName(
+            &raptureTextModule,
+            (byte)exportedPoint.GatheringType.Row,
+            exportedPoint.GatheringPointType
+        );
+
+        var tooltipPtr = MemoryUtils.strconcat(levelText, space, gatheringPointName);
+        var tooltip = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
+        tooltip->SetString(tooltipPtr);
+
+        var iconId = !IsGatheringPointRare(exportedPoint.GatheringPointType)
+            ? gatheringType.IconMain
+            : gatheringType.IconOff;
+
+        var agentMap = Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
+        agentMap->TempMapMarkerCount = 0;
+        agentMap->AddGatheringTempMarker(
+            4u,
+            (int)Math.Round(exportedPoint.X),
+            (int)Math.Round(exportedPoint.Y),
+            (uint)iconId,
+            exportedPoint.Radius,
+            tooltip
+        );
+
+        var titleBuilder = new SeStringBuilder()
+            .Add(new TextPayload("LeveHelper"));
+        if (item != null)
+        {
+            titleBuilder
+                .Add(new TextPayload(" ("))
+                .AddUiForeground(549)
+                .AddUiGlow(550)
+                .Add(new TextPayload(item.ItemName))
+                .AddUiGlowOff()
+                .AddUiForegroundOff()
+                .Add(new TextPayload(")"));
+        }
+        var titlePtr = MemoryUtils.FromByteArray(titleBuilder.BuiltString.Encode());
+        var title = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
+        title->SetString(titlePtr);
+
+        var mapInfo = stackalloc OpenMapInfo[1];
+        mapInfo->Type = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType.GatheringLog;
+        mapInfo->MapId = territoryType.Map.Row;
+        mapInfo->TerritoryId = territoryType.RowId;
+        mapInfo->TitleString = *title;
+        agentMap->OpenMap(mapInfo);
+        title->Dtor();
+        Marshal.FreeHGlobal((nint)titlePtr);
+
+        tooltip->Dtor();
+        Marshal.FreeHGlobal((nint)tooltipPtr);
+        Marshal.FreeHGlobal((nint)space);
+
+        return true;
+    }
+
+    public bool OpenMapWithFishingSpot(FishingSpot? fishingSpot, CachedItem? item = null)
     {
         if (fishingSpot == null)
-        {
             return false;
+
+        var territoryType = fishingSpot.TerritoryType.Value;
+        if (territoryType == null)
+            return false;
+
+        var gatheringItemLevel = 0;
+        if (item != null)
+        {
+            gatheringItemLevel = Service.Data.GetExcelSheet<FishParameter>()
+                ?.FirstOrDefault(row => row.Item == (item?.ItemId ?? 0))
+                ?.GatheringItemLevel.Value
+                ?.GatheringItemLevel ?? 0;
         }
 
         static int convert(short pos, ushort scale) => (pos - 1024) / (scale / 100);
 
-        var territoryType = fishingSpot.TerritoryType.Value;
         var scale = territoryType!.Map.Value!.SizeFactor;
         var x = convert(fishingSpot.X, scale);
         var y = convert(fishingSpot.Z, scale);
-        var radius = fishingSpot.Radius / 7 / (scale / 100);
-        var iconId = 60465u;
+        var radius = fishingSpot.Radius / 7 / (scale / 100); // don't ask me why this works
+
+        var raptureTextModule = Framework.Instance()->GetUiModule()->GetRaptureTextModule();
+
+        var levelText = gatheringItemLevel == 0
+            ? raptureTextModule->GetAddonText(242) // "Lv. ???"
+            : FormatAddonText(raptureTextModule, 35, gatheringItemLevel);
+
+        var tooltip = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
+        tooltip->SetString(levelText);
+
+        var iconId = fishingSpot.Rare ? 60466u : 60465u;
 
         var agentMap = Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
-        agentMap->AgentInterface.Hide();
-        agentMap->OpenMap(territoryType.Map.Row, territoryType.RowId, "", FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType.GatheringLog);
-        agentMap->AddGatheringTempMarker(x, y, radius, iconId, 4u, null);
+        agentMap->TempMapMarkerCount = 0;
+        agentMap->AddGatheringTempMarker(
+            4u,
+            x,
+            y,
+            iconId,
+            radius,
+            tooltip
+        );
+
+        var titleBuilder = new SeStringBuilder()
+            .Add(new TextPayload("LeveHelper"));
+        if (item != null)
+        {
+            titleBuilder
+                .Add(new TextPayload(" ("))
+                .AddUiForeground(549)
+                .AddUiGlow(550)
+                .Add(new TextPayload(item.ItemName))
+                .AddUiGlowOff()
+                .AddUiForegroundOff()
+                .Add(new TextPayload(")"));
+        }
+        var titlePtr = MemoryUtils.FromByteArray(titleBuilder.BuiltString.Encode());
+        var title = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
+        title->SetString(titlePtr);
+
+        var mapInfo = stackalloc OpenMapInfo[1];
+        mapInfo->Type = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType.GatheringLog;
+        mapInfo->MapId = territoryType.Map.Row;
+        mapInfo->TerritoryId = territoryType.RowId;
+        mapInfo->TitleString = *title;
+        agentMap->OpenMap(mapInfo);
+        title->Dtor();
+        Marshal.FreeHGlobal((nint)titlePtr);
+
+        tooltip->Dtor();
 
         return true;
     }
+
+    public static bool OpenMapWithMapLink(Level level) => Service.GameGui.OpenMapWithMapLink(GetMapLink(level));
+    public static bool OpenMapWithMapLink(TerritoryType territoryType, float x, float y) =>
+        Service.GameGui.OpenMapWithMapLink(new MapLinkPayload(territoryType.RowId, territoryType.Map.Row, x, y, 0f));
 
     private static MapLinkPayload GetMapLink(Level level)
     {
