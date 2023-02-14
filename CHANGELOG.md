@@ -8,6 +8,7 @@
   - *(new)* **Recipe Tree:** This tab shows the recipe tree of each item required by your currently accepted craft leves.
   - **Configuration:** Previously in its own window, the configuration now moved into its own tab.
 - **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
+- **Changed:** Removed allowance cost column as it only affects Grand Company Leves which already have an indicator in their name.
 
 ## [0.1.7] (2023-02-03)
 

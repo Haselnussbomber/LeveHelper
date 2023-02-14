@@ -68,7 +68,7 @@ public class ListTab
             return;
         }
 
-        if (!ImGui.BeginTable("LeveHelper_Table", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Sortable | ImGuiTableFlags.Hideable, ImGui.GetContentRegionAvail()))
+        if (!ImGui.BeginTable("LeveHelper_Table", 5, ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Sortable | ImGuiTableFlags.Hideable, ImGui.GetContentRegionAvail()))
         {
             //ImGui.EndTable(); // LeveHelper_Table - this throws an exception
             ImGui.EndChild(); // LeveHelper_TableWrapper
@@ -82,7 +82,6 @@ public class ListTab
         ImGui.TableSetupColumn("Name");
         ImGui.TableSetupColumn("Type");
         ImGui.TableSetupColumn("Levemete");
-        ImGui.TableSetupColumn("Allowance Cost");
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
 
@@ -161,7 +160,7 @@ public class ListTab
 
                 if (ImGui.IsItemHovered())
                 {
-                    ImGui.SetTooltip($"Only available to Characters that started in {item.TownName}.");
+                    ImGui.SetTooltip($"Only available to characters that started in {item.TownName}.");
                 }
             }
             else
@@ -224,10 +223,6 @@ public class ListTab
             {
                 Plugin.FilterManager.SetValue<LevemeteFilter>(item.Leve?.LevelLevemete.Value?.Object ?? 0);
             }
-
-            // AllowanceCost
-            ImGui.TableNextColumn();
-            ImGui.Text(item.Leve?.AllowanceCost.ToString());
         }
 
         ImGui.EndTable(); // LeveHelper_Table
