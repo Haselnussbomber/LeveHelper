@@ -358,13 +358,6 @@ public class CraftingHelperWindow : Window
                     DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}");
                 }
             }
-
-            ImGui.Separator();
-
-            foreach (var entry in LeveRequiredItems)
-            {
-                DrawItem(entry.Item, entry.Amount, $"Item{i++}");
-            }
         }
     }
 }
