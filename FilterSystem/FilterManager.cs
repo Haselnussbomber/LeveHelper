@@ -65,7 +65,7 @@ public class FilterManager
         State.NumCompletedLeves = State.Leves.Where(row => row.IsComplete).Count();
         State.NumTotalLeves = State.Leves.Count();
         State.NeededAllowances = State.Leves
-            .Where(row => !row.IsComplete)
+            .Where(row => !row.IsComplete && !row.IsAccepted)
             .Select(item => item.AllowanceCost)
             .Aggregate(0, (total, cost) => total + cost);
     }
