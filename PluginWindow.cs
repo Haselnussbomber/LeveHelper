@@ -221,6 +221,7 @@ public unsafe class PluginWindow : Window
                 var zone = zones
                     .Where(zone => zone.Value.Select(e => e.Item.ItemId).Contains(entry.Item.ItemId))
                     .OrderByDescending(zone => zone.Value.Count)
+                    .ThenBy(zone => zone.Key.CompareTo(Service.ClientState.TerritoryType))
                     .First();
 
                 if (!groupedGatherables.ContainsKey(zone.Key))
