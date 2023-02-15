@@ -31,6 +31,7 @@ public unsafe class PluginWindow : Window
     private readonly AddonObserver SynthesisSimpleObserver = new("SynthesisSimple");
     private readonly AddonObserver GatheringObserver = new("Gathering");
     private readonly AddonObserver ShopObserver = new("Shop");
+    private readonly AddonObserver ItemSearchResultObserver = new("ItemSearchResult");
 
     private ushort[] LastActiveLevequestIds = Array.Empty<ushort>();
 
@@ -59,6 +60,7 @@ public unsafe class PluginWindow : Window
         SynthesisSimpleObserver.OnClose += Refresh;
         GatheringObserver.OnClose += Refresh;
         ShopObserver.OnClose += Refresh;
+        ItemSearchResultObserver.OnClose += Refresh;
     }
 
     public override void OnClose()
@@ -68,6 +70,7 @@ public unsafe class PluginWindow : Window
         SynthesisSimpleObserver.OnClose -= Refresh;
         GatheringObserver.OnClose -= Refresh;
         ShopObserver.OnClose -= Refresh;
+        ItemSearchResultObserver.OnClose -= Refresh;
     }
 
     private void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
@@ -82,6 +85,7 @@ public unsafe class PluginWindow : Window
         SynthesisSimpleObserver.Update();
         GatheringObserver.Update();
         ShopObserver.Update();
+        ItemSearchResultObserver.Update();
 
         var activeLevequestIds = Service.GameFunctions.ActiveLevequestsIds;
         if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
