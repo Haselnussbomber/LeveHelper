@@ -77,7 +77,6 @@ public class ListTab
 
         var state = Plugin.FilterManager.State;
 
-        ImGui.TableSetupColumn("Id", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Name");
         ImGui.TableSetupColumn("Type");
@@ -100,21 +99,6 @@ public class ListTab
         foreach (var item in state.LevesArray)
         {
             ImGui.TableNextRow();
-
-            // Id
-            ImGui.TableNextColumn();
-            ImGui.Text(item.LeveId.ToString());
-
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.SetTooltip("Left Click: Open on GarlandTools");
-            }
-
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-            {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}");
-            }
 
             // Level
             ImGui.TableNextColumn();
@@ -171,6 +155,17 @@ public class ListTab
                 {
                     ImGui.SetTooltip("You've not accepted or completed this Levequest.");
                 }
+            }
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                // TODO: add this back in, show link, make nicer with info above, maybe context menu?
+                //ImGui.SetTooltip("Left Click: Open on GarlandTools");
+            }
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+            {
+                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}");
             }
 
             if (item.IsCraftLeve && item.RequiredItems != null)

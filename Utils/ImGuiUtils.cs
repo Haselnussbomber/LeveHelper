@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -80,6 +81,7 @@ public static class ImGuiUtils
         ImGui.SameLine();
 
         // draw icons to the right: Gather, Vendor..
+        var isLeveRequiredItem = Plugin.PluginWindow.LeveRequiredItems.Any(entry => entry.Item.ItemId == item.ItemId);
 
         var color = ColorWhite;
 
@@ -89,7 +91,7 @@ public static class ImGuiUtils
             color = ColorGrey;
 
         ImGui.PushStyleColor(ImGuiCol.Text, color);
-        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}##{key}_Selectable");
+        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
         ImGui.PopStyleColor();
 
         if (ImGui.IsItemHovered())

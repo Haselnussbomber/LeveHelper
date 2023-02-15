@@ -42,7 +42,7 @@ public class QueueTab
                 ImGui.Text("Crystals:");
                 foreach (var entry in Window.Crystals)
                 {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
+                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
@@ -51,11 +51,11 @@ public class QueueTab
                 ImGui.Text("Gather:");
                 foreach (var kv in Window.Gatherable)
                 {
-                    ImGui.Text(kv.Item1.PlaceName);
+                    ImGui.Text(kv.TerritoryType.PlaceName);
 
-                    foreach (var entry in kv.Item2)
+                    foreach (var entry in kv.Items)
                     {
-                        DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true, kv.Item1);
+                        DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class QueueTab
                 ImGui.Text("Other:");
                 foreach (var entry in Window.OtherSources)
                 {
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
+                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
@@ -75,7 +75,8 @@ public class QueueTab
                 foreach (var entry in Window.Craftable)
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
-                    DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
+                    // TODO: sort by dependency and job???
+                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 

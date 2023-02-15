@@ -17,7 +17,7 @@ public unsafe class PluginWindow : Window
     public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
     public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
-    public (CachedTerritoryType, HashSet<QueuedItem>)[] Gatherable { get; private set; } = Array.Empty<(CachedTerritoryType, HashSet<QueuedItem>)>();
+    public ZoneItems[] Gatherable { get; private set; } = Array.Empty<ZoneItems>();
     public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
 
@@ -149,37 +149,27 @@ public unsafe class PluginWindow : Window
         var acceptedCraftAndGatherLeves = Service.GameFunctions.ActiveLevequests
             .Where(leve => (leve.IsCraftLeve || leve.IsGatherLeve) && leve.RequiredItems != null);
 
-        // step 1: list all items required for craftleves
+        // list all items required for CraftLeves and GatherLeves
         LeveRequiredItems = acceptedCraftAndGatherLeves
             .SelectMany(leve => leve.RequiredItems!)
             .ToArray();
 
-        // step 2: gather a list of all items
-        var allItems = new Dictionary<uint, QueuedItem>();
+        // gather a list of all items needed to craft everything
+        var neededAmounts = new Dictionary<uint, QueuedItem>();
         foreach (var leve in acceptedCraftAndGatherLeves)
         {
             foreach (var entry in leve.RequiredItems!)
             {
-                GetItemsRecursive(allItems, entry, 1);
+                TraverseItems(entry.Item, entry.Amount, neededAmounts);
             }
         }
 
-        // step 3: decrease amount out ingredients for completed items
-        // TODO: exclude LeveRequiredItems?
-        foreach (var leve in acceptedCraftAndGatherLeves)
-        {
-            foreach (var entry in leve.RequiredItems!)
-            {
-                FilterItem(allItems, entry, 1);
-            }
-        }
-
-        RequiredItems = allItems
-            .Values
-            .Where(entry => entry.AmountLeft > 0) // step 4: filter every completed item
+        RequiredItems = neededAmounts
+            .Where(kv => kv.Value.AmountLeft > 0) // filter every completed item
+            .Select(kv => kv.Value)
             .ToArray();
 
-        // step 4: categorize
+        // categorize
         Crystals = RequiredItems
             .Where(entry => entry.Item.QueueCategory == ItemQueueCategory.Crystals)
             .ToArray();
@@ -220,7 +210,7 @@ public unsafe class PluginWindow : Window
             }
 
             // for each item, get the one zone with the most items in it
-            var groupedGatherables = new Dictionary<uint, (CachedTerritoryType, HashSet<QueuedItem>)>();
+            var groupedGatherables = new Dictionary<uint, ZoneItems>();
             foreach (var entry in gatherables)
             {
                 var zone = zones
@@ -230,20 +220,21 @@ public unsafe class PluginWindow : Window
                     .First();
 
                 if (!groupedGatherables.ContainsKey(zone.Key))
-                    groupedGatherables.Add(zone.Key, (TerritoryTypeCache.Get(zone.Key), zone.Value));
+                    groupedGatherables.Add(zone.Key, new(TerritoryTypeCache.Get(zone.Key), zone.Value));
             }
 
             // sorting by cheapest teleport costs
             var array = groupedGatherables.Values.ToList();
 
             // add starting point
-            array.Insert(0, (TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new()));
+            array.Insert(0, new(TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new()));
 
             // sort by teleport cost
-            array.Sort((a, b) => -(int)Service.GameFunctions.CalculateTeleportCost(a.Item1.RowId, b.Item1.RowId, false, false, false));
+            // TODO: this doesn't work correctly. maybe Dijkstra?
+            array.Sort((a, b) => -(int)Service.GameFunctions.CalculateTeleportCost(a.TerritoryType.RowId, b.TerritoryType.RowId, false, false, false));
 
             Gatherable = array
-                .Where(entry => entry.Item2.Count != 0) // remove starting point
+                .Where(entry => entry.Items.Count != 0) // remove starting point
                 .ToArray();
         }
 
@@ -256,70 +247,24 @@ public unsafe class PluginWindow : Window
             .ToArray();
     }
 
-    private void GetItemsRecursive(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentTotalAmount)
+    private static void TraverseItems(CachedItem item, uint amount, Dictionary<uint, QueuedItem> neededAmounts)
     {
-        var nodeAmount = node.Amount * (node.Item.Recipe?.AmountResult ?? 1) * parentTotalAmount;
-        var resultAmount = (uint)(nodeAmount / (double)(node.Item.Recipe?.AmountResult ?? 1));
-
-        // process ingredients
-        if (node.Item.IsCraftable)
+        if (neededAmounts.ContainsKey(item.ItemId))
         {
-            foreach (var ingredient in node.Item.Ingredients!)
-            {
-                GetItemsRecursive(dict, ingredient, resultAmount);
-            }
-        }
-
-        // add node to list
-        if (dict.TryGetValue(node.Item.ItemId, out var item))
-        {
-            item.AddAmount(resultAmount);
+            neededAmounts[item.ItemId].AmountNeeded += amount;
         }
         else
         {
-            dict.Add(node.Item.ItemId, new QueuedItem(node.Item, resultAmount));
-            node.Item.UpdateQuantityOwned();
-        }
-    }
-
-    private void FilterItem(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentTotalAmount)
-    {
-        var itemAmount = node.Amount * parentTotalAmount;
-
-        // do we have enough?
-        if (node.Item.QuantityOwned >= itemAmount)
-        {
-            // then subtract it from out list
-            if (dict.TryGetValue(node.Item.ItemId, out var item))
-            {
-                item.AmountLeft -= itemAmount;
-            }
-
-            // and reduce needed ingredients count
-            foreach (var ingredient in node.Item.Ingredients)
-            {
-                DecreaseIngredientsRecursive(dict, ingredient, itemAmount);
-            }
-        }
-        else
-        {
-            foreach (var ingredient in node.Item.Ingredients)
-            {
-                FilterItem(dict, ingredient, (uint)(itemAmount / (double)(node.Item.Recipe?.AmountResult ?? 1)));
-            }
-        }
-    }
-
-    private void DecreaseIngredientsRecursive(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentAmount)
-    {
-        if (dict.TryGetValue(node.Item.ItemId, out var item))
-        {
-            item.AmountLeft -= (uint)(node.Amount * parentAmount / (double)(node.Item.Recipe?.AmountResult ?? 1));
+            neededAmounts.Add(item.ItemId, new(item, amount));
         }
 
-        foreach (var ingredient in node.Item.Ingredients)
+        if (neededAmounts[item.ItemId].AmountLeft == 0)
+            return;
+
+        foreach (var dependency in item.Ingredients)
         {
-            DecreaseIngredientsRecursive(dict, ingredient, node.Amount * parentAmount);
+            var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependency.Item.ResultAmount);
+            TraverseItems(dependency.Item, totalAmount, neededAmounts);
         }
     }
 }
