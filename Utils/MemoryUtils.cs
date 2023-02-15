@@ -6,7 +6,7 @@ using Dalamud.Memory;
 
 namespace LeveHelper;
 
-public unsafe class MemoryUtils
+public static unsafe class MemoryUtils
 {
     public static byte* FromByteArray(byte[] data)
     {

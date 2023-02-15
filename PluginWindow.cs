@@ -165,11 +165,12 @@ public unsafe class PluginWindow : Window
         }
 
         // step 3: decrease amount out ingredients for completed items
+        // TODO: exclude LeveRequiredItems?
         foreach (var leve in acceptedCraftAndGatherLeves)
         {
             foreach (var entry in leve.RequiredItems!)
             {
-                FilterItem(allItems, entry);
+                FilterItem(allItems, entry, 1);
             }
         }
 
@@ -257,7 +258,7 @@ public unsafe class PluginWindow : Window
 
     private void GetItemsRecursive(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentTotalAmount)
     {
-        var nodeAmount = node.Amount * parentTotalAmount;
+        var nodeAmount = node.Amount * (node.Item.Recipe?.AmountResult ?? 1) * parentTotalAmount;
         var resultAmount = (uint)(nodeAmount / (double)(node.Item.Recipe?.AmountResult ?? 1));
 
         // process ingredients
@@ -281,28 +282,30 @@ public unsafe class PluginWindow : Window
         }
     }
 
-    private void FilterItem(Dictionary<uint, QueuedItem> dict, RequiredItem node)
+    private void FilterItem(Dictionary<uint, QueuedItem> dict, RequiredItem node, uint parentTotalAmount)
     {
+        var itemAmount = node.Amount * parentTotalAmount;
+
         // do we have enough?
-        if (node.Item.QuantityOwned >= node.Amount)
+        if (node.Item.QuantityOwned >= itemAmount)
         {
             // then subtract it from out list
             if (dict.TryGetValue(node.Item.ItemId, out var item))
             {
-                item.AmountLeft -= node.Amount;
+                item.AmountLeft -= itemAmount;
             }
 
             // and reduce needed ingredients count
             foreach (var ingredient in node.Item.Ingredients)
             {
-                DecreaseIngredientsRecursive(dict, ingredient, node.Amount);
+                DecreaseIngredientsRecursive(dict, ingredient, itemAmount);
             }
         }
         else
         {
             foreach (var ingredient in node.Item.Ingredients)
             {
-                FilterItem(dict, ingredient);
+                FilterItem(dict, ingredient, (uint)(itemAmount / (double)(node.Item.Recipe?.AmountResult ?? 1)));
             }
         }
     }

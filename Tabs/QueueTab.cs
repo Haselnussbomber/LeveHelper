@@ -74,9 +74,12 @@ public class QueueTab
                 ImGui.Text("Craft:");
                 foreach (var entry in Window.Craftable)
                 {
+                    // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
                     DrawItem(entry.Item, entry.AmountLeft, $"Item{i++}", true);
                 }
             }
+
+            // TODO: turn in queue?
         }
     }
 }

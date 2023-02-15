@@ -48,7 +48,7 @@ public static class ImGuiUtils
         ImGui.Image(icons[iconId].ImGuiHandle, new(width == -1 ? icons[iconId].Width : width, height == -1 ? icons[iconId].Height : height));
     }
 
-    public static void DrawIngredients(string key, RequiredItem[] ingredients, uint parentCount = 1, int depth = 0)
+    public static void DrawIngredients(string key, RequiredItem[] ingredients, uint parentAmount = 1, int depth = 0)
     {
         if (depth > 0)
             ImGui.Indent();
@@ -56,16 +56,17 @@ public static class ImGuiUtils
         foreach (var entry in ingredients)
         {
             var ingredient = entry.Item;
-            var ingredientCount = entry.Amount * parentCount;
+            var ingredientAmount = entry.Amount * parentAmount;
 
-            DrawItem(ingredient, ingredientCount, $"{key}_{ingredient.ItemId}");
+            DrawItem(ingredient, ingredientAmount, $"{key}_{ingredient.ItemId}");
 
-            if (ingredient.QuantityOwned >= ingredientCount)
+            if (ingredient.QuantityOwned >= ingredientAmount)
                 continue;
 
             if (ingredient.Ingredients.Any())
             {
-                DrawIngredients($"{key}_{ingredient.ItemId}", ingredient.Ingredients, entry.Amount, depth + 1);
+                var ingredientCount = (uint)(ingredientAmount / (double)(entry.Item.Recipe?.AmountResult ?? 1));
+                DrawIngredients($"{key}_{ingredient.ItemId}", ingredient.Ingredients, ingredientCount, depth + 1);
             }
         }
 
