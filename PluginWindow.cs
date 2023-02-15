@@ -235,7 +235,7 @@ public unsafe class PluginWindow : Window
             array.Insert(0, (TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new()));
 
             // sort by teleport cost
-            array.Sort((a, b) => (int)Service.GameFunctions.CalculateTeleportCost(a.Item1.RowId, b.Item1.RowId, false, false, false));
+            array.Sort((a, b) => -(int)Service.GameFunctions.CalculateTeleportCost(a.Item1.RowId, b.Item1.RowId, false, false, false));
 
             Gatherable = array
                 .Where(entry => entry.Item2.Count != 0) // remove starting point
