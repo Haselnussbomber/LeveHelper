@@ -1,9 +1,12 @@
 using System;
 using System.Globalization;
 using System.Numerics;
+using System.Threading.Tasks;
+using Dalamud.Interface;
+using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Filters;
-using static LeveHelper.ImGuiUtils;
 
 namespace LeveHelper;
 
@@ -62,6 +65,7 @@ public class ListTab
 
     private void DrawTable()
     {
+        // TODO: make this a list instead, type icon in front of name, name click to open map, right click for context menu to search on garland tools
         if (!ImGui.BeginChild("LeveHelper_TableWrapper", new Vector2(-1), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
             ImGui.EndChild(); // LeveHelper_TableWrapper
@@ -78,8 +82,8 @@ public class ListTab
         var state = Plugin.FilterManager.State;
 
         ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
+        ImGui.TableSetupColumn("Type", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Name");
-        ImGui.TableSetupColumn("Type");
         ImGui.TableSetupColumn("Levemete");
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
@@ -104,99 +108,152 @@ public class ListTab
             ImGui.TableNextColumn();
             ImGui.Text(item.ClassJobLevel.ToString());
 
+            // Type
+            ImGui.TableNextColumn();
+            if (item.TypeIcon != 0)
+            {
+                ImGuiUtils.DrawIcon(item.TypeIcon, 20, 20);
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.SetTooltip(item.TypeName + "\nRight Click: Filter by Type");
+                }
+
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+                {
+                    Plugin.FilterManager.SetValue<TypeFilter>((uint)(item.Leve?.Unknown4 ?? 0));
+                }
+            }
+
             // Name
             ImGui.TableNextColumn();
-            if (item.TownLocked)
-            {
-                ImGui.Text("*  ");
 
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip($"Only available to Characters that started in {item.TownName}.");
-                }
-
-                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, default(Vector2));
-                ImGui.SameLine();
-                ImGui.PopStyleVar();
-            }
-
+            var color = ImGuiUtils.ColorRed;
             if (item.IsComplete)
-            {
-                ImGui.TextColored(ColorGreen, item.Name);
-
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("You've completed this Levequest.");
-                }
-            }
+                color = ImGuiUtils.ColorGreen;
             else if (item.IsAccepted)
-            {
-                ImGui.TextColored(ColorYellow, item.Name);
+                color = ImGuiUtils.ColorYellow;
+            else if (item.TownLocked && item.TownId != Plugin.StartTown)
+                color = ImGuiUtils.ColorGrey;
 
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("You've accepted this Levequest.");
-                }
-            }
-            else if (item.TownLocked)
-            {
-                ImGui.TextColored(ColorRed, item.Name);
-
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip($"Only available to characters that started in {item.TownName}.");
-                }
-            }
-            else
-            {
-                ImGui.TextColored(ColorRed, item.Name);
-
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("You've not accepted or completed this Levequest.");
-                }
-            }
+            ImGui.PushStyleColor(ImGuiCol.Text, color);
+            ImGui.Selectable(item.Name);
+            ImGui.PopStyleColor();
 
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                // TODO: add this back in, show link, make nicer with info above, maybe context menu?
-                //ImGui.SetTooltip("Left Click: Open on GarlandTools");
-            }
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-            {
-                Dalamud.Utility.Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}");
-            }
+                ImGui.BeginTooltip();
 
-            if (item.IsCraftLeve && item.RequiredItems != null)
-            {
-                if (Plugin.Config.ShowInlineRecipeTree && (!Plugin.Config.ShowInlineRecipeTreeForAcceptedOnly || (Plugin.Config.ShowInlineRecipeTreeForAcceptedOnly && item.IsAccepted)))
+                if (!item.TownLocked || (item.TownLocked && item.TownId == Plugin.StartTown))
                 {
-                    if (Plugin.Config.ShowInlineResultItemOnly)
+                    if (item.IsComplete)
                     {
-                        foreach (var req in item.RequiredItems)
-                            DrawItem(req.Item, req.Amount, $"InlineRecipeTree_{item.LeveId}_Item");
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorGreen);
+                        ImGui.Text("You've completed this Levequest.");
+                    }
+                    else if (item.IsAccepted)
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                        ImGui.Text("You've accepted this Levequest.");
                     }
                     else
                     {
-                        DrawIngredients($"InlineRecipeTree_{item.LeveId}", item.RequiredItems, 1);
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Times, ImGuiUtils.ColorRed);
+                        ImGui.Text("You've not accepted or completed this Levequest.");
                     }
+                }
+
+                if (item.TownLocked)
+                {
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                    ImGui.Text($"Only available to characters that started in {item.TownName}.");
+                }
+
+                /*
+                {
+                    var startPos = ImGui.GetCursorPos();
+                    ImGuiUtils.DrawIcon(item.LeveVfxIcon, 160, 256);
+                    ImGui.SetCursorPos(startPos);
+                    ImGuiUtils.DrawIcon(item.LeveVfxFrameIcon, 160, 256);
+                }
+                */
+
+                ImGui.EndTooltip();
+            }
+
+            if (item.IsAccepted && ImGui.IsItemClicked())
+            {
+                unsafe
+                {
+                    var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
+                    Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                    ImGui.SetWindowFocus(null);
                 }
             }
 
-            // Type
-            ImGui.TableNextColumn();
-            ImGui.Text(item.TypeName);
-
-            if (ImGui.IsItemHovered())
+            if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.LeveId}_Tooltip"))
             {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.SetTooltip("Right Click: Filter by Type");
+                var showSeparator = false;
+
+                if (item.IsAccepted)
+                {
+                    if (ImGui.Selectable("Open in Journal"))
+                    {
+                        unsafe
+                        {
+                            var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
+                            Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                            ImGui.SetWindowFocus(null);
+                        }
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    }
+
+                    showSeparator = true;
+                }
+
+                if (showSeparator)
+                    ImGui.Separator();
+
+                if (ImGui.Selectable("Open on Garland Tools"))
+                {
+                    Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}"));
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.BeginTooltip();
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
+                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.LeveId}");
+                    ImGui.EndTooltip();
+                }
+                /* crashes the game?!
+                if (ImGui.Selectable("Open on Final Fantasy XIV A Realm Reborn Wiki"))
+                {
+                    Task.Run(() => Util.OpenLink($"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}"));
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.BeginTooltip();
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
+                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
+                    ImGui.EndTooltip();
+                }
+                */
+                ImGui.EndPopup();
             }
 
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+            if (item.IsCraftLeve && item.IsAccepted && item.RequiredItems != null)
             {
-                Plugin.FilterManager.SetValue<TypeFilter>((uint)(item.Leve?.Unknown4 ?? 0));
+                foreach (var entry in item.RequiredItems)
+                {
+                    ImGuiUtils.DrawItem(entry.Item, entry.Amount, $"##LeveTooltip_{item.LeveId}_RequiredItems_{entry.Item.ItemId}");
+                }
             }
 
             // Levemete

@@ -16,6 +16,7 @@ public class Plugin : IDalamudPlugin, IDisposable
 
     internal static Configuration Config = null!;
     internal static FilterManager FilterManager = null!;
+    internal static byte StartTown;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {

@@ -49,6 +49,14 @@ public static class ImGuiUtils
         ImGui.Image(icons[iconId].ImGuiHandle, new(width == -1 ? icons[iconId].Width : width, height == -1 ? icons[iconId].Height : height));
     }
 
+    public static void DrawFontAwesomeIcon(FontAwesomeIcon icon, Vector4 color)
+    {
+        ImGui.PushFont(UiBuilder.IconFont);
+        ImGui.TextColored(color, icon.ToIconString());
+        ImGui.PopFont();
+        ImGui.SameLine();
+    }
+
     public static void DrawIngredients(string key, RequiredItem[] ingredients, uint parentAmount = 1, int depth = 0)
     {
         if (depth > 0)
@@ -59,8 +67,13 @@ public static class ImGuiUtils
             var ingredient = entry.Item;
             var ingredientAmount = entry.Amount * parentAmount;
 
+            // filter crystals completely if we have enough
+            if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientAmount)
+                continue;
+
             DrawItem(ingredient, ingredientAmount, $"{key}_{ingredient.ItemId}");
 
+            // filter ingredients if we have enough
             if (ingredient.QuantityOwned >= ingredientAmount)
                 continue;
 
@@ -179,7 +192,7 @@ public static class ImGuiUtils
             }
         }
 
-        if (ImGui.BeginPopupContextItem($"ItemContextMenu##{key}_Tooltip"))
+        if (ImGui.BeginPopupContextItem($"##ItemContextMenu_{key}_Tooltip"))
         {
             var showSeparator = false;
 

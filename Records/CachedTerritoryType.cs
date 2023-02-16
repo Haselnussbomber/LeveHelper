@@ -11,6 +11,7 @@ public record CachedTerritoryType
 
     private TerritoryType? territoryType { get; set; } = null;
     private string? placeName { get; set; } = null;
+    private Map? map { get; set; } = null;
 
     public uint RowId { get; }
 
@@ -19,4 +20,7 @@ public record CachedTerritoryType
 
     public string PlaceName
         => placeName ??= TerritoryType?.PlaceName.Value?.Name.ClearString() ?? "";
+
+    public Map? Map
+        => map ??= TerritoryType?.Map.Value;
 }

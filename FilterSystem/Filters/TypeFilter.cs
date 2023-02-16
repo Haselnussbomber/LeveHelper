@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
@@ -18,7 +17,7 @@ public class TypeFilter : Filter
 
     public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
-    private Dictionary<string, Dictionary<uint, (string, int)>>? Groups = null;
+    private Dictionary<string, CachedLeveAssignmentType[]>? Groups = null;
 
     public override void Reset()
     {
@@ -80,21 +79,21 @@ public class TypeFilter : Filter
                 {
                     var indent = "    ";
 
-                    if (type.Value.Item2 != 0)
+                    if (type.Icon != 0)
                     {
-                        ImGuiUtils.DrawIcon(type.Value.Item2, 20, 20);
+                        ImGuiUtils.DrawIcon(type.Icon, 20, 20);
                         ImGui.SameLine();
                         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
                         indent = "";
                     }
 
-                    if (ImGui.Selectable($"{indent}{type.Value.Item1}##LeveHelper_TypeFilter_Combo_{type.Key}", Config.SelectedType == type.Key))
+                    if (ImGui.Selectable($"{indent}{type.Name}##LeveHelper_TypeFilter_Combo_{type.RowId}", Config.SelectedType == type.RowId))
                     {
-                        Set(type.Key);
+                        Set(type.RowId);
                         manager.Update();
                     }
 
-                    if (Config.SelectedType == type.Key)
+                    if (Config.SelectedType == type.RowId)
                     {
                         ImGui.SetItemDefaultFocus();
                     }
@@ -137,14 +136,11 @@ public class TypeFilter : Filter
         }
     }
 
-    private Dictionary<uint, (string, int)> CreateGroup(params uint[] ids)
-    {
-        var sheet = Service.Data.GetExcelSheet<LeveAssignmentType>();
-        return ids
-            .Select(key => (Id: key, Icon: sheet?.GetRow(key)?.Icon ?? 0, Title: StringUtil.GetText("LeveAssignmentType", key)))
-            .OrderBy(entry => entry.Title)
-            .ToDictionary(entry => entry.Id, entry => (entry.Title, entry.Icon));
-    }
+    private static CachedLeveAssignmentType[] CreateGroup(params uint[] ids)
+        => ids
+            .Select(LeveAssignmentTypeCache.Get)
+            .OrderBy(entry => entry.Name)
+            .ToArray();
 
     public override bool Run()
     {

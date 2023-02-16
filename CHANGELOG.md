@@ -12,6 +12,7 @@
   - **Configuration:** Previously in its own window, the configuration now moved into its own tab.
   - By the way, you can reorder the tabs by dragging them.
 - **Added:** Filters are now collapsible.
+- **Added:** Clicking on an accepted levequest will open the quest journal.
 - **Changed:** Removed allowance cost column as it only affects Grand Company Leves which already have an indicator in their name.
 - **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
 

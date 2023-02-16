@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 
@@ -54,6 +55,7 @@ public unsafe class PluginWindow : Window
     public override void OnOpen()
     {
         Plugin.FilterManager ??= new();
+        Plugin.StartTown = (byte)(PlayerState.Instance()->StartTown - 1);
 
         CatchObserver.OnOpen += Refresh;
         SynthesisObserver.OnClose += Refresh;
@@ -76,6 +78,7 @@ public unsafe class PluginWindow : Window
     private void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
     {
         UpdateList();
+        Plugin.FilterManager.Update();
     }
 
     public override void PreDraw()
@@ -93,6 +96,7 @@ public unsafe class PluginWindow : Window
             LastActiveLevequestIds = activeLevequestIds;
 
             UpdateList();
+            Plugin.FilterManager.Update();
         }
     }
 
@@ -116,20 +120,23 @@ public unsafe class PluginWindow : Window
                 ImGui.EndTabItem();
             }
 
-            if (ImGui.BeginTabItem("Queue"))
+            if (Plugin.PluginWindow.RequiredItems.Any())
             {
-                RespectCloseHotkey = false;
+                if (ImGui.BeginTabItem("Queue"))
+                {
+                    RespectCloseHotkey = false;
 
-                QueueTab.Draw();
-                ImGui.EndTabItem();
-            }
+                    QueueTab.Draw();
+                    ImGui.EndTabItem();
+                }
 
-            if (ImGui.BeginTabItem("Recipe Tree"))
-            {
-                RespectCloseHotkey = true;
+                if (ImGui.BeginTabItem("Recipe Tree"))
+                {
+                    RespectCloseHotkey = true;
 
-                RecipeTreeTab.Draw();
-                ImGui.EndTabItem();
+                    RecipeTreeTab.Draw();
+                    ImGui.EndTabItem();
+                }
             }
 
             if (ImGui.BeginTabItem("Configuration"))
