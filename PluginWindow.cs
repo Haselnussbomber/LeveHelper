@@ -236,7 +236,7 @@ public unsafe class PluginWindow : Window
                     nodes.Add((zoneItemFrom, zoneItemTo), cost);
                 }
             }
-            
+
             Gatherable = nodes
                 .OrderBy(kv => kv.Value) // sort by cost
                 .Where(kv => kv.Key.Item2.Items.Count != 0) // filter starting zone
@@ -256,23 +256,28 @@ public unsafe class PluginWindow : Window
 
     private static void TraverseItems(CachedItem item, uint amount, Dictionary<uint, QueuedItem> neededAmounts)
     {
-        if (neededAmounts.ContainsKey(item.ItemId))
-        {
-            neededAmounts[item.ItemId].AmountNeeded += amount;
-        }
-        else
+        var newNode = false;
+        if (!neededAmounts.TryGetValue(item.ItemId, out var node))
         {
             item.UpdateQuantityOwned();
-            neededAmounts.Add(item.ItemId, new(item, amount));
+            node = new(item, 0);
+            newNode = true;
         }
 
-        if (neededAmounts[item.ItemId].AmountLeft == 0)
-            return;
+        node.AmountNeeded += amount;
 
-        foreach (var dependency in item.Ingredients)
+        if (node.AmountLeft != 0)
         {
-            var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependency.Item.ResultAmount);
-            TraverseItems(dependency.Item, totalAmount, neededAmounts);
+            foreach (var dependency in item.Ingredients)
+            {
+                var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependency.Item.ResultAmount);
+                TraverseItems(dependency.Item, totalAmount, neededAmounts);
+            }
+        }
+
+        if (newNode)
+        {
+            neededAmounts.Add(item.ItemId, node);
         }
     }
 }
