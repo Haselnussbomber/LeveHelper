@@ -8,12 +8,10 @@ public record QueuedItem
     {
         this.Item = Item;
         this.AmountNeeded = AmountNeeded;
-
-        AmountHave = Item.QuantityOwned;
     }
 
     public CachedItem Item { get; init; }
-    public uint AmountHave { get; set; }
+    public uint AmountHave => Item.QuantityOwned;
     public uint AmountNeeded { get; set; }
     public uint AmountLeft
     {

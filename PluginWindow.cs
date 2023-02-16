@@ -224,17 +224,24 @@ public unsafe class PluginWindow : Window
             }
 
             // sorting by cheapest teleport costs
-            var array = groupedGatherables.Values.ToList();
+            var zoneItems = groupedGatherables.Values.ToList();
+            zoneItems.Insert(0, new(TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new())); // add starting zone
 
-            // add starting point
-            array.Insert(0, new(TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new()));
-
-            // sort by teleport cost
-            // TODO: this doesn't work correctly. maybe Dijkstra?
-            array.Sort((a, b) => -(int)Service.GameFunctions.CalculateTeleportCost(a.TerritoryType.RowId, b.TerritoryType.RowId, false, false, false));
-
-            Gatherable = array
-                .Where(entry => entry.Items.Count != 0) // remove starting point
+            var nodes = new Dictionary<(ZoneItems, ZoneItems), uint>();
+            foreach (var zoneItemFrom in zoneItems)
+            {
+                foreach (var zoneItemTo in zoneItems)
+                {
+                    var cost = Service.GameFunctions.CalculateTeleportCost(zoneItemFrom.TerritoryType.RowId, zoneItemTo.TerritoryType.RowId, false, false, false);
+                    nodes.Add((zoneItemFrom, zoneItemTo), cost);
+                }
+            }
+            
+            Gatherable = nodes
+                .OrderBy(kv => kv.Value) // sort by cost
+                .Where(kv => kv.Key.Item2.Items.Count != 0) // filter starting zone
+                .Select(kv => kv.Key.Item2)
+                .Distinct()
                 .ToArray();
         }
 
@@ -255,6 +262,7 @@ public unsafe class PluginWindow : Window
         }
         else
         {
+            item.UpdateQuantityOwned();
             neededAmounts.Add(item.ItemId, new(item, amount));
         }
 
