@@ -20,7 +20,9 @@ public static class ImGuiUtils
     public static Vector4 ColorWhite = new(1f, 1f, 1f, 1f);
     public static Vector4 ColorGrey = new(0.5f, 0.5f, 0.5f, 1f);
     public static Vector4 ColorRed = new(1f, 0f, 0f, 1f);
+    public static Vector4 ColorFreesia = new(246 / 255f, 195 / 255f, 36 / 255f, 1f); // #F6C324
     public static Vector4 ColorYellow = new(1f, 1f, 0f, 1f);
+    public static Vector4 ColorYellowGreen = new(154 / 255f, 205 / 255f, 50 / 255f, 1f); // #9ACD32
     public static Vector4 ColorGreen = new(0f, 1f, 0f, 1f);
 
     public static Vector4 ColorMaelstorm = new(129f / 255f, 19f / 255f, 1f / 255f, 1f); // #811301
@@ -29,9 +31,9 @@ public static class ImGuiUtils
 
     public static Vector4 ColorGroup = new(216f / 255f, 187f / 255f, 125f / 255f, 1f); // #D8BB7D
 
-    private static readonly Dictionary<int, TextureWrap> icons = new();
+    private static readonly Dictionary<uint, TextureWrap> icons = new();
 
-    public static void DrawIcon(int iconId, int width = -1, int height = -1)
+    public static void DrawIcon(uint iconId, int width = -1, int height = -1)
     {
         if (!icons.ContainsKey(iconId))
         {
@@ -47,6 +49,13 @@ public static class ImGuiUtils
         }
 
         ImGui.Image(icons[iconId].ImGuiHandle, new(width == -1 ? icons[iconId].Width : width, height == -1 ? icons[iconId].Height : height));
+    }
+
+    public static void SameLineNoSpace()
+    {
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, default(Vector2));
+        ImGui.SameLine();
+        ImGui.PopStyleVar();
     }
 
     public static void DrawFontAwesomeIcon(FontAwesomeIcon icon, Vector4 color)
@@ -67,20 +76,23 @@ public static class ImGuiUtils
             var ingredient = entry.Item;
             var ingredientAmount = entry.Amount * parentAmount;
 
-            // filter crystals completely if we have enough
-            if (ingredient.IsCrystal && ingredient.QuantityOwned >= ingredientAmount)
-                continue;
-
-            DrawItem(ingredient, ingredientAmount, $"{key}_{ingredient.ItemId}");
-
-            // filter ingredients if we have enough
-            if (ingredient.QuantityOwned >= ingredientAmount)
-                continue;
-
-            if (ingredient.Ingredients.Any())
+            if (ingredient is CachedItem ingredientItem)
             {
-                var ingredientCount = (uint)(ingredientAmount / (double)(entry.Item.Recipe?.AmountResult ?? 1));
-                DrawIngredients($"{key}_{ingredient.ItemId}", ingredient.Ingredients, ingredientCount, depth + 1);
+                // filter crystals completely if we have enough
+                if (ingredientItem.IsCrystal && ingredient.QuantityOwned >= ingredientAmount)
+                    continue;
+
+                DrawItem(ingredientItem, ingredientAmount, $"{key}_{ingredient.ItemId}");
+
+                // filter ingredients if we have enough
+                if (ingredient.QuantityOwned >= ingredientAmount)
+                    continue;
+
+                if (ingredientItem.Ingredients.Any())
+                {
+                    var ingredientCount = (uint)(ingredientAmount / (double)(ingredientItem.Recipe?.AmountResult ?? 1));
+                    DrawIngredients($"{key}_{ingredient.ItemId}", ingredientItem.Ingredients, ingredientCount, depth + 1);
+                }
             }
         }
 
@@ -100,11 +112,11 @@ public static class ImGuiUtils
 
         if (item.QuantityOwned >= neededCount)
             color = ColorGreen;
-        else if (item.QuantityOwned < neededCount || !item.HasAllIngredients)
+        else if (item.QuantityOwned < neededCount || item.HasAllIngredients == false)
             color = ColorGrey;
 
         ImGui.PushStyleColor(ImGuiCol.Text, color);
-        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.ItemName}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
         ImGui.PopStyleColor();
 
         if (ImGui.IsItemHovered())
@@ -113,11 +125,11 @@ public static class ImGuiUtils
 
             // TODO: info about what leve/recipe needs this?
 
-            if (item.IsCraftable)
+            if (item.IsCraftable == true)
             {
                 ImGui.SetTooltip(StringUtil.GetAddonText(1414)); // "Search for Item by Crafting Method"
             }
-            else if (item.IsGatherable)
+            else if (item.IsGatherable == true)
             {
                 if (territoryType != null)
                 {
@@ -128,7 +140,7 @@ public static class ImGuiUtils
                     ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
                 }
             }
-            else if (item.IsFish)
+            else if (item.IsFish == true)
             {
                 ImGui.SetTooltip(StringUtil.GetAddonText(8506)); // "Open Map"
             }
@@ -153,7 +165,7 @@ public static class ImGuiUtils
 
         if (ImGui.IsItemClicked())
         {
-            if (item.IsCraftable)
+            if (item.IsCraftable == true)
             {
                 unsafe
                 {
@@ -163,14 +175,14 @@ public static class ImGuiUtils
                 }
             }
             // TODO: preferance setting?
-            else if (item.IsGatherable)
+            else if (item.IsGatherable == true)
             {
                 unsafe
                 {
                     if (territoryType != null)
                     {
                         var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                        Service.GameFunctions.OpenMapWithGatheringPoint((Lumina.Excel.GeneratedSheets.GatheringPoint?)point.GatheringPoint, (CachedItem)item);
                     }
                     else
                     {
@@ -181,7 +193,7 @@ public static class ImGuiUtils
                     ImGui.SetWindowFocus(null);
                 }
             }
-            else if (item.IsFish)
+            else if (item.IsFish == true)
             {
                 Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First().FishingSpot, item);
                 ImGui.SetWindowFocus(null);
@@ -196,7 +208,7 @@ public static class ImGuiUtils
         {
             var showSeparator = false;
 
-            if (item.IsCraftable)
+            if (item.IsCraftable == true)
             {
                 if (ImGui.Selectable(StringUtil.GetAddonText(1414))) // "Search for Item by Crafting Method"
                 {
@@ -215,14 +227,14 @@ public static class ImGuiUtils
                 showSeparator = true;
             }
 
-            if (item.IsGatherable)
+            if (item.IsGatherable == true)
             {
                 if (territoryType != null)
                 {
                     if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
                     {
                         var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                        Service.GameFunctions.OpenMapWithGatheringPoint((Lumina.Excel.GeneratedSheets.GatheringPoint?)point.GatheringPoint, (CachedItem)item);
                         ImGui.SetWindowFocus(null);
                     }
                     if (ImGui.IsItemHovered())
@@ -248,7 +260,7 @@ public static class ImGuiUtils
                 showSeparator = true;
             }
 
-            if (item.IsFish)
+            if (item.IsFish == true)
             {
                 if (territoryType != null)
                 {
@@ -295,7 +307,7 @@ public static class ImGuiUtils
 
             if (ImGui.Selectable(StringUtil.GetAddonText(159))) // "Copy Item Name"
             {
-                ImGui.SetClipboardText(item.ItemName);
+                ImGui.SetClipboardText(item.Name);
             }
             if (ImGui.IsItemHovered())
             {
@@ -333,7 +345,7 @@ public static class ImGuiUtils
             var pos = ImGui.GetCursorPos();
             var availSize = ImGui.GetContentRegionAvail();
             ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
-            DrawIcon((int)item.ClassJobIcon, 20, 20);
+            DrawIcon((uint)item.ClassJobIcon, 20, 20);
         }
     }
 }

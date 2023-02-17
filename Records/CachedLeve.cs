@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -59,7 +60,7 @@ public record CachedLeve
     }
 
     public CachedLeveAssignmentType? LeveAssignmentType
-        => leveAssignmentType ??= leve != null ? LeveAssignmentTypeCache.Get((uint)Leve!.Unknown4) : null; // leve.LeveAssignmentType.Row seems to have moved
+        => leveAssignmentType ??= leve != null ? LeveAssignmentTypeCache.Get((uint)Leve!.Unknown4) : null; // leve.LeveAssignmentType seems to have moved
 
     public int TypeIcon
         => LeveAssignmentType?.Icon ?? 0;
@@ -82,43 +83,55 @@ public record CachedLeve
     public bool IsAccepted
         => Service.GameFunctions.IsLevequestAccepted(LeveId);
 
+    public unsafe bool IsReadyForTurnIn
+        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 255;
+
+    public unsafe bool IsStarted
+        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 1 && Service.GameFunctions.GetLeveClearClass((ushort)LeveId) != 0;
+
+    public unsafe bool IsFailed
+        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 3;
+
     public bool IsCraftLeve
         => LeveAssignmentType?.RowId is >= 5 and <= 12;
 
-    public bool IsGatherLeve
+    public bool IsGatheringLeve
         => LeveAssignmentType?.RowId is >= 2 and <= 4;
 
-    public RequiredItem[]? RequiredItems
+    public RequiredItem[] RequiredItems
     {
         get
         {
-            if (!IsCraftLeve || Leve == null)
-                return null;
+            if (Leve == null || requiredItems != null)
+                return requiredItems ??= Array.Empty<RequiredItem>();
 
-            var craftLeve = Service.Data.GetExcelSheet<CraftLeve>()?.GetRow((uint)Leve.DataId);
-            if (craftLeve == null)
-                return null;
+            if (IsCraftLeve)
+            {
+                var craftLeve = Service.Data.GetExcelSheet<CraftLeve>()?.GetRow((uint)Leve.DataId);
+                if (craftLeve != null)
+                {
+                    return requiredItems = craftLeve.UnkData3
+                        .Where(item => item.Item != 0 && item.ItemCount != 0)
+                        .Aggregate(
+                            new Dictionary<int, RequiredItem>(),
+                            (dict, entry) =>
+                            {
+                                if (!dict.TryGetValue(entry.Item, out var reqItem))
+                                {
+                                    reqItem = new RequiredItem(ItemCache.Get((uint)entry.Item), 0);
+                                    dict.Add(entry.Item, reqItem);
+                                }
 
-            requiredItems = craftLeve.UnkData3
-                .Where(item => item.Item != 0 && item.ItemCount != 0)
-                .Aggregate(
-                    new Dictionary<int, RequiredItem>(),
-                    (dict, entry) =>
-                    {
-                        if (!dict.TryGetValue(entry.Item, out var reqItem))
-                        {
-                            reqItem = new RequiredItem(ItemCache.Get((uint)entry.Item), 0);
-                            dict.Add(entry.Item, reqItem);
-                        }
+                                reqItem.Amount += entry.ItemCount;
 
-                        reqItem.Amount += entry.ItemCount;
+                                return dict;
+                            })
+                        .Values
+                        .ToArray();
+                }
+            }
 
-                        return dict;
-                    })
-                .Values
-                .ToArray();
-
-            return requiredItems;
+            return requiredItems ??= Array.Empty<RequiredItem>();
         }
     }
 

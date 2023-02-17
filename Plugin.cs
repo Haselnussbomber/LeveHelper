@@ -27,21 +27,23 @@ public class Plugin : IDalamudPlugin, IDisposable
         PlaceNameHelper.Connect();
         Scanner.Connect();
 
-        WindowSystem.AddWindow(PluginWindow = new PluginWindow());
-
-        Service.PluginInterface.UiBuilder.Draw += OnDraw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
-
-        var commandInfo = new CommandInfo(OnCommand)
-        {
-            HelpMessage = "Show Window"
-        };
-
-        Service.Commands.AddHandler("/levehelper", commandInfo);
-        Service.Commands.AddHandler("/lh", commandInfo);
-
         Service.Framework.RunOnFrameworkThread(() =>
         {
+            FilterManager = new();
+
+            WindowSystem.AddWindow(PluginWindow = new PluginWindow());
+
+            Service.PluginInterface.UiBuilder.Draw += OnDraw;
+            Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
+
+            var commandInfo = new CommandInfo(OnCommand)
+            {
+                HelpMessage = "Show Window"
+            };
+
+            Service.Commands.AddHandler("/levehelper", commandInfo);
+            Service.Commands.AddHandler("/lh", commandInfo);
+
             Task.Run(GatheringPointCache.Load);
         });
     }

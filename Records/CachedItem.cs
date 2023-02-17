@@ -16,7 +16,7 @@ public record CachedItem
     }
 
     private Item? item { get; set; } = null;
-    private string itemName { get; set; } = "";
+    private string name { get; set; } = "";
     private Recipe? recipe { get; set; } = null;
     private bool? isCraftable { get; set; } = null;
     private uint? resultAmount { get; set; } = null;
@@ -35,27 +35,27 @@ public record CachedItem
     public Item? Item
         => item ??= Service.Data.GetExcelSheet<Item>()?.GetRow(ItemId);
 
-    public string ItemName
+    public string Name
     {
         get
         {
-            if (string.IsNullOrEmpty(itemName))
+            if (string.IsNullOrEmpty(name))
             {
                 unsafe
                 {
                     var ptr = (nint)Framework.Instance()->GetUiModule()->GetRaptureTextModule()->FormatAddonText2(2021, (int)ItemId, 0);
                     if (ptr != 0)
-                        itemName = MemoryHelper.ReadSeStringNullTerminated(ptr).ToString();
+                        name = MemoryHelper.ReadSeStringNullTerminated(ptr).ToString();
                 }
             }
 
-            return !string.IsNullOrEmpty(itemName)
-                ? itemName
+            return !string.IsNullOrEmpty(name)
+                ? name
                 : Item?.Name.ClearString() ?? "";
         }
     }
 
-    public int Icon
+    public uint Icon
         => Item?.Icon ?? 0;
 
     public bool IsCrystal

@@ -24,6 +24,6 @@ public record QueuedItem
 
     public override string ToString()
     {
-        return $"QueuedItem({Item.ItemName}, Have: {AmountHave}, Needed: {AmountNeeded}, Left: {AmountLeft})";
+        return $"QueuedItem({Item.Name}, Have: {AmountHave}, Needed: {AmountNeeded}, Left: {AmountLeft})";
     }
 }

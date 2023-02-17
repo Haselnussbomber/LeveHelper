@@ -54,7 +54,6 @@ public unsafe class PluginWindow : Window
 
     public override void OnOpen()
     {
-        Plugin.FilterManager ??= new();
         Plugin.StartTown = (byte)(PlayerState.Instance()->StartTown - 1);
 
         CatchObserver.OnOpen += Refresh;
@@ -120,7 +119,7 @@ public unsafe class PluginWindow : Window
                 ImGui.EndTabItem();
             }
 
-            if (Plugin.PluginWindow.RequiredItems.Any())
+            if (Plugin.PluginWindow.RequiredItems.Any()) // TODO: is this fine or will this mess with the tabs?!?!?
             {
                 if (ImGui.BeginTabItem("Queue"))
                 {
@@ -154,20 +153,23 @@ public unsafe class PluginWindow : Window
     public void UpdateList()
     {
         var acceptedCraftAndGatherLeves = Service.GameFunctions.ActiveLevequests
-            .Where(leve => (leve.IsCraftLeve || leve.IsGatherLeve) && leve.RequiredItems != null);
+            .Where(leve => leve.RequiredItems.Length > 0);
 
         // list all items required for CraftLeves and GatherLeves
         LeveRequiredItems = acceptedCraftAndGatherLeves
-            .SelectMany(leve => leve.RequiredItems!)
+            .SelectMany(leve => leve.RequiredItems)
             .ToArray();
 
         // gather a list of all items needed to craft everything
         var neededAmounts = new Dictionary<uint, QueuedItem>();
         foreach (var leve in acceptedCraftAndGatherLeves)
         {
-            foreach (var entry in leve.RequiredItems!)
+            foreach (var entry in leve.RequiredItems)
             {
-                TraverseItems(entry.Item, entry.Amount, neededAmounts);
+                if (entry.Item is CachedItem item)
+                {
+                    TraverseItems(item, entry.Amount, neededAmounts);
+                }
             }
         }
 
@@ -277,8 +279,11 @@ public unsafe class PluginWindow : Window
         {
             foreach (var dependency in item.Ingredients)
             {
-                var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependency.Item.ResultAmount);
-                TraverseItems(dependency.Item, totalAmount, neededAmounts);
+                if (dependency.Item is CachedItem dependencyItem)
+                {
+                    var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependencyItem.ResultAmount);
+                    TraverseItems(dependencyItem, totalAmount, neededAmounts);
+                }
             }
         }
 

@@ -39,17 +39,20 @@ public class FilterManager
 
         State.Leves = (State.SortColumnIndex, State.SortDirection) switch
         {
-            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.ClassJobLevel),
-            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.ClassJobLevel),
+            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.LeveId),
+            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.LeveId),
 
-            (1, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.TypeName),
-            (1, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.TypeName),
+            (1, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.ClassJobLevel),
+            (1, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.ClassJobLevel),
 
-            (2, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Name),
-            (2, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Name),
+            (2, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.TypeName),
+            (2, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.TypeName),
 
-            (3, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.LevemeteName),
-            (3, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.LevemeteName),
+            (3, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Name),
+            (3, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Name),
+
+            (4, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.LevemeteName),
+            (4, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.LevemeteName),
 
             _ => State.Leves
         };

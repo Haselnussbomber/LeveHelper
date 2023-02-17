@@ -41,7 +41,7 @@ public unsafe class GameFunctions
     public readonly byte* NumAllowancesPtr = null!;
     public byte NumAllowances => *NumAllowancesPtr;
 
-    private unsafe Span<LeveWork> LeveQuestsSpan
+    public unsafe Span<LeveWork> LeveQuestsSpan
     {
         get
         {
@@ -112,6 +112,36 @@ public unsafe class GameFunctions
         }
 
         return false;
+    }
+
+    public unsafe byte GetLeveSequence(ushort leveId)
+    {
+        var leveQuestsSpan = LeveQuestsSpan;
+        for (var i = 0; i < leveQuestsSpan.Length; i++)
+        {
+            if (leveQuestsSpan[i].LeveId == leveId)
+            {
+                var leveWork = (nint)Unsafe.AsPointer(ref leveQuestsSpan[i]);
+                return *(byte*)(leveWork + 0xA);
+            }
+        }
+
+        return 0;
+    }
+
+    public unsafe byte GetLeveClearClass(ushort leveId)
+    {
+        var leveQuestsSpan = LeveQuestsSpan;
+        for (var i = 0; i < leveQuestsSpan.Length; i++)
+        {
+            if (leveQuestsSpan[i].LeveId == leveId)
+            {
+                var leveWork = (nint)Unsafe.AsPointer(ref leveQuestsSpan[i]);
+                return *(byte*)(leveWork + 0x10);
+            }
+        }
+
+        return 0;
     }
 
     [Signature("66 89 54 24 ?? 66 89 4C 24 ?? 53")]
@@ -219,7 +249,7 @@ public unsafe class GameFunctions
                 .Add(new TextPayload(" ("))
                 .AddUiForeground(549)
                 .AddUiGlow(550)
-                .Add(new TextPayload(item.ItemName))
+                .Add(new TextPayload(item.Name))
                 .AddUiGlowOff()
                 .AddUiForegroundOff()
                 .Add(new TextPayload(")"));
@@ -299,7 +329,7 @@ public unsafe class GameFunctions
                 .Add(new TextPayload(" ("))
                 .AddUiForeground(549)
                 .AddUiGlow(550)
-                .Add(new TextPayload(item.ItemName))
+                .Add(new TextPayload(item.Name))
                 .AddUiGlowOff()
                 .AddUiForegroundOff()
                 .Add(new TextPayload(")"));

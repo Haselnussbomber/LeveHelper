@@ -81,7 +81,7 @@ public class TypeFilter : Filter
 
                     if (type.Icon != 0)
                     {
-                        ImGuiUtils.DrawIcon(type.Icon, 20, 20);
+                        ImGuiUtils.DrawIcon((uint)type.Icon, 20, 20);
                         ImGui.SameLine();
                         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
                         indent = "";
