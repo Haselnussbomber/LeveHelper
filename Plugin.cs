@@ -21,6 +21,8 @@ public class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
+        FFXIVClientStructs.Interop.Resolver.GetInstance.SetupSearchSpace(Service.SigScanner.SearchBase);
+        FFXIVClientStructs.Interop.Resolver.GetInstance.Resolve();
         Service.GameFunctions = new();
 
         Config = Configuration.Load();
