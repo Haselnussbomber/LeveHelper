@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
@@ -26,55 +24,13 @@ public unsafe class GameFunctions
         SignatureHelper.Initialise(this);
     }
 
-    // TODO: remove when client structs is updated
-    [Signature("E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 88 45 80")]
-    public readonly IsLevequestCompletedDelegate IsLevequestCompleted = null!;
-    public delegate bool IsLevequestCompletedDelegate(QuestManager* questManager, ushort id);
-
-    // TODO: remove when client structs is updated
-    [Signature("E8 ?? ?? ?? ?? 41 8D 75 01")]
-    private readonly delegate* unmanaged<long> _getNextAllowancesTimestamp;
-    public DateTime NextAllowances => DateTimeOffset.FromUnixTimeSeconds(_getNextAllowancesTimestamp() * 60).LocalDateTime;
-
-    // TODO: remove when client structs is updated
-    [Signature("88 05 ?? ?? ?? ?? 0F B7 41 06", ScanType = ScanType.StaticAddress)]
-    public readonly byte* NumAllowancesPtr = null!;
-    public byte NumAllowances => *NumAllowancesPtr;
-
-    public unsafe Span<LeveWork> LeveQuestsSpan
-    {
-        get
-        {
-            var ptr = (LeveWork*)((nint)QuestManager.Instance() + 0xC80); // TODO: remove when client structs is updated (offset Patch 6.31)
-            return new Span<LeveWork>(Unsafe.AsPointer(ref ptr[0]), 16);
-            //return QuestManager.Instance()->LeveQuestsSpan;
-        }
-    }
-
-    public int NumActiveLevequests
-    {
-        get
-        {
-            var numActiveLevequests = 0;
-
-            var span = LeveQuestsSpan;
-            for (var i = 0; i < span.Length; i++)
-            {
-                if (span[i].LeveId != 0)
-                    numActiveLevequests++;
-            }
-
-            return numActiveLevequests;
-        }
-    }
-
     public ushort[] ActiveLevequestsIds
     {
         get
         {
             var ids = new List<ushort>();
 
-            var span = LeveQuestsSpan;
+            var span = QuestManager.Instance()->LeveQuestsSpan;
             for (var i = 0; i < span.Length; i++)
             {
                 if (span[i].LeveId != 0)
@@ -91,7 +47,7 @@ public unsafe class GameFunctions
         {
             var ids = new List<CachedLeve>();
 
-            var span = LeveQuestsSpan;
+            var span = QuestManager.Instance()->LeveQuestsSpan;
             for (var i = 0; i < span.Length; i++)
             {
                 if (span[i].LeveId != 0)
@@ -100,48 +56,6 @@ public unsafe class GameFunctions
 
             return ids.ToArray();
         }
-    }
-
-    public bool IsLevequestAccepted(uint leveId)
-    {
-        var span = LeveQuestsSpan;
-        for (var i = 0; i < span.Length; i++)
-        {
-            if (span[i].LeveId == leveId)
-                return true;
-        }
-
-        return false;
-    }
-
-    public unsafe byte GetLeveSequence(ushort leveId)
-    {
-        var leveQuestsSpan = LeveQuestsSpan;
-        for (var i = 0; i < leveQuestsSpan.Length; i++)
-        {
-            if (leveQuestsSpan[i].LeveId == leveId)
-            {
-                var leveWork = (nint)Unsafe.AsPointer(ref leveQuestsSpan[i]);
-                return *(byte*)(leveWork + 0xA);
-            }
-        }
-
-        return 0;
-    }
-
-    public unsafe byte GetLeveClearClass(ushort leveId)
-    {
-        var leveQuestsSpan = LeveQuestsSpan;
-        for (var i = 0; i < leveQuestsSpan.Length; i++)
-        {
-            if (leveQuestsSpan[i].LeveId == leveId)
-            {
-                var leveWork = (nint)Unsafe.AsPointer(ref leveQuestsSpan[i]);
-                return *(byte*)(leveWork + 0x10);
-            }
-        }
-
-        return 0;
     }
 
     [Signature("66 89 54 24 ?? 66 89 4C 24 ?? 53")]
@@ -159,10 +73,6 @@ public unsafe class GameFunctions
     [Signature("E8 ?? ?? ?? ?? 4C 8B 05 ?? ?? ?? ?? 48 8D 8C 24 ?? ?? ?? ?? 48 8B D0 E8 ?? ?? ?? ?? 8B 4E 08")]
     public readonly GetGatheringPointNameDelegate GetGatheringPointName = null!;
     public delegate byte* GetGatheringPointNameDelegate(RaptureTextModule** module, byte gatheringType, byte gatheringPointType);
-
-    [Signature("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 0F B6 93 ?? ?? ?? ?? 48 8B CE")]
-    public readonly AgentFishGuide_OpenForItemIdDelegate AgentFishGuide_OpenForItemId = null!;
-    public delegate byte* AgentFishGuide_OpenForItemIdDelegate(nint agentFishGuide, uint itemId, bool isSpearfishing);
 
     [Signature("E8 ?? ?? ?? ?? 48 8B 74 24 ?? 48 8B 7C 24 ?? 48 83 C4 30 5B C3 48 8B CB")]
     public readonly AgentJournal_OpenForQuestDelegate AgentJournal_OpenForQuest = null!;

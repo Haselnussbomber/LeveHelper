@@ -45,7 +45,7 @@ public class LevemeteFilter : Filter
         ImGui.Text("Levemete:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", Levemetes.ContainsKey(Config.SelectedLevemete) ? Levemetes[Config.SelectedLevemete] : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", Levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All"))
         {
             if (ImGui.Selectable("All##LeveHelper_LevemeteFilter_Combo_0", Config.SelectedLevemete == 0))
             {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>0.1.7</Version>
     <TargetFramework>net7.0-windows</TargetFramework>
@@ -10,50 +10,45 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\</OutputPath>
-    <AllowedReferenceRelatedFileExtensions>.pdb</AllowedReferenceRelatedFileExtensions>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Dalamud>$(AppData)\XIVLauncher\addon\Hooks\dev</Dalamud>
+    <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev</DalamudLibPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IsCI)' == 'true'">
-    <Dalamud>$(HOME)/dalamud</Dalamud>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedAllSources>true</EmbedAllSources>
+    <DalamudLibPath>$(HOME)/dalamud/</DalamudLibPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblySearchPaths>$(AssemblySearchPaths);$(DalamudLibPath);</AssemblySearchPaths>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove=".git*" />
+    <None Remove="deps\**" />
+    <Compile Remove=".git*" />
+    <Compile Remove="deps\**" />
+    <EmbeddedResource Remove=".git*" />
+    <EmbeddedResource Remove="deps\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Dalamud">
-      <HintPath>$(Dalamud)\Dalamud.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Lumina">
-      <HintPath>$(Dalamud)\Lumina.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Lumina.Excel">
-      <HintPath>$(Dalamud)\Lumina.Excel.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="FFXIVClientStructs">
-      <HintPath>$(Dalamud)\FFXIVClientStructs.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="ImGui">
-      <HintPath>$(Dalamud)\ImGui.NET.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="ImGuiScene">
-      <HintPath>$(Dalamud)\ImGuiScene.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(Dalamud)\Newtonsoft.Json.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <Reference Include="Dalamud" Private="false" />
+    <Reference Include="Lumina" Private="false" />
+    <Reference Include="Lumina.Excel" Private="false" />
+    <!-- <Reference Include="FFXIVClientStructs" Private="false" /> -->
+    <Reference Include="FFXIVClientStructs" Private="true" HintPath="$(ProjectDir)\deps\FFXIVClientStructs\bin\$(ConfigurationName)\FFXIVClientStructs.dll" />
+    <Reference Include="ImGui.NET" Private="false" />
+    <Reference Include="ImGuiScene" Private="false" />
+    <Reference Include="Newtonsoft.Json" Private="false" />
   </ItemGroup>
 
   <ItemGroup>

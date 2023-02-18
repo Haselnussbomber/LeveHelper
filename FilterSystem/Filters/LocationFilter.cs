@@ -45,7 +45,7 @@ public class LocationFilter : Filter
         ImGui.Text("Location:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", Locations.ContainsKey(Config.SelectedLocation) ? Locations[Config.SelectedLocation] : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", Locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
         {
             if (ImGui.Selectable("All##LeveHelper_LocationFilter_Combo_0", Config.SelectedLocation == 0))
             {

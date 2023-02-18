@@ -279,8 +279,8 @@ public static class ImGuiUtils
                 {
                     unsafe
                     {
-                        var agent = (nint)AgentModule.Instance()->GetAgentByInternalId(AgentId.FishGuide);
-                        Service.GameFunctions.AgentFishGuide_OpenForItemId(agent, item.ItemId, item.IsSpearfishing);
+                        var agent = (AgentFishGuide*)AgentModule.Instance()->GetAgentByInternalId(AgentId.FishGuide);
+                        agent->OpenForItemId(item.ItemId, item.IsSpearfishing);
                         ImGui.SetWindowFocus(null);
                     }
                 }

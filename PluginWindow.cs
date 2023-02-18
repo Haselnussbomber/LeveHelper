@@ -96,6 +96,8 @@ public unsafe class PluginWindow : Window
 
             UpdateList();
             Plugin.FilterManager.Update();
+
+            // TODO: option to auto-open after accepting a levequest
         }
     }
 
@@ -247,8 +249,8 @@ public unsafe class PluginWindow : Window
             }
 
             Gatherable = nodes
-                .OrderBy(kv => kv.Value) // sort by cost
                 .Where(kv => kv.Key.Item2.Items.Count != 0) // filter starting zone
+                .OrderBy(kv => kv.Value) // sort by cost
                 .Select(kv => kv.Key.Item2)
                 .Distinct()
                 .ToArray();

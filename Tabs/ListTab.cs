@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Filters;
@@ -26,11 +27,12 @@ public class ListTab
         DrawTable();
     }
 
-    private void DrawInfoBar()
+    private unsafe void DrawInfoBar()
     {
         var state = Plugin.FilterManager.State;
+        var questManager = QuestManager.Instance();
 
-        ImGui.Text($"Accepted Leves: {Service.GameFunctions.NumActiveLevequests}/16");
+        ImGui.Text($"Accepted Leves: {questManager->NumAcceptedLeveQuests}/16");
         if (ImGui.GetWindowSize().X > PluginWindow.TextWrapBreakpoint)
         {
             ImGui.SameLine();
@@ -38,12 +40,12 @@ public class ListTab
             ImGui.SameLine();
         }
 
-        var missing = state.NeededAllowances - Service.GameFunctions.NumAllowances;
+        var missing = state.NeededAllowances - questManager->NumLeveAllowances;
         var missingText = missing > 0
             ? $", {missing} missing, {Math.Floor(missing / 6f)} days total"
             : "";
 
-        ImGui.Text($"Allowances: {Service.GameFunctions.NumAllowances}/100 (need {state.NeededAllowances}{missingText}, next 3 in {Service.GameFunctions.NextAllowances - DateTime.Now:hh':'mm':'ss})");
+        ImGui.Text($"Allowances: {questManager->NumLeveAllowances}/100 (need {state.NeededAllowances}{missingText}, next 3 in {QuestManager.GetNextLeveAllowancesDateTime() - DateTime.Now:hh':'mm':'ss})");
 
         if (state.NumTotalLeves > 0)
         {

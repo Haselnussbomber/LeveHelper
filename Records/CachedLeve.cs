@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Lumina.Excel.GeneratedSheets;
 
@@ -32,6 +33,9 @@ public record CachedLeve
     private int? leveVfxFrameIcon = null;
 
     public uint LeveId { get; private set; }
+
+    public unsafe LeveWork* LeveWork
+        => QuestManager.Instance()->GetLeveQuestById((ushort)LeveId);
 
     public Leve? Leve
         => leve ??= Service.Data.GetExcelSheet<Leve>()?.GetRow(LeveId);
@@ -78,19 +82,19 @@ public record CachedLeve
         => Leve != null && (Leve.RowId == 546 || Leve.RowId == 556 || Leve.RowId == 566);
 
     public unsafe bool IsComplete
-        => Service.GameFunctions.IsLevequestCompleted(QuestManager.Instance(), (ushort)LeveId); // TODO: remove when client structs is updated
+        => QuestManager.Instance()->IsLevequestComplete((ushort)LeveId);
 
-    public bool IsAccepted
-        => Service.GameFunctions.IsLevequestAccepted(LeveId);
+    public unsafe bool IsAccepted
+        => LeveWork != null;
 
     public unsafe bool IsReadyForTurnIn
-        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 255;
+        => IsAccepted && LeveWork->Sequence == 255;
 
     public unsafe bool IsStarted
-        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 1 && Service.GameFunctions.GetLeveClearClass((ushort)LeveId) != 0;
+        => IsAccepted && LeveWork->Sequence == 1 && LeveWork->ClearClass != 0;
 
     public unsafe bool IsFailed
-        => IsAccepted && Service.GameFunctions.GetLeveSequence((ushort)LeveId) == 3;
+        => IsAccepted && LeveWork->Sequence == 3;
 
     public bool IsCraftLeve
         => LeveAssignmentType?.RowId is >= 5 and <= 12;
