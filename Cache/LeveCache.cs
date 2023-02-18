@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Lumina.Excel.GeneratedSheets;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
@@ -9,10 +9,10 @@ public static class LeveCache
 
     public static CachedLeve Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var leve))
-            Cache.Add(id, leve = new(id));
+        if (!Cache.TryGetValue(id, out var cachedLeve))
+            Cache.Add(id, cachedLeve = new(id));
 
-        return leve;
+        return cachedLeve;
     }
 
     public static CachedLeve Get(Leve leve)

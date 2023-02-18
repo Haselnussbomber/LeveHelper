@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
@@ -8,9 +9,17 @@ public static class LeveAssignmentTypeCache
 
     public static CachedLeveAssignmentType Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var item))
-            Cache.Add(id, item = new(id));
+        if (!Cache.TryGetValue(id, out var cachedLeveAssignmentType))
+            Cache.Add(id, cachedLeveAssignmentType = new(id));
 
-        return item;
+        return cachedLeveAssignmentType;
+    }
+
+    public static CachedLeveAssignmentType Get(LeveAssignmentType leveAssignmentType)
+    {
+        if (!Cache.TryGetValue(leveAssignmentType.RowId, out var cachedLeveAssignmentType))
+            Cache.Add(leveAssignmentType.RowId, cachedLeveAssignmentType = new(leveAssignmentType));
+
+        return cachedLeveAssignmentType;
     }
 }

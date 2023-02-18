@@ -11,14 +11,14 @@ public static class GatheringPointCache
 
     public static CachedGatheringPoint Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var item))
-            Cache.Add(id, item = new(id));
+        if (!Cache.TryGetValue(id, out var cachedGatheringPoint))
+            Cache.Add(id, cachedGatheringPoint = new(id));
 
-        return item;
+        return cachedGatheringPoint;
     }
 
     public static CachedGatheringPoint[]? FindByItemId(uint id)
-        => CacheByItemId.TryGetValue(id, out var item) ? item : null;
+        => CacheByItemId.TryGetValue(id, out var cachedGatheringPoint) ? cachedGatheringPoint : null;
 
     public static void Load()
     {

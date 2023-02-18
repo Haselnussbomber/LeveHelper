@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.GeneratedSheets;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
@@ -41,10 +41,10 @@ public record CachedLeve
         => leve ??= Service.Data.GetExcelSheet<Leve>()?.GetRow(LeveId);
 
     public string Name
-        => name ??= Leve?.Name.ClearString() ?? $"<{LeveId}>";
+        => name ??= Leve?.Name?.ClearString() ?? $"<{LeveId}>";
 
     public string NameEn
-        => nameEn ??= Service.Data.GetExcelSheet<Leve>(Dalamud.ClientLanguage.English)?.GetRow(LeveId)?.Name.ClearString() ?? $"<{LeveId}>";
+        => nameEn ??= Service.Data.GetExcelSheet<Leve>(Dalamud.ClientLanguage.English)?.GetRow(LeveId)?.Name?.ClearString() ?? $"<{LeveId}>";
 
     public ushort ClassJobLevel
         => Leve?.ClassJobLevel ?? 0;
@@ -64,7 +64,7 @@ public record CachedLeve
     }
 
     public CachedLeveAssignmentType? LeveAssignmentType
-        => leveAssignmentType ??= leve != null ? LeveAssignmentTypeCache.Get((uint)Leve!.Unknown4) : null; // leve.LeveAssignmentType seems to have moved
+        => leveAssignmentType ??= leve != null && Leve!.LeveAssignmentType.Value != null ? LeveAssignmentTypeCache.Get(Leve!.LeveAssignmentType.Value) : null;
 
     public int TypeIcon
         => LeveAssignmentType?.Icon ?? 0;
@@ -111,7 +111,7 @@ public record CachedLeve
 
             if (IsCraftLeve)
             {
-                var craftLeve = Service.Data.GetExcelSheet<CraftLeve>()?.GetRow((uint)Leve.DataId);
+                var craftLeve = Service.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLeve>()?.GetRow((uint)Leve.DataId);
                 if (craftLeve != null)
                 {
                     return requiredItems = craftLeve.UnkData3

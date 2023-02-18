@@ -8,9 +8,9 @@ public static class ItemCache
 
     public static CachedItem Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var item))
-            Cache.Add(id, item = new(id));
+        if (!Cache.TryGetValue(id, out var cachedItem))
+            Cache.Add(id, cachedItem = new(id));
 
-        return item;
+        return cachedItem;
     }
 }

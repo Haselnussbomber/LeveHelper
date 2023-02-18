@@ -137,7 +137,7 @@ public class ListTab
 
                     if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                     {
-                        Plugin.FilterManager.SetValue<TypeFilter>((uint)(item.Leve?.Unknown4 ?? 0));
+                        Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType?.RowId ?? 0u);
                     }
                 }
 

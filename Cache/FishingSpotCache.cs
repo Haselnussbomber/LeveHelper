@@ -11,24 +11,24 @@ public static class FishingSpotCache
 
     public static CachedFishingSpot Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var item))
-            Cache.Add(id, item = new(id));
+        if (!Cache.TryGetValue(id, out var cachedFishingSpot))
+            Cache.Add(id, cachedFishingSpot = new(id));
 
-        return item;
+        return cachedFishingSpot;
     }
 
     public static CachedFishingSpot[]? FindByItemId(uint id)
     {
-        if (!CacheByItemId.TryGetValue(id, out var item))
+        if (!CacheByItemId.TryGetValue(id, out var cachedFishingSpot))
         {
-            item = Service.Data.GetExcelSheet<FishingSpot>()?
+            cachedFishingSpot = Service.Data.GetExcelSheet<FishingSpot>()?
                 .Where(row => row.TerritoryType.Row != 0 && row.Item.Any(i => i.Row == id))
                 .Select(row => Get(row.RowId))
                 .ToArray();
 
-            CacheByItemId.Add(id, item);
+            CacheByItemId.Add(id, cachedFishingSpot);
         }
 
-        return item;
+        return cachedFishingSpot;
     }
 }

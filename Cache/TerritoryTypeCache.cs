@@ -8,9 +8,9 @@ public static class TerritoryTypeCache
 
     public static CachedTerritoryType Get(uint id)
     {
-        if (!Cache.TryGetValue(id, out var item))
-            Cache.Add(id, item = new(id));
+        if (!Cache.TryGetValue(id, out var cachedTerritoryType))
+            Cache.Add(id, cachedTerritoryType = new(id));
 
-        return item;
+        return cachedTerritoryType;
     }
 }

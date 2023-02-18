@@ -162,7 +162,7 @@ public class TypeFilter : Filter
         if (Config.SelectedType == 0)
             return false;
 
-        state.Leves = state.Leves.Where(item => item.Leve?.Unknown4 == Config.SelectedType);
+        state.Leves = state.Leves.Where(item => item.LeveAssignmentType?.RowId == Config.SelectedType);
 
         return true;
     }

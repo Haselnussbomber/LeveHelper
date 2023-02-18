@@ -9,6 +9,12 @@ public record CachedLeveAssignmentType
         RowId = rowId;
     }
 
+    public CachedLeveAssignmentType(LeveAssignmentType leveAssignmentType)
+    {
+        RowId = leveAssignmentType.RowId;
+        this.leveAssignmentType = leveAssignmentType;
+    }
+
     private LeveAssignmentType? leveAssignmentType { get; set; } = null;
     private string? name { get; set; } = null;
     private int? icon { get; set; } = null;
