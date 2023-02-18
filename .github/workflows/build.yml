@@ -38,6 +38,12 @@ jobs:
             curl -o latest.zip https://goatcorp.github.io/dalamud-distrib/stg/latest.zip
             unzip latest.zip -d ~/dalamud/
 
+      - name: Build Client Structs
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          cd deps/FFXIVClientStructs/FFXIVClientStructs
+          dotnet build -c Release -p:IsCI=true -clp:NoSummary
+
       - name: Build
         run: dotnet build -c Release -p:IsCI=true -clp:NoSummary
 
