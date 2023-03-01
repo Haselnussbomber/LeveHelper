@@ -13,7 +13,6 @@ public class Service
 {
     public static GameFunctions GameFunctions { get; internal set; } = null!;
     [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
-    [PluginService] public static SigScanner SigScanner { get; private set; } = null!;
     [PluginService] public static ChatGui Chat { get; private set; } = null!;
     [PluginService] public static ClientState ClientState { get; private set; } = null!;
     [PluginService] public static CommandManager Commands { get; private set; } = null!;

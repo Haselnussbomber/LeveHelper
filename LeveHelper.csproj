@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>0.1.7</Version>
+    <VersionPrefix>0.2.0</VersionPrefix>
     <TargetFramework>net7.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
@@ -16,7 +16,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev</DalamudLibPath>
+    <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_REF)' == 'refs/tags/prerelease'">
+    <VersionSuffix>prerelease</VersionSuffix>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -44,8 +48,7 @@
     <Reference Include="Dalamud" Private="false" />
     <Reference Include="Lumina" Private="false" />
     <Reference Include="Lumina.Excel" Private="false" />
-    <!-- <Reference Include="FFXIVClientStructs" Private="false" /> -->
-    <Reference Include="FFXIVClientStructs" Private="true" HintPath="$(ProjectDir)\deps\FFXIVClientStructs\bin\$(ConfigurationName)\FFXIVClientStructs.dll" />
+    <Reference Include="FFXIVClientStructs" Private="false" />
     <Reference Include="ImGui.NET" Private="false" />
     <Reference Include="ImGuiScene" Private="false" />
     <Reference Include="Newtonsoft.Json" Private="false" />
