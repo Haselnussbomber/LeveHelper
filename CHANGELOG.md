@@ -1,20 +1,48 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0-prerelease]
 
-- **Added:** Tabs!
-  - **Levequest List:** This was the main plugin window listing all levequests in the game.
-  - *(new)* **Queue:** This tab lists items you need to gather, fish and/or craft for your currently accepted leves.
-    - Gather: Gatherables grouped by zone and sorted by teleport cost.
-    - Other: These items may be drops or being sold by vendors. For now, check on GarlandTools DB.
-    - Craft: Items you need to craft. They are sorted by dependency, so you can easily work your way down the list.
-  - *(new)* **Recipe Tree:** This tab shows the recipe tree for all items required by your currently accepted craft leves.
-  - **Configuration:** Previously in its own window, the configuration now moved into its own tab.
-  - By the way, you can reorder the tabs by dragging them.
-- **Added:** Filters are now collapsible.
+This is the biggest update to LeveHelper yet, featuring an all-new queue and recipe tree for crafting/gathering leves!
+
+I'm slowly testing things out, and the UI is also a work in progress. Please bear with me. :smile:
+
+The LeveHelper window is now a bit smaller due to removed columns, so you might have to resize it. It's also now separated into tabs:
+
+### Levequest List
+
+This was and still is the main plugin window listing all levequests in the game.
+
+- **Added:** Filters can now be collapsed to save screen real estate.
 - **Added:** Clicking on an accepted levequest will open the quest journal.
+- **Added:** Accepted crafting/gathering levequests will list their required items underneath the name.
+- **Changed:** Tooltip and name colors have been adjusted.
+  - Incomplete levequests are still displayed in red, completed in green.
+  - Accepted levequests are now displayed in yellow.
+  - Levequests ready for turn in are now displayed in a yellowish-green as a middle ground between accepted and completed.
+  - Failed levequests are now displayed in orange as a middle ground between incomplete and accepted.
+  - Unavailable levequests (which are based on your character's starting city) are now grayed out.
 - **Changed:** Removed allowance cost column as it only affects Grand Company Leves which already have an indicator in their name.
 - **Fixed:** The allowance costs of accepted levequests will no longer be included in the needed allowances calculation.
+
+### Queue
+
+This tab lists items you need to gather, fish and/or craft or gather for your currently accepted leves.
+
+- **Gather:** Gatherables grouped by zone and sorted by teleport cost.
+- **Other:** These items may be drops or being sold by vendors. For now, check on GarlandTools DB.
+- **Craft:** Items you need to craft. They are sorted by dependency, so you can easily work your way down the list.
+
+### Recipe Tree
+
+This tab shows the recipe tree for all items required by your currently accepted craft leves.
+
+### Configuration
+
+Previously in its own window, the configuration now moved into its own tab.
+
+---
+
+And yes, I know that Levemete is not the issuer. There is no in-game data for levequest issuers. I might add those manually later.
 
 ## [0.1.7] (2023-02-03)
 
@@ -85,6 +113,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...HEAD
+[0.2.0-prerelease]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...prerelease
 [0.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.4...v0.1.5
