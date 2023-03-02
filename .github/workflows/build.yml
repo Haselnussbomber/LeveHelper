@@ -67,7 +67,7 @@ jobs:
         uses: kzrnm/get-net-sdk-project-versions-action@v1
         id: get-version
         with:
-          proj-path: HaselTweaks.csproj
+          proj-path: ${{ env.plugin_name }}.csproj
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v3
