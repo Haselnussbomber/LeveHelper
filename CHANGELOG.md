@@ -26,11 +26,11 @@ This was and still is the main plugin window listing all levequests in the game.
 
 ### Queue
 
-This tab lists items you need to gather, fish and/or craft or gather for your currently accepted leves.
+This tab lists items you need to gather, fish and/or craft for your currently accepted leves.
 
-- **Gather:** Gatherables grouped by zone and sorted by teleport cost.
+- **Gather:** Gatherables are grouped by zone and sorted by teleport cost.
 - **Other:** These items may be drops or being sold by vendors. For now, check on GarlandTools DB.
-- **Craft:** Items you need to craft. They are sorted by dependency, so you can easily work your way down the list.
+- **Craft:** Items you need to craft are sorted by dependency, so you can easily work your way down the list.
 
 ### Recipe Tree
 

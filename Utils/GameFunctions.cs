@@ -78,21 +78,13 @@ public unsafe class GameFunctions
     public readonly AgentJournal_OpenForQuestDelegate AgentJournal_OpenForQuest = null!;
     public delegate byte* AgentJournal_OpenForQuestDelegate(nint agentJournal, int id, int type, ushort a4 = 0, bool a5 = true); // type: 1 = Quest, 2 = Levequest
 
-    [Signature("E8 ?? ?? ?? ?? EB 1D 83 F8 0D")]
-    private readonly ItemFinderModuleSearchForItemDelegate ItemFinderModule_SearchForItem = null!;
-    private delegate void* ItemFinderModuleSearchForItemDelegate(void* module, uint itemId, bool includeHQ = true);
-    public void SearchForItem(uint itemId) => ItemFinderModule_SearchForItem(Framework.Instance()->GetUiModule()->GetItemFinderModule(), itemId);
-
-    [Signature("E9 ?? ?? ?? ?? 48 8D 47 30")]
-    private readonly FormatObjectStringDelegate FormatObjectString = null!;
-    private delegate IntPtr FormatObjectStringDelegate(int mode, uint id, uint idConversionMode, uint a4);
-
     private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
     public string GetENpcResidentName(uint npcId)
     {
         if (!ENpcResidentNameCache.TryGetValue(npcId, out var name))
         {
-            name = MemoryHelper.ReadSeStringNullTerminated(FormatObjectString(0, npcId, 3, 1)).ToString();
+            var textPtr = RaptureTextModule.Instance()->FormatAddonText2(2025, (int)npcId, 1);
+            name = MemoryHelper.ReadSeStringNullTerminated((nint)textPtr).ToString();
             ENpcResidentNameCache.Add(npcId, name);
         }
 

@@ -7,13 +7,14 @@ using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using ImGuiScene;
 using Lumina.Data.Files;
 
 namespace LeveHelper;
 
-public static class ImGuiUtils
+public static unsafe class ImGuiUtils
 {
     public static Vector4 ColorTransparent = new(0f, 0f, 0f, 0f);
 
@@ -297,7 +298,7 @@ public static class ImGuiUtils
 
             if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
             {
-                Service.GameFunctions.SearchForItem(item.ItemId);
+                ItemFinderModule.Instance()->SearchForItem(item.ItemId);
                 ImGui.SetWindowFocus(null);
             }
             if (ImGui.IsItemHovered())

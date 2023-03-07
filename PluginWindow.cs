@@ -54,7 +54,7 @@ public unsafe class PluginWindow : Window
 
     public override void OnOpen()
     {
-        Plugin.StartTown = (byte)(PlayerState.Instance()->StartTown - 1);
+        Plugin.StartTown = PlayerState.Instance()->StartTown;
 
         CatchObserver.OnOpen += Refresh;
         SynthesisObserver.OnClose += Refresh;
