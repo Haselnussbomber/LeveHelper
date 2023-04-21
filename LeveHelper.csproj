@@ -19,10 +19,6 @@
     <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_REF)' == 'refs/tags/prerelease'">
-    <VersionSuffix>prerelease2</VersionSuffix>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <Deterministic>true</Deterministic>
