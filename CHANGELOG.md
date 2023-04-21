@@ -1,10 +1,13 @@
 # Changelog
 
-## [0.2.0-prerelease]
+## [2.0.0] (2023-04-21)
+
+I haven't done Levequests in a while, which also means I haven't been working on this plugin. This was the last progress I made roughly a month ago.
+I'm releasing this now, just so it doesn't go to waste. Hopefully it works correctly and isn't very buggy. :pray:
+
+---
 
 This is the biggest update to LeveHelper yet, featuring an all-new queue and recipe tree for crafting/gathering leves!
-
-I'm slowly testing things out, and the UI is also a work in progress. Please bear with me. :smile:
 
 The LeveHelper window is now a bit smaller due to removed columns, so you might have to resize it. It's also now separated into tabs:
 
@@ -39,10 +42,6 @@ This tab shows the recipe tree for all items required by your currently accepted
 ### Configuration
 
 Previously in its own window, the configuration now moved into its own tab.
-
----
-
-And yes, I know that Levemete is not the issuer. There is no in-game data for levequest issuers. I might add those manually later.
 
 ## [0.1.7] (2023-02-03)
 
@@ -113,7 +112,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...HEAD
-[0.2.0-prerelease]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...prerelease
+[2.0.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...v2.0.0
 [0.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.4...v0.1.5
