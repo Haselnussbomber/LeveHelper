@@ -86,7 +86,7 @@ public class ListTab
         ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Type", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-        ImGui.TableSetupColumn("Levemete", ImGuiTableColumnFlags.WidthFixed, 100);
+        ImGui.TableSetupColumn("Levemete", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
 

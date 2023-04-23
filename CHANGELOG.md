@@ -5,6 +5,7 @@
 ### Levequest List
 
 - **Fixed:** When displaying items for an accepted levequest, the list could be displayed incorrectly.
+- **Fixed:** The width of the levemete column is no longer fixed to 100px in order to display the whole name, if the window is big enough.
 
 ## [2.0.0] (2023-04-21)
 
