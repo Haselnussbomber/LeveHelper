@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.2] (2023-04-23)
 
 - **Fixed:** To prevent the tab order from being reset,the "Queue" and "Recipe Tree" tabs are now always displayed.
 
@@ -123,6 +123,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...HEAD
+[2.0.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...v2.0.0
 [0.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.6...v0.1.7
