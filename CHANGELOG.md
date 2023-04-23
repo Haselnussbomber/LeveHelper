@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Fixed:** To prevent the tab order from being reset,the "Queue" and "Recipe Tree" tabs are now always displayed.
+
 ## [2.0.1] (2023-04-23)
 
 ### Levequest List

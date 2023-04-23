@@ -121,23 +121,20 @@ public unsafe class PluginWindow : Window
                 ImGui.EndTabItem();
             }
 
-            if (Plugin.PluginWindow.RequiredItems.Any()) // TODO: is this fine or will this mess with the tabs?!?!?
+            if (ImGui.BeginTabItem("Queue"))
             {
-                if (ImGui.BeginTabItem("Queue"))
-                {
-                    RespectCloseHotkey = false;
+                RespectCloseHotkey = false;
 
-                    QueueTab.Draw();
-                    ImGui.EndTabItem();
-                }
+                QueueTab.Draw();
+                ImGui.EndTabItem();
+            }
 
-                if (ImGui.BeginTabItem("Recipe Tree"))
-                {
-                    RespectCloseHotkey = true;
+            if (ImGui.BeginTabItem("Recipe Tree"))
+            {
+                RespectCloseHotkey = true;
 
-                    RecipeTreeTab.Draw();
-                    ImGui.EndTabItem();
-                }
+                RecipeTreeTab.Draw();
+                ImGui.EndTabItem();
             }
 
             if (ImGui.BeginTabItem("Configuration"))
