@@ -102,233 +102,221 @@ public class ListTab
             }
         }
 
-        ImGuiListClipper clipperData;
-        ImGuiListClipperPtr clipper;
-        unsafe { clipper = new ImGuiListClipperPtr(&clipperData); }
-        clipper.Begin(state.LevesArray.Length);
-
-        while (clipper.Step())
+        foreach (var item in state.LevesArray)
         {
-            for (var i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+            ImGui.TableNextRow();
+
+            // Id
+            ImGui.TableNextColumn();
+            ImGui.Text(item.LeveId.ToString());
+
+            // Level
+            ImGui.TableNextColumn();
+            ImGui.Text(item.ClassJobLevel.ToString());
+
+            // Type
+            ImGui.TableNextColumn();
+            if (item.TypeIcon != 0)
             {
-                var item = state.LevesArray[i];
-
-                ImGui.TableNextRow();
-
-                // Id
-                ImGui.TableNextColumn();
-                ImGui.Text(item.LeveId.ToString());
-
-                // Level
-                ImGui.TableNextColumn();
-                ImGui.Text(item.ClassJobLevel.ToString());
-
-                // Type
-                ImGui.TableNextColumn();
-                if (item.TypeIcon != 0)
-                {
-                    ImGuiUtils.DrawIcon((uint)item.TypeIcon, 20, 20);
-
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGui.SetTooltip(item.TypeName + "\nRight Click: Filter by Type");
-                    }
-
-                    if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-                    {
-                        Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType?.RowId ?? 0u);
-                    }
-                }
-
-                // Name
-                ImGui.TableNextColumn();
-
-                var color = ImGuiUtils.ColorRed;
-
-                if (item.IsReadyForTurnIn)
-                    color = ImGuiUtils.ColorYellowGreen;
-                else if (item.IsFailed)
-                    color = ImGuiUtils.ColorFreesia;
-                else if (item.IsAccepted)
-                    color = ImGuiUtils.ColorYellow;
-                else if (item.IsComplete)
-                    color = ImGuiUtils.ColorGreen;
-                else if (item.TownLocked && item.TownId != Plugin.StartTown)
-                    color = ImGuiUtils.ColorGrey;
-
-                ImGui.PushStyleColor(ImGuiCol.Text, color);
-                ImGui.Selectable(item.Name);
-                ImGui.PopStyleColor();
-
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-
-                    if (!item.TownLocked || (item.TownLocked && item.TownId == Plugin.StartTown))
-                    {
-                        if (item.IsReadyForTurnIn)
-                        {
-                            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                            ImGuiUtils.DrawIcon(71045, 20, 20);
-                            ImGuiUtils.SameLineNoSpace();
-                            //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
-                            ImGui.Text("Ready for turn in");
-                        }
-                        else if (item.IsStarted)
-                        {
-                            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                            ImGuiUtils.DrawIcon(71041, 20, 20);
-                            ImGuiUtils.SameLineNoSpace();
-                            //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
-                            ImGui.Text("Started");
-                        }
-                        else if (item.IsFailed)
-                        {
-                            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                            ImGuiUtils.DrawIcon(60861, 20, 20);
-                            ImGuiUtils.SameLineNoSpace();
-                            //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, ImGuiUtils.ColorFreesia);
-                            ImGui.Text("Failed");
-                        }
-                        else if (item.IsAccepted)
-                        {
-                            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                            ImGuiUtils.DrawIcon(71041, 20, 20);
-                            ImGuiUtils.SameLineNoSpace();
-                            //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
-                            ImGui.Text("Accepted");
-                        }
-                        else if (item.IsComplete)
-                        {
-                            ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorGreen);
-                            ImGui.Text("Complete");
-                        }
-
-                        else
-                        {
-                            ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Times, ImGuiUtils.ColorRed);
-                            ImGui.Text("Incomplete");
-                        }
-                    }
-
-                    if (item.TownLocked)
-                    {
-                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
-                        ImGui.Text($"Only available to characters that started in {item.TownName}.");
-                    }
-
-                    /*
-                    {
-                        var startPos = ImGui.GetCursorPos();
-                        ImGuiUtils.DrawIcon(item.LeveVfxIcon, 160, 256);
-                        ImGui.SetCursorPos(startPos);
-                        ImGuiUtils.DrawIcon(item.LeveVfxFrameIcon, 160, 256);
-                    }
-                    */
-
-                    ImGui.EndTooltip();
-                }
-
-                if (item.IsAccepted && ImGui.IsItemClicked())
-                {
-                    unsafe
-                    {
-                        var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                        Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
-                        ImGui.SetWindowFocus(null);
-                    }
-                }
-
-                if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.LeveId}_Tooltip"))
-                {
-                    var showSeparator = false;
-
-                    if (item.IsAccepted)
-                    {
-                        if (ImGui.Selectable("Open in Journal"))
-                        {
-                            unsafe
-                            {
-                                var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                                Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
-                                ImGui.SetWindowFocus(null);
-                            }
-                        }
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        }
-
-                        showSeparator = true;
-                    }
-
-                    if (showSeparator)
-                        ImGui.Separator();
-
-                    if (ImGui.Selectable("Open on Garland Tools"))
-                    {
-                        Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}"));
-                    }
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGui.BeginTooltip();
-                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
-                        ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.LeveId}");
-                        ImGui.EndTooltip();
-                    }
-                    /* crashes the game?!
-                    if (ImGui.Selectable("Open on Final Fantasy XIV A Realm Reborn Wiki"))
-                    {
-                        Task.Run(() => Util.OpenLink($"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}"));
-                    }
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGui.BeginTooltip();
-                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
-                        ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
-                        ImGui.EndTooltip();
-                    }
-                    */
-                    ImGui.EndPopup();
-                }
-
-                if (item.IsAccepted && item.RequiredItems != null)
-                {
-                    foreach (var entry in item.RequiredItems)
-                    {
-                        if (entry.Item is CachedItem reqItem)
-                        {
-                            ImGuiUtils.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.LeveId}_RequiredItems_{reqItem.ItemId}");
-                        }
-                    }
-                }
-
-                // Levemete
-                ImGui.TableNextColumn();
-                ImGui.Text(item.LevemeteName);
+                ImGuiUtils.DrawIcon((uint)item.TypeIcon, 20, 20);
 
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    ImGui.SetTooltip("Left Click: Open Map\nRight Click: Filter by Levemate");
-                }
-
-                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                {
-                    item.Leve?.LevelLevemete.Value?.OpenMapLocation();
+                    ImGui.SetTooltip(item.TypeName + "\nRight Click: Filter by Type");
                 }
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    Plugin.FilterManager.SetValue<LevemeteFilter>(item.Leve?.LevelLevemete.Value?.Object ?? 0);
+                    Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType?.RowId ?? 0u);
                 }
             }
-        }
 
-        clipper.End();
+            // Name
+            ImGui.TableNextColumn();
+
+            var color = ImGuiUtils.ColorRed;
+
+            if (item.IsReadyForTurnIn)
+                color = ImGuiUtils.ColorYellowGreen;
+            else if (item.IsFailed)
+                color = ImGuiUtils.ColorFreesia;
+            else if (item.IsAccepted)
+                color = ImGuiUtils.ColorYellow;
+            else if (item.IsComplete)
+                color = ImGuiUtils.ColorGreen;
+            else if (item.TownLocked && item.TownId != Plugin.StartTown)
+                color = ImGuiUtils.ColorGrey;
+
+            ImGui.PushStyleColor(ImGuiCol.Text, color);
+            ImGui.Selectable(item.Name);
+            ImGui.PopStyleColor();
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.BeginTooltip();
+
+                if (!item.TownLocked || (item.TownLocked && item.TownId == Plugin.StartTown))
+                {
+                    if (item.IsReadyForTurnIn)
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGuiUtils.DrawIcon(71045, 20, 20);
+                        ImGuiUtils.SameLineNoSpace();
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
+                        ImGui.Text("Ready for turn in");
+                    }
+                    else if (item.IsStarted)
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGuiUtils.DrawIcon(71041, 20, 20);
+                        ImGuiUtils.SameLineNoSpace();
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
+                        ImGui.Text("Started");
+                    }
+                    else if (item.IsFailed)
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGuiUtils.DrawIcon(60861, 20, 20);
+                        ImGuiUtils.SameLineNoSpace();
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, ImGuiUtils.ColorFreesia);
+                        ImGui.Text("Failed");
+                    }
+                    else if (item.IsAccepted)
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGuiUtils.DrawIcon(71041, 20, 20);
+                        ImGuiUtils.SameLineNoSpace();
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                        ImGui.Text("Accepted");
+                    }
+                    else if (item.IsComplete)
+                    {
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorGreen);
+                        ImGui.Text("Complete");
+                    }
+
+                    else
+                    {
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Times, ImGuiUtils.ColorRed);
+                        ImGui.Text("Incomplete");
+                    }
+                }
+
+                if (item.TownLocked)
+                {
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                    ImGui.Text($"Only available to characters that started in {item.TownName}.");
+                }
+
+                /*
+                {
+                    var startPos = ImGui.GetCursorPos();
+                    ImGuiUtils.DrawIcon(item.LeveVfxIcon, 160, 256);
+                    ImGui.SetCursorPos(startPos);
+                    ImGuiUtils.DrawIcon(item.LeveVfxFrameIcon, 160, 256);
+                }
+                */
+
+                ImGui.EndTooltip();
+            }
+
+            if (item.IsAccepted && ImGui.IsItemClicked())
+            {
+                unsafe
+                {
+                    var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
+                    Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                    ImGui.SetWindowFocus(null);
+                }
+            }
+
+            if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.LeveId}_Tooltip"))
+            {
+                var showSeparator = false;
+
+                if (item.IsAccepted)
+                {
+                    if (ImGui.Selectable("Open in Journal"))
+                    {
+                        unsafe
+                        {
+                            var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
+                            Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                            ImGui.SetWindowFocus(null);
+                        }
+                    }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    }
+
+                    showSeparator = true;
+                }
+
+                if (showSeparator)
+                    ImGui.Separator();
+
+                if (ImGui.Selectable("Open on Garland Tools"))
+                {
+                    Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}"));
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.BeginTooltip();
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
+                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.LeveId}");
+                    ImGui.EndTooltip();
+                }
+                /* crashes the game?!
+                if (ImGui.Selectable("Open on Final Fantasy XIV A Realm Reborn Wiki"))
+                {
+                    Task.Run(() => Util.OpenLink($"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}"));
+                }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.BeginTooltip();
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
+                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
+                    ImGui.EndTooltip();
+                }
+                */
+                ImGui.EndPopup();
+            }
+
+            if (/*item.IsAccepted && */item.RequiredItems != null)
+            {
+                foreach (var entry in item.RequiredItems)
+                {
+                    if (entry.Item is CachedItem reqItem)
+                    {
+                        ImGuiUtils.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.LeveId}_RequiredItems_{reqItem.ItemId}");
+                    }
+                }
+            }
+
+            // Levemete
+            ImGui.TableNextColumn();
+            ImGui.Text(item.LevemeteName);
+
+            if (ImGui.IsItemHovered())
+            {
+                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                ImGui.SetTooltip("Left Click: Open Map\nRight Click: Filter by Levemate");
+            }
+
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+            {
+                item.Leve?.LevelLevemete.Value?.OpenMapLocation();
+            }
+
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+            {
+                Plugin.FilterManager.SetValue<LevemeteFilter>(item.Leve?.LevelLevemete.Value?.Object ?? 0);
+            }
+        }
 
         ImGui.EndTable(); // LeveHelper_TableV2
         ImGui.EndChild(); // LeveHelper_TableWrapper

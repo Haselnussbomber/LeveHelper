@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Levequest List
+
+- **Fixed:** When displaying items for an accepted levequest, the list could be displayed incorrectly.
+
 ## [2.0.0] (2023-04-21)
 
 I haven't done Levequests in a while, which also means I haven't been working on this plugin. This was the last progress I made roughly a month ago.
