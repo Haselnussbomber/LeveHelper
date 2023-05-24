@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
-using LeveHelper.Sheets;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
