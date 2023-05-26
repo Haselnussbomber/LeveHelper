@@ -8,7 +8,6 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -112,7 +111,7 @@ public unsafe class GameFunctions
         if (gatheringType == null)
             return false;
 
-        var raptureTextModule = Framework.Instance()->GetUiModule()->GetRaptureTextModule();
+        var raptureTextModule = RaptureTextModule.Instance();
 
         var levelText = gatheringPointBase.GatheringLevel == 1
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
@@ -132,7 +131,7 @@ public unsafe class GameFunctions
             ? gatheringType.IconMain
             : gatheringType.IconOff;
 
-        var agentMap = Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
+        var agentMap = AgentMap.Instance();
         agentMap->TempMapMarkerCount = 0;
         agentMap->AddGatheringTempMarker(
             4u,
@@ -201,7 +200,7 @@ public unsafe class GameFunctions
         var y = convert(fishingSpot.Z, scale);
         var radius = fishingSpot.Radius / 7 / (scale / 100); // don't ask me why this works
 
-        var raptureTextModule = Framework.Instance()->GetUiModule()->GetRaptureTextModule();
+        var raptureTextModule = RaptureTextModule.Instance();
 
         var levelText = gatheringItemLevel == 0
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
@@ -212,7 +211,7 @@ public unsafe class GameFunctions
 
         var iconId = fishingSpot.Rare ? 60466u : 60465u;
 
-        var agentMap = Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentMap();
+        var agentMap = AgentMap.Instance();
         agentMap->TempMapMarkerCount = 0;
         agentMap->AddGatheringTempMarker(
             4u,
@@ -254,9 +253,10 @@ public unsafe class GameFunctions
         return true;
     }
 
-    public static bool OpenMapWithMapLink(Level level) => Service.GameGui.OpenMapWithMapLink(GetMapLink(level));
-    public static bool OpenMapWithMapLink(TerritoryType territoryType, float x, float y) =>
-        Service.GameGui.OpenMapWithMapLink(new MapLinkPayload(territoryType.RowId, territoryType.Map.Row, x, y, 0f));
+    public static bool OpenMapWithMapLink(Level level)
+        => Service.GameGui.OpenMapWithMapLink(GetMapLink(level));
+    public static bool OpenMapWithMapLink(TerritoryType territoryType, float x, float y)
+        => Service.GameGui.OpenMapWithMapLink(new MapLinkPayload(territoryType.RowId, territoryType.Map.Row, x, y, 0f));
 
     private static MapLinkPayload GetMapLink(Level level)
     {

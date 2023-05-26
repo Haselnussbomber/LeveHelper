@@ -170,8 +170,7 @@ public static unsafe class ImGuiUtils
             {
                 unsafe
                 {
-                    var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                    agent->OpenRecipeByItemId(item.ItemId);
+                    AgentRecipeNote.Instance()->OpenRecipeByItemId(item.ItemId);
                     ImGui.SetWindowFocus(null);
                 }
             }
@@ -183,12 +182,11 @@ public static unsafe class ImGuiUtils
                     if (territoryType != null)
                     {
                         var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint((Lumina.Excel.GeneratedSheets.GatheringPoint?)point.GatheringPoint, (CachedItem)item);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
                     }
                     else
                     {
-                        var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
-                        agent->OpenGatherableByItemId((ushort)item.ItemId);
+                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
                     }
 
                     ImGui.SetWindowFocus(null);
@@ -215,8 +213,7 @@ public static unsafe class ImGuiUtils
                 {
                     unsafe
                     {
-                        var agent = (AgentRecipeNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.RecipeNote);
-                        agent->OpenRecipeByItemId(item.ItemId);
+                        AgentRecipeNote.Instance()->OpenRecipeByItemId(item.ItemId);
                         ImGui.SetWindowFocus(null);
                     }
                 }
@@ -235,7 +232,7 @@ public static unsafe class ImGuiUtils
                     if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
                     {
                         var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint((Lumina.Excel.GeneratedSheets.GatheringPoint?)point.GatheringPoint, (CachedItem)item);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
                         ImGui.SetWindowFocus(null);
                     }
                     if (ImGui.IsItemHovered())
@@ -248,8 +245,7 @@ public static unsafe class ImGuiUtils
                 {
                     unsafe
                     {
-                        var agent = (AgentGatheringNote*)AgentModule.Instance()->GetAgentByInternalId(AgentId.GatheringNote);
-                        agent->OpenGatherableByItemId((ushort)item.ItemId);
+                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
                         ImGui.SetWindowFocus(null);
                     }
                 }

@@ -84,7 +84,7 @@ public class QueueTab
         }
         else
         {
-            ImGui.Text($"Ready for turn in!");
+            ImGui.Text("Ready for turn in!");
         }
     }
 }

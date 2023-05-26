@@ -104,7 +104,6 @@ public static class Scanner
         {
             if (config.NotifyTreasure
                 && obj.ObjectKind == ObjectKind.Treasure
-                // && obj.DataId == TreasureId
                 && !FoundTreasures.Contains(obj.ObjectId))
             {
                 var mapLink = obj.GetMapLink();
