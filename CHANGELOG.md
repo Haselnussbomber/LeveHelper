@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3] (2023-04-26)
+
+Updated for Patch 6.4.
+
+Some text has been translated into French and Japanese by using ChatGPT (commit [ee6316c](https://github.com/Haselnussbomber/LeveHelper/commit/ee6316c)).  
+Please file a bug if any translation is incorrect.
+
 ## [2.0.2] (2023-04-23)
 
 - **Fixed:** To prevent the tab order from being reset,the "Queue" and "Recipe Tree" tabs are now always displayed.
@@ -123,6 +130,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...HEAD
+[2.0.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...v2.0.0
