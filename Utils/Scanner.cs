@@ -119,9 +119,9 @@ public static class Scanner
 
                 sb.AddText(Service.ClientState.ClientLanguage switch
                 {
-                    // ClientLanguage.Japanese => "",
+                    ClientLanguage.Japanese => "発見されました。",
                     ClientLanguage.German => " entdeckt.",
-                    // ClientLanguage.French => "",
+                    ClientLanguage.French => " découvert.",
                     _ => " discovered."
                 });
 
@@ -148,9 +148,9 @@ public static class Scanner
                 sb.AddUiForegroundOff();
                 sb.AddText(Service.ClientState.ClientLanguage switch
                 {
-                    // ClientLanguage.Japanese => "",
+                    ClientLanguage.Japanese => "捜査対象 ",
                     ClientLanguage.German => "Gesuchtes Ziel ",
-                    // ClientLanguage.French => "",
+                    ClientLanguage.French => "Cible recherchée ",
                     _ => "Wanted target "
                 });
 
@@ -158,9 +158,9 @@ public static class Scanner
 
                 sb.AddText(Service.ClientState.ClientLanguage switch
                 {
-                    // ClientLanguage.Japanese => "",
+                    ClientLanguage.Japanese => "発見されました。",
                     ClientLanguage.German => " entdeckt.",
-                    // ClientLanguage.French => "",
+                    ClientLanguage.French => " découvert.",
                     _ => " discovered."
                 });
 
