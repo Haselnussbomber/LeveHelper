@@ -27,13 +27,6 @@ public unsafe class PluginWindow : Window
     private readonly RecipeTreeTab RecipeTreeTab;
     private readonly ListTab ListTab;
 
-    private readonly AddonObserver CatchObserver = new("Catch");
-    private readonly AddonObserver SynthesisObserver = new("Synthesis");
-    private readonly AddonObserver SynthesisSimpleObserver = new("SynthesisSimple");
-    private readonly AddonObserver GatheringObserver = new("Gathering");
-    private readonly AddonObserver ShopObserver = new("Shop");
-    private readonly AddonObserver ItemSearchResultObserver = new("ItemSearchResult");
-
     private ushort[] LastActiveLevequestIds = Array.Empty<ushort>();
 
     public PluginWindow() : base("LeveHelper")
@@ -55,26 +48,21 @@ public unsafe class PluginWindow : Window
     public override void OnOpen()
     {
         Plugin.StartTown = PlayerState.Instance()->StartTown;
-
-        CatchObserver.OnOpen += Refresh;
-        SynthesisObserver.OnClose += Refresh;
-        SynthesisSimpleObserver.OnClose += Refresh;
-        GatheringObserver.OnClose += Refresh;
-        ShopObserver.OnClose += Refresh;
-        ItemSearchResultObserver.OnClose += Refresh;
     }
 
-    public override void OnClose()
+    public void OnAddonOpen(string addonName, AtkUnitBase* unitbase)
     {
-        CatchObserver.OnOpen -= Refresh;
-        SynthesisObserver.OnClose -= Refresh;
-        SynthesisSimpleObserver.OnClose -= Refresh;
-        GatheringObserver.OnClose -= Refresh;
-        ShopObserver.OnClose -= Refresh;
-        ItemSearchResultObserver.OnClose -= Refresh;
+        if (addonName is "Catch")
+            Refresh();
     }
 
-    private void Refresh(AddonObserver sender, AtkUnitBase* unitBase)
+    public void OnAddonClose(string addonName, AtkUnitBase* unitbase)
+    {
+        if (addonName is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
+            Refresh();
+    }
+
+    private void Refresh()
     {
         UpdateList();
         Plugin.FilterManager.Update();
@@ -82,13 +70,6 @@ public unsafe class PluginWindow : Window
 
     public override void PreDraw()
     {
-        CatchObserver.Update();
-        SynthesisObserver.Update();
-        SynthesisSimpleObserver.Update();
-        GatheringObserver.Update();
-        ShopObserver.Update();
-        ItemSearchResultObserver.Update();
-
         var activeLevequestIds = Service.GameFunctions.ActiveLevequestsIds;
         if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
         {
