@@ -29,11 +29,10 @@ public unsafe class GameFunctions
         {
             var ids = new List<ushort>();
 
-            var span = QuestManager.Instance()->LeveQuestsSpan;
-            for (var i = 0; i < span.Length; i++)
+            foreach (var entry in QuestManager.Instance()->LeveQuestsSpan)
             {
-                if (span[i].LeveId != 0)
-                    ids.Add(span[i].LeveId);
+                if (entry.LeveId != 0)
+                    ids.Add(entry.LeveId);
             }
 
             return ids.ToArray();
@@ -46,11 +45,10 @@ public unsafe class GameFunctions
         {
             var ids = new List<CachedLeve>();
 
-            var span = QuestManager.Instance()->LeveQuestsSpan;
-            for (var i = 0; i < span.Length; i++)
+            foreach (var entry in QuestManager.Instance()->LeveQuestsSpan)
             {
-                if (span[i].LeveId != 0)
-                    ids.Add(LeveCache.Get(span[i].LeveId));
+                if (entry.LeveId != 0)
+                    ids.Add(LeveCache.Get(entry.LeveId));
             }
 
             return ids.ToArray();
