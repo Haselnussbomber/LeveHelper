@@ -22,7 +22,6 @@ public record CachedLeve
 
     private Leve? leve = null;
     private string? name = null;
-    private string? nameEn = null;
     private string? levemeteName = null;
     private uint? townId = null;
     private string? townName = null;
@@ -42,9 +41,6 @@ public record CachedLeve
 
     public string Name
         => name ??= Leve?.Name?.ClearString() ?? $"<{LeveId}>";
-
-    public string NameEn
-        => nameEn ??= Service.Data.GetExcelSheet<Leve>(Dalamud.ClientLanguage.English)?.GetRow(LeveId)?.Name?.ClearString() ?? $"<{LeveId}>";
 
     public ushort ClassJobLevel
         => Leve?.ClassJobLevel ?? 0;
@@ -111,7 +107,7 @@ public record CachedLeve
 
             if (IsCraftLeve)
             {
-                var craftLeve = Service.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLeve>()?.GetRow((uint)Leve.DataId);
+                var craftLeve = Service.Data.GetExcelSheet<CraftLeve>()?.GetRow((uint)Leve.DataId);
                 if (craftLeve != null)
                 {
                     return requiredItems = craftLeve.UnkData3
