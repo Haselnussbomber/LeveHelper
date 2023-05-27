@@ -35,25 +35,22 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         PlaceNameHelper.Connect();
         Scanner.Connect();
 
-        Service.Framework.RunOnFrameworkThread(() =>
+        FilterManager = new();
+
+        WindowSystem.AddWindow(PluginWindow = new PluginWindow());
+
+        Service.PluginInterface.UiBuilder.Draw += OnDraw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
+
+        var commandInfo = new CommandInfo(OnCommand)
         {
-            FilterManager = new();
+            HelpMessage = "Show Window"
+        };
 
-            WindowSystem.AddWindow(PluginWindow = new PluginWindow());
+        Service.Commands.AddHandler("/levehelper", commandInfo);
+        Service.Commands.AddHandler("/lh", commandInfo);
 
-            Service.PluginInterface.UiBuilder.Draw += OnDraw;
-            Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
-
-            var commandInfo = new CommandInfo(OnCommand)
-            {
-                HelpMessage = "Show Window"
-            };
-
-            Service.Commands.AddHandler("/levehelper", commandInfo);
-            Service.Commands.AddHandler("/lh", commandInfo);
-
-            Task.Run(GatheringPointCache.Load);
-        });
+        Task.Run(GatheringPointCache.Load);
     }
 
     private void OnDraw()
