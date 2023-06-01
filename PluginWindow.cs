@@ -221,7 +221,7 @@ public unsafe class PluginWindow : Window
             {
                 foreach (var zoneItemTo in zoneItems)
                 {
-                    var cost = Service.GameFunctions.CalculateTeleportCost(zoneItemFrom.TerritoryType.RowId, zoneItemTo.TerritoryType.RowId, false, false, false);
+                    var cost = (uint)Telepo.GetTeleportCost((ushort)zoneItemFrom.TerritoryType.RowId, (ushort)zoneItemTo.TerritoryType.RowId, false, false, false);
                     nodes.Add((zoneItemFrom, zoneItemTo), cost);
                 }
             }

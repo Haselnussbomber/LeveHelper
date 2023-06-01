@@ -55,10 +55,6 @@ public unsafe class GameFunctions
         }
     }
 
-    [Signature("66 89 54 24 ?? 66 89 4C 24 ?? 53")]
-    public readonly CalculateTeleportCostDelegate CalculateTeleportCost = null!;
-    public delegate uint CalculateTeleportCostDelegate(uint fromTerritoryTypeId, uint toTerritoryTypeId, bool a3, bool a4, bool a5);
-
     [Signature("80 F9 07 77 10")]
     public readonly IsGatheringPointTypeOffDelegate IsGatheringPointRare = null!;
     public delegate bool IsGatheringPointTypeOffDelegate(byte gatheringPointType);
