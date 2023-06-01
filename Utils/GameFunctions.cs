@@ -59,10 +59,6 @@ public unsafe class GameFunctions
     public readonly IsGatheringPointTypeOffDelegate IsGatheringPointRare = null!;
     public delegate bool IsGatheringPointTypeOffDelegate(byte gatheringPointType);
 
-    [Signature("E8 ?? ?? ?? ?? 41 B0 07")]
-    public readonly FormatAddonTextDelegate FormatAddonText = null!;
-    public delegate byte* FormatAddonTextDelegate(RaptureTextModule* module, uint id, int value);
-
     [Signature("E8 ?? ?? ?? ?? 4C 8B 05 ?? ?? ?? ?? 48 8D 8C 24 ?? ?? ?? ?? 48 8B D0 E8 ?? ?? ?? ?? 8B 4E 08")]
     public readonly GetGatheringPointNameDelegate GetGatheringPointName = null!;
     public delegate byte* GetGatheringPointNameDelegate(RaptureTextModule** module, byte gatheringType, byte gatheringPointType);
@@ -109,7 +105,7 @@ public unsafe class GameFunctions
 
         var levelText = gatheringPointBase.GatheringLevel == 1
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
-            : FormatAddonText(raptureTextModule, 35, gatheringPointBase.GatheringLevel);
+            : raptureTextModule->FormatAddonText2(35, gatheringPointBase.GatheringLevel, 0);
         var space = MemoryUtils.FromString(" ");
         var gatheringPointName = GetGatheringPointName(
             &raptureTextModule,
@@ -198,7 +194,7 @@ public unsafe class GameFunctions
 
         var levelText = gatheringItemLevel == 0
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
-            : FormatAddonText(raptureTextModule, 35, gatheringItemLevel);
+            : raptureTextModule->FormatAddonText2(35, gatheringItemLevel, 0);
 
         var tooltip = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
         tooltip->SetString(levelText);
