@@ -1,16 +1,17 @@
 using System;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
 public record QueuedItem
 {
-    public QueuedItem(CachedItem Item, uint AmountNeeded)
+    public QueuedItem(Item Item, uint AmountNeeded)
     {
         this.Item = Item;
         this.AmountNeeded = AmountNeeded;
     }
 
-    public CachedItem Item { get; init; }
+    public Item Item { get; init; }
     public uint AmountHave => Item.QuantityOwned;
     public uint AmountNeeded { get; set; }
     public uint AmountLeft

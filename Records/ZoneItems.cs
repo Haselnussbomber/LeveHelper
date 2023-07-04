@@ -1,5 +1,6 @@
 using System.Collections.Generic;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
-public record ZoneItems(CachedTerritoryType TerritoryType, HashSet<QueuedItem> Items);
+public record ZoneItems(TerritoryType TerritoryType, HashSet<QueuedItem> Items);

@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Filters;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
@@ -108,7 +109,7 @@ public class ListTab
 
             // Id
             ImGui.TableNextColumn();
-            ImGui.Text(item.LeveId.ToString());
+            ImGui.Text(item.RowId.ToString());
 
             // Level
             ImGui.TableNextColumn();
@@ -128,7 +129,7 @@ public class ListTab
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType?.RowId ?? 0u);
+                    Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType.Row);
                 }
             }
 
@@ -145,7 +146,7 @@ public class ListTab
                 color = ImGuiUtils.ColorYellow;
             else if (item.IsComplete)
                 color = ImGuiUtils.ColorGreen;
-            else if (item.TownLocked && item.TownId != Plugin.StartTown)
+            else if (item.TownLocked && item.Town.Row != Plugin.StartTown)
                 color = ImGuiUtils.ColorGrey;
 
             ImGui.PushStyleColor(ImGuiCol.Text, color);
@@ -156,7 +157,7 @@ public class ListTab
             {
                 ImGui.BeginTooltip();
 
-                if (!item.TownLocked || (item.TownLocked && item.TownId == Plugin.StartTown))
+                if (!item.TownLocked || (item.TownLocked && item.Town.Row == Plugin.StartTown))
                 {
                     if (item.IsReadyForTurnIn)
                     {
@@ -226,12 +227,12 @@ public class ListTab
                 unsafe
                 {
                     var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                    Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                    Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.RowId, 2);
                     ImGui.SetWindowFocus(null);
                 }
             }
 
-            if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.LeveId}_Tooltip"))
+            if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.RowId}_Tooltip"))
             {
                 var showSeparator = false;
 
@@ -242,7 +243,7 @@ public class ListTab
                         unsafe
                         {
                             var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                            Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.LeveId, 2);
+                            Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.RowId, 2);
                             ImGui.SetWindowFocus(null);
                         }
                     }
@@ -259,14 +260,14 @@ public class ListTab
 
                 if (ImGui.Selectable("Open on Garland Tools"))
                 {
-                    Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.LeveId}"));
+                    Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.RowId}"));
                 }
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                     ImGui.BeginTooltip();
                     ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
-                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.LeveId}");
+                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
                     ImGui.EndTooltip();
                 }
                 /* crashes the game?!
@@ -290,9 +291,9 @@ public class ListTab
             {
                 foreach (var entry in item.RequiredItems)
                 {
-                    if (entry.Item is CachedItem reqItem)
+                    if (entry.Item is Item reqItem)
                     {
-                        ImGuiUtils.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.LeveId}_RequiredItems_{reqItem.ItemId}");
+                        ImGuiUtils.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
                     }
                 }
             }
@@ -309,12 +310,12 @@ public class ListTab
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                item.Leve?.LevelLevemete.Value?.OpenMapLocation();
+                item.LevelLevemete.Value?.OpenMapLocation();
             }
 
             if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
             {
-                Plugin.FilterManager.SetValue<LevemeteFilter>(item.Leve?.LevelLevemete.Value?.Object ?? 0);
+                Plugin.FilterManager.SetValue<LevemeteFilter>(item.LevelLevemete.Value?.Object ?? 0);
             }
         }
 

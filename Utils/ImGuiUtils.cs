@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using ImGuiScene;
+using LeveHelper.Sheets;
 using Lumina.Data.Files;
 
 namespace LeveHelper;
@@ -77,13 +78,13 @@ public static unsafe class ImGuiUtils
             var ingredient = entry.Item;
             var ingredientAmount = entry.Amount * parentAmount;
 
-            if (ingredient is CachedItem ingredientItem)
+            if (ingredient is Item ingredientItem)
             {
                 // filter crystals completely if we have enough
                 if (ingredientItem.IsCrystal && ingredient.QuantityOwned >= ingredientAmount)
                     continue;
 
-                DrawItem(ingredientItem, ingredientAmount, $"{key}_{ingredient.ItemId}");
+                DrawItem(ingredientItem, ingredientAmount, $"{key}_{ingredient.RowId}");
 
                 // filter ingredients if we have enough
                 if (ingredient.QuantityOwned >= ingredientAmount)
@@ -92,7 +93,7 @@ public static unsafe class ImGuiUtils
                 if (ingredientItem.Ingredients.Any())
                 {
                     var ingredientCount = (uint)(ingredientAmount / (double)(ingredientItem.Recipe?.AmountResult ?? 1));
-                    DrawIngredients($"{key}_{ingredient.ItemId}", ingredientItem.Ingredients, ingredientCount, depth + 1);
+                    DrawIngredients($"{key}_{ingredient.RowId}", ingredientItem.Ingredients, ingredientCount, depth + 1);
                 }
             }
         }
@@ -101,13 +102,13 @@ public static unsafe class ImGuiUtils
             ImGui.Unindent();
     }
 
-    public static void DrawItem(CachedItem item, uint neededCount, string key = "Item", bool showIndicators = false, CachedTerritoryType? territoryType = null)
+    public static void DrawItem(Item item, uint neededCount, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
     {
         DrawIcon(item.Icon, 20, 20);
         ImGui.SameLine();
 
         // draw icons to the right: Gather, Vendor..
-        var isLeveRequiredItem = Plugin.PluginWindow.LeveRequiredItems.Any(entry => entry.Item.ItemId == item.ItemId);
+        var isLeveRequiredItem = Plugin.PluginWindow.LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
         var color = ColorWhite;
 
@@ -159,7 +160,7 @@ public static unsafe class ImGuiUtils
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
                 ImGui.EndTooltip();
             }
         }
@@ -170,7 +171,7 @@ public static unsafe class ImGuiUtils
             {
                 unsafe
                 {
-                    AgentRecipeNote.Instance()->OpenRecipeByItemId(item.ItemId);
+                    AgentRecipeNote.Instance()->OpenRecipeByItemId(item.RowId);
                     ImGui.SetWindowFocus(null);
                 }
             }
@@ -181,12 +182,12 @@ public static unsafe class ImGuiUtils
                 {
                     if (territoryType != null)
                     {
-                        var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                        var point = item.GatheringPoints.First(point => point.TerritoryType.Row == territoryType.RowId);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point, item);
                     }
                     else
                     {
-                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
+                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.RowId);
                     }
 
                     ImGui.SetWindowFocus(null);
@@ -194,12 +195,12 @@ public static unsafe class ImGuiUtils
             }
             else if (item.IsFish == true)
             {
-                Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First().FishingSpot, item);
+                Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First(), item);
                 ImGui.SetWindowFocus(null);
             }
             else
             {
-                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}"));
+                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.RowId}"));
             }
         }
 
@@ -213,7 +214,7 @@ public static unsafe class ImGuiUtils
                 {
                     unsafe
                     {
-                        AgentRecipeNote.Instance()->OpenRecipeByItemId(item.ItemId);
+                        AgentRecipeNote.Instance()->OpenRecipeByItemId(item.RowId);
                         ImGui.SetWindowFocus(null);
                     }
                 }
@@ -231,8 +232,8 @@ public static unsafe class ImGuiUtils
                 {
                     if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
                     {
-                        var point = item.GatheringPoints.First(point => point.TerritoryTypeId == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint(point.GatheringPoint, item);
+                        var point = item.GatheringPoints.First(point => point.TerritoryType.Row == territoryType.RowId);
+                        Service.GameFunctions.OpenMapWithGatheringPoint(point, item);
                         ImGui.SetWindowFocus(null);
                     }
                     if (ImGui.IsItemHovered())
@@ -245,7 +246,7 @@ public static unsafe class ImGuiUtils
                 {
                     unsafe
                     {
-                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
+                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.RowId);
                         ImGui.SetWindowFocus(null);
                     }
                 }
@@ -263,7 +264,7 @@ public static unsafe class ImGuiUtils
                 {
                     if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
                     {
-                        Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First().FishingSpot, item);
+                        Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First(), item);
                         ImGui.SetWindowFocus(null);
                     }
                     if (ImGui.IsItemHovered())
@@ -277,7 +278,7 @@ public static unsafe class ImGuiUtils
                     unsafe
                     {
                         var agent = (AgentFishGuide*)AgentModule.Instance()->GetAgentByInternalId(AgentId.FishGuide);
-                        agent->OpenForItemId(item.ItemId, item.IsSpearfishing);
+                        agent->OpenForItemId(item.RowId, item.IsSpearfishing);
                         ImGui.SetWindowFocus(null);
                     }
                 }
@@ -294,7 +295,7 @@ public static unsafe class ImGuiUtils
 
             if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
             {
-                ItemFinderModule.Instance()->SearchForItem(item.ItemId);
+                ItemFinderModule.Instance()->SearchForItem(item.RowId);
                 ImGui.SetWindowFocus(null);
             }
             if (ImGui.IsItemHovered())
@@ -313,7 +314,7 @@ public static unsafe class ImGuiUtils
 
             if (ImGui.Selectable("Open on GarlandTools"))
             {
-                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.ItemId}"));
+                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.RowId}"));
             }
             if (ImGui.IsItemHovered())
             {
@@ -328,7 +329,7 @@ public static unsafe class ImGuiUtils
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
+                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
                 ImGui.EndTooltip();
             }
 

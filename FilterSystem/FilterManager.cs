@@ -39,8 +39,8 @@ public class FilterManager
 
         State.Leves = (State.SortColumnIndex, State.SortDirection) switch
         {
-            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.LeveId),
-            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.LeveId),
+            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.RowId),
+            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.RowId),
 
             (1, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.ClassJobLevel),
             (1, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.ClassJobLevel),

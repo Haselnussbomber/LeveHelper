@@ -12,7 +12,10 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
-using Lumina.Excel.GeneratedSheets;
+using LeveHelper.Sheets;
+using ExportedGatheringPoint = Lumina.Excel.GeneratedSheets.ExportedGatheringPoint;
+using FishParameter = Lumina.Excel.GeneratedSheets.FishParameter;
+using Level = Lumina.Excel.GeneratedSheets.Level;
 
 namespace LeveHelper;
 
@@ -39,16 +42,16 @@ public unsafe class GameFunctions
         }
     }
 
-    public CachedLeve[] ActiveLevequests
+    public Leve[] ActiveLevequests
     {
         get
         {
-            var ids = new List<CachedLeve>();
+            var ids = new List<Leve>();
 
             foreach (var entry in QuestManager.Instance()->LeveQuestsSpan)
             {
                 if (entry.LeveId != 0)
-                    ids.Add(LeveCache.Get(entry.LeveId));
+                    ids.Add(Service.Data.GetExcelSheet<Leve>()!.GetRow(entry.LeveId)!);
             }
 
             return ids.ToArray();
@@ -65,7 +68,7 @@ public unsafe class GameFunctions
 
     [Signature("E8 ?? ?? ?? ?? 48 8B 74 24 ?? 48 8B 7C 24 ?? 48 83 C4 30 5B C3 48 8B CB")]
     public readonly AgentJournal_OpenForQuestDelegate AgentJournal_OpenForQuest = null!;
-    public delegate byte* AgentJournal_OpenForQuestDelegate(nint agentJournal, int id, int type, ushort a4 = 0, bool a5 = true); // type: 1 = Quest, 2 = Levequest
+    public delegate byte* AgentJournal_OpenForQuestDelegate(nint agentJournal, int id, int type, ushort a4 = 0, bool a5 = false); // type: 1 = Quest, 2 = Levequest
 
     private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
     public string GetENpcResidentName(uint npcId)
@@ -80,7 +83,7 @@ public unsafe class GameFunctions
         return name;
     }
 
-    public bool OpenMapWithGatheringPoint(GatheringPoint? gatheringPoint, CachedItem? item = null)
+    public bool OpenMapWithGatheringPoint(GatheringPoint? gatheringPoint, Item? item = null)
     {
         if (gatheringPoint == null)
             return false;
@@ -165,7 +168,7 @@ public unsafe class GameFunctions
         return true;
     }
 
-    public bool OpenMapWithFishingSpot(FishingSpot? fishingSpot, CachedItem? item = null)
+    public bool OpenMapWithFishingSpot(FishingSpot? fishingSpot, Item? item = null)
     {
         if (fishingSpot == null)
             return false;
@@ -178,7 +181,7 @@ public unsafe class GameFunctions
         if (item != null)
         {
             gatheringItemLevel = Service.Data.GetExcelSheet<FishParameter>()
-                ?.FirstOrDefault(row => row.Item == (item?.ItemId ?? 0))
+                ?.FirstOrDefault(row => row.Item == (item?.RowId ?? 0))
                 ?.GatheringItemLevel.Value
                 ?.GatheringItemLevel ?? 0;
         }
@@ -230,7 +233,7 @@ public unsafe class GameFunctions
         title->SetString(titlePtr);
 
         var mapInfo = stackalloc OpenMapInfo[1];
-        mapInfo->Type = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType.GatheringLog;
+        mapInfo->Type = MapType.GatheringLog;
         mapInfo->MapId = territoryType.Map.Row;
         mapInfo->TerritoryId = territoryType.RowId;
         mapInfo->TitleString = *title;

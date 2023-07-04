@@ -6,6 +6,7 @@ using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
@@ -146,7 +147,7 @@ public unsafe class PluginWindow : Window
         {
             foreach (var entry in leve.RequiredItems)
             {
-                if (entry.Item is CachedItem item)
+                if (entry.Item is Item item)
                 {
                     TraverseItems(item, entry.Amount, neededAmounts);
                 }
@@ -175,25 +176,25 @@ public unsafe class PluginWindow : Window
             {
                 foreach (var point in entry.Item.GatheringPoints)
                 {
-                    if (zones.TryGetValue(point.TerritoryTypeId, out var list))
+                    if (zones.TryGetValue(point.TerritoryType.Row, out var list))
                     {
                         list.Add(entry);
                     }
                     else
                     {
-                        zones.Add(point.TerritoryTypeId, new() { entry });
+                        zones.Add(point.TerritoryType.Row, new() { entry });
                     }
                 }
 
                 foreach (var spot in entry.Item.FishingSpots)
                 {
-                    if (zones.TryGetValue(spot.TerritoryTypeId, out var list))
+                    if (zones.TryGetValue(spot.TerritoryType.Row, out var list))
                     {
                         list.Add(entry);
                     }
                     else
                     {
-                        zones.Add(spot.TerritoryTypeId, new() { entry });
+                        zones.Add(spot.TerritoryType.Row, new() { entry });
                     }
                 }
             }
@@ -203,18 +204,18 @@ public unsafe class PluginWindow : Window
             foreach (var entry in gatherables)
             {
                 var zone = zones
-                    .Where(zone => zone.Value.Select(e => e.Item.ItemId).Contains(entry.Item.ItemId))
+                    .Where(zone => zone.Value.Select(e => e.Item.RowId).Contains(entry.Item.RowId))
                     .OrderByDescending(zone => zone.Value.Count)
                     .ThenBy(zone => zone.Key.CompareTo(Service.ClientState.TerritoryType))
                     .First();
 
                 if (!groupedGatherables.ContainsKey(zone.Key))
-                    groupedGatherables.Add(zone.Key, new(TerritoryTypeCache.Get(zone.Key), zone.Value));
+                    groupedGatherables.Add(zone.Key, new(Service.Data.GetExcelSheet<TerritoryType>()!.GetRow(zone.Key)!, zone.Value));
             }
 
             // sorting by cheapest teleport costs
             var zoneItems = groupedGatherables.Values.ToList();
-            zoneItems.Insert(0, new(TerritoryTypeCache.Get(Service.ClientState.TerritoryType), new())); // add starting zone
+            zoneItems.Insert(0, new(Service.Data.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType)!, new())); // add starting zone
 
             var nodes = new Dictionary<(ZoneItems, ZoneItems), uint>();
             foreach (var zoneItemFrom in zoneItems)
@@ -243,10 +244,10 @@ public unsafe class PluginWindow : Window
             .ToArray();
     }
 
-    private static void TraverseItems(CachedItem item, uint amount, Dictionary<uint, QueuedItem> neededAmounts)
+    private static void TraverseItems(Item item, uint amount, Dictionary<uint, QueuedItem> neededAmounts)
     {
         var newNode = false;
-        if (!neededAmounts.TryGetValue(item.ItemId, out var node))
+        if (!neededAmounts.TryGetValue(item.RowId, out var node))
         {
             item.UpdateQuantityOwned();
             node = new(item, 0);
@@ -259,7 +260,7 @@ public unsafe class PluginWindow : Window
         {
             foreach (var dependency in item.Ingredients)
             {
-                if (dependency.Item is CachedItem dependencyItem)
+                if (dependency.Item is Item dependencyItem)
                 {
                     var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependencyItem.ResultAmount);
                     TraverseItems(dependencyItem, totalAmount, neededAmounts);
@@ -269,7 +270,7 @@ public unsafe class PluginWindow : Window
 
         if (newNode)
         {
-            neededAmounts.Add(item.ItemId, node);
+            neededAmounts.Add(item.RowId, node);
         }
     }
 }

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using LeveHelper.Sheets;
 
 namespace LeveHelper;
 
 public class FiltersState
 {
-    public CachedLeve[] AllLeves { get; init; }
+    public Leve[] AllLeves { get; init; }
 
-    public IEnumerable<CachedLeve> Leves { get; set; } = null!;
-    public CachedLeve[] LevesArray { get; set; } = null!;
+    public IEnumerable<Leve> Leves { get; set; } = null!;
+    public Leve[] LevesArray { get; set; } = null!;
 
     public short SortColumnIndex { get; set; }
     public ImGuiSortDirection SortDirection { get; set; }
@@ -32,7 +32,6 @@ public class FiltersState
     {
         AllLeves = Service.Data.GetExcelSheet<Leve>()!
             .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))
-            .Select(LeveCache.Get)
             .ToArray();
     }
 }

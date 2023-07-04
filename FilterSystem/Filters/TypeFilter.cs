@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
+using LeveHelper.Sheets;
 
 namespace LeveHelper.Filters;
 
@@ -17,7 +18,7 @@ public class TypeFilter : Filter
 
     public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
-    private Dictionary<string, CachedLeveAssignmentType[]>? Groups = null;
+    private Dictionary<string, LeveAssignmentType[]>? Groups = null;
 
     public override void Reset()
     {
@@ -136,9 +137,9 @@ public class TypeFilter : Filter
         }
     }
 
-    private static CachedLeveAssignmentType[] CreateGroup(params uint[] ids)
+    private static LeveAssignmentType[] CreateGroup(params uint[] ids)
         => ids
-            .Select(LeveAssignmentTypeCache.Get)
+            .Select((rowId) => Service.Data.GetExcelSheet<LeveAssignmentType>()!.GetRow(rowId)!)
             .OrderBy(entry => entry.Name)
             .ToArray();
 
@@ -162,7 +163,7 @@ public class TypeFilter : Filter
         if (Config.SelectedType == 0)
             return false;
 
-        state.Leves = state.Leves.Where(item => item.LeveAssignmentType?.RowId == Config.SelectedType);
+        state.Leves = state.Leves.Where(item => item.LeveAssignmentType.Row == Config.SelectedType);
 
         return true;
     }
