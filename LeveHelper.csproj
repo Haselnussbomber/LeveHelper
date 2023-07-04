@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Reference Include="Dalamud" Private="false" />
+    <Reference Include="Dalamud.Interface" Private="false" />
     <Reference Include="Lumina" Private="false" />
     <Reference Include="Lumina.Excel" Private="false" />
     <Reference Include="FFXIVClientStructs" Private="false" />
@@ -51,6 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DalamudPackager" Version="2.1.10" />
+    <PackageReference Include="DalamudPackager" Version="2.1.11" />
   </ItemGroup>
 </Project>

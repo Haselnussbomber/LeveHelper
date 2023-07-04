@@ -12,23 +12,16 @@ public class LocationFilterConfiguration
 
 public class LocationFilter : Filter
 {
+    private Dictionary<uint, string>? _locations = null;
+
     public LocationFilter(FilterManager manager) : base(manager)
     {
     }
 
     public static LocationFilterConfiguration Config => Plugin.Config.Filters.LocationFilter;
 
-    private Dictionary<uint, string>? Locations = null;
-
-    public override void Reset()
-    {
-        Config.SelectedLocation = 0;
-    }
-
-    public override bool HasValue()
-    {
-        return Config.SelectedLocation != 0;
-    }
+    public override void Reset() => Config.SelectedLocation = 0;
+    public override bool HasValue() => Config.SelectedLocation != 0;
 
     public override void Set(dynamic value)
     {
@@ -38,14 +31,14 @@ public class LocationFilter : Filter
 
     public override void Draw()
     {
-        if (Locations == null)
+        if (_locations == null)
             return;
 
         ImGui.TableNextColumn();
         ImGui.Text("Location:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", Locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
         {
             if (ImGui.Selectable("All##LeveHelper_LocationFilter_Combo_0", Config.SelectedLocation == 0))
             {
@@ -58,7 +51,7 @@ public class LocationFilter : Filter
                 ImGui.SetItemDefaultFocus();
             }
 
-            foreach (var kv in Locations)
+            foreach (var kv in _locations)
             {
                 if (ImGui.Selectable($"{kv.Value}##LeveHelper_LocationFilter_Combo_{kv.Key}", Config.SelectedLocation == kv.Key))
                 {
@@ -78,7 +71,7 @@ public class LocationFilter : Filter
         ImGui.SameLine();
 
         var placeNameId = PlaceNameHelper.PlaceNameId;
-        if (placeNameId != 0 && Config.SelectedLocation != placeNameId && Locations.ContainsKey(placeNameId) && ImGui.Button("Set Current Zone"))
+        if (placeNameId != 0 && Config.SelectedLocation != placeNameId && _locations.ContainsKey(placeNameId) && ImGui.Button("Set Current Zone"))
         {
             Config.SelectedLocation = placeNameId;
             manager.Update();
@@ -87,7 +80,7 @@ public class LocationFilter : Filter
 
     public override bool Run()
     {
-        Locations = state.Leves
+        _locations = state.Leves
             .Select(row => row.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()

@@ -1,3 +1,4 @@
+using Dalamud.Interface.Raii;
 using ImGuiNET;
 
 namespace LeveHelper;
@@ -13,6 +14,8 @@ public class ConfigurationTab
 
     public void Draw()
     {
+        using var windowId = ImRaii.PushId("##ConfigurationTab");
+
         var config = Plugin.Config;
 
         // Notify when Wanted Target is found

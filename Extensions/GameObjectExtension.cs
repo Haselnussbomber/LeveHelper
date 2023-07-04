@@ -19,8 +19,8 @@ public static class GameObjectExtension
         var mapLinkPayload = new MapLinkPayload(
             territoryId,
             territoryType.Map.Row,
-            toCoord(obj.Position.X, territoryType.Map.Value?.SizeFactor ?? 100) + territoryType.Map.Value?.OffsetX ?? 0,
-            toCoord(obj.Position.Z, territoryType.Map.Value?.SizeFactor ?? 100) + territoryType.Map.Value?.OffsetY ?? 0,
+            ToCoord(obj.Position.X, territoryType.Map.Value?.SizeFactor ?? 100) + territoryType.Map.Value?.OffsetX ?? 0,
+            ToCoord(obj.Position.Z, territoryType.Map.Value?.SizeFactor ?? 100) + territoryType.Map.Value?.OffsetY ?? 0,
             0.05f
         );
 
@@ -38,7 +38,7 @@ public static class GameObjectExtension
     }
 
     /// <see cref="https://github.com/xivapi/ffxiv-datamining/blob/master/docs/MapCoordinates.md"/>
-    private static float toCoord(float value, ushort scale)
+    private static float ToCoord(float value, ushort scale)
     {
         var tileScale = 2048f / 41f;
         return value / tileScale + 2048f / (scale / 100f) / tileScale / 2 + 1;

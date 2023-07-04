@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Hooking;
@@ -25,15 +24,19 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-        Service.GameFunctions = new();
+        Task.Run(Setup);
+    }
 
+    private void Setup()
+    {
+        Service.GameFunctions = new();
         SignatureHelper.Initialise(this);
         AddonSetupHook?.Enable();
         AddonFinalizeHook?.Enable();
 
         Config = Configuration.Load();
         PlaceNameHelper.Connect();
-        Scanner.Connect();
+        WantedTargetScanner.Connect();
 
         FilterManager = new();
 
@@ -50,7 +53,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.Commands.AddHandler("/levehelper", commandInfo);
         Service.Commands.AddHandler("/lh", commandInfo);
 
-        Task.Run(GatheringPointCache.Load);
+        GatheringPointCache.Load();
     }
 
     private void OnDraw()
@@ -80,19 +83,22 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.PluginInterface.UiBuilder.Draw -= OnDraw;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
 
+        PlaceNameHelper.Disconnect();
+        WantedTargetScanner.Disconnect();
+
         Service.Commands.RemoveHandler("/levehelper");
         Service.Commands.RemoveHandler("/lh");
 
         WindowSystem.RemoveAllWindows();
+        WindowSystem = null!;
+
+        PluginWindow.Dispose();
+        PluginWindow = null!;
 
         Config.Save();
-        PlaceNameHelper.Disconnect();
-        Scanner.Disconnect();
-
-        WindowSystem = null!;
-        PluginWindow = null!;
-        FilterManager = null!;
         Config = null!;
+
+        FilterManager = null!;
     }
 
     [Signature("E8 ?? ?? ?? ?? 8B 83 ?? ?? ?? ?? C1 E8 14 ?? ??", DetourName = nameof(AddonSetup))]

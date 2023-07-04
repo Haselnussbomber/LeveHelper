@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -9,9 +8,9 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public static class Scanner
+public static class WantedTargetScanner
 {
-    private static bool subscribed;
+    private static bool IsSubscribed;
 
     // name ids (= rowid of BNpcName sheet)
     private static readonly List<uint> WantedTargetIds = new()
@@ -52,17 +51,21 @@ public static class Scanner
 
     public static unsafe void Connect()
     {
-        if (subscribed) return;
+        if (IsSubscribed)
+            return;
+
         DirectorHelper.DirectorChanged += OnDirectorChanged;
         Service.Framework.Update += Framework_Update;
-        subscribed = true;
+
+        IsSubscribed = true;
     }
 
     public static unsafe void Disconnect()
     {
         DirectorHelper.DirectorChanged -= OnDirectorChanged;
         Service.Framework.Update -= Framework_Update;
-        subscribed = false;
+
+        IsSubscribed = false;
     }
 
     private static unsafe void OnDirectorChanged(Director* NewDirector)

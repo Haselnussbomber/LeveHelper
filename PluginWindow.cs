@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -7,31 +6,28 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using LeveHelper.Sheets;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
-public unsafe class PluginWindow : Window
+public unsafe class PluginWindow : Window, IDisposable
 {
     public const int TextWrapBreakpoint = 820;
 
-    public Vector2 MyPosition { get; private set; }
-    public Vector2 MySize { get; private set; }
-    public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
-    public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
-    public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
-    public ZoneItems[] Gatherable { get; private set; } = Array.Empty<ZoneItems>();
-    public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
-    public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
+    private Vector2 _position;
+    private Vector2 _size;
 
-    private readonly QueueTab QueueTab;
-    private readonly ConfigurationTab ConfigurationTab;
-    private readonly RecipeTreeTab RecipeTreeTab;
-    private readonly ListTab ListTab;
+    private readonly QueueTab _queueTab;
+    private readonly ConfigurationTab _configurationTab;
+    private readonly RecipeTreeTab _recipeTreeTab;
+    private readonly ListTab _listTab;
 
-    private ushort[] LastActiveLevequestIds = Array.Empty<ushort>();
+    private ushort[] _lastActiveLevequestIds = Array.Empty<ushort>();
 
     public PluginWindow() : base("LeveHelper")
     {
+        base.Namespace = "##LeveHelper";
+
         base.Size = new Vector2(830, 600);
         base.SizeCondition = ImGuiCond.FirstUseEver;
         base.SizeConstraints = new()
@@ -40,11 +36,24 @@ public unsafe class PluginWindow : Window
             MaximumSize = new Vector2(4096, 2160)
         };
 
-        ListTab = new(this);
-        QueueTab = new(this);
-        RecipeTreeTab = new(this);
-        ConfigurationTab = new(this);
+        _listTab = new(this);
+        _queueTab = new(this);
+        _recipeTreeTab = new(this);
+        _configurationTab = new(this);
     }
+
+    public void Dispose()
+    {
+        TextureManager.Dispose();
+    }
+
+    public TextureManager TextureManager { get; private set; } = new();
+    public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
+    public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
+    public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
+    public ZoneItems[] Gatherable { get; private set; } = Array.Empty<ZoneItems>();
+    public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
+    public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
 
     public override void OnOpen()
     {
@@ -72,9 +81,9 @@ public unsafe class PluginWindow : Window
     public override void PreDraw()
     {
         var activeLevequestIds = Service.GameFunctions.ActiveLevequestsIds;
-        if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
+        if (!_lastActiveLevequestIds.SequenceEqual(activeLevequestIds))
         {
-            LastActiveLevequestIds = activeLevequestIds;
+            _lastActiveLevequestIds = activeLevequestIds;
 
             UpdateList();
             Plugin.FilterManager.Update();
@@ -84,14 +93,12 @@ public unsafe class PluginWindow : Window
     }
 
     public override bool DrawConditions()
-    {
-        return Service.ClientState.IsLoggedIn;
-    }
+        => Service.ClientState.IsLoggedIn;
 
     public override void Draw()
     {
-        MyPosition = ImGui.GetWindowPos();
-        MySize = ImGui.GetWindowSize();
+        _position = ImGui.GetWindowPos();
+        _size = ImGui.GetWindowSize();
 
         if (ImGui.BeginTabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
         {
@@ -99,7 +106,7 @@ public unsafe class PluginWindow : Window
             {
                 RespectCloseHotkey = true;
 
-                ListTab.Draw();
+                _listTab.Draw();
                 ImGui.EndTabItem();
             }
 
@@ -107,7 +114,7 @@ public unsafe class PluginWindow : Window
             {
                 RespectCloseHotkey = false;
 
-                QueueTab.Draw();
+                _queueTab.Draw();
                 ImGui.EndTabItem();
             }
 
@@ -115,7 +122,7 @@ public unsafe class PluginWindow : Window
             {
                 RespectCloseHotkey = true;
 
-                RecipeTreeTab.Draw();
+                _recipeTreeTab.Draw();
                 ImGui.EndTabItem();
             }
 
@@ -123,7 +130,7 @@ public unsafe class PluginWindow : Window
             {
                 RespectCloseHotkey = true;
 
-                ConfigurationTab.Draw();
+                _configurationTab.Draw();
                 ImGui.EndTabItem();
             }
 

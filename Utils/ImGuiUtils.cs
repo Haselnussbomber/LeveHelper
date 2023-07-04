@@ -1,70 +1,25 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
+using Dalamud.Interface.Raii;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
-using ImGuiScene;
 using LeveHelper.Sheets;
-using Lumina.Data.Files;
 
-namespace LeveHelper;
+namespace LeveHelper.Utils;
 
-public static unsafe class ImGuiUtils
+public static partial class ImGuiUtils
 {
-    public static Vector4 ColorTransparent = new(0f, 0f, 0f, 0f);
-
-    public static Vector4 ColorWhite = new(1f, 1f, 1f, 1f);
-    public static Vector4 ColorGrey = new(0.5f, 0.5f, 0.5f, 1f);
-    public static Vector4 ColorRed = new(1f, 0f, 0f, 1f);
-    public static Vector4 ColorFreesia = new(246 / 255f, 195 / 255f, 36 / 255f, 1f); // #F6C324
-    public static Vector4 ColorYellow = new(1f, 1f, 0f, 1f);
-    public static Vector4 ColorYellowGreen = new(154 / 255f, 205 / 255f, 50 / 255f, 1f); // #9ACD32
-    public static Vector4 ColorGreen = new(0f, 1f, 0f, 1f);
-
-    public static Vector4 ColorMaelstorm = new(129f / 255f, 19f / 255f, 1f / 255f, 1f); // #811301
-    public static Vector4 ColorAdder = new(165f / 255f, 115f / 255f, 0f, 1f); // #a57300
-    public static Vector4 ColorLegion = new(72f / 255f, 89f / 255f, 55f / 255f, 1f); // #485937
-
-    public static Vector4 ColorGroup = new(216f / 255f, 187f / 255f, 125f / 255f, 1f); // #D8BB7D
-
-    private static readonly Dictionary<uint, TextureWrap> icons = new();
-
-    public static void DrawIcon(uint iconId, int width = -1, int height = -1)
-    {
-        if (!icons.ContainsKey(iconId))
-        {
-            var tex = Service.Data.GetFile<TexFile>($"ui/icon/{iconId / 1000:D3}000/{iconId:D6}_hr1.tex");
-            if (tex == null)
-                return;
-
-            var texWrap = Service.PluginInterface.UiBuilder.LoadImageRaw(tex.GetRgbaImageData(), tex.Header.Width, tex.Header.Height, 4);
-            if (texWrap.ImGuiHandle == IntPtr.Zero)
-                return;
-
-            icons[iconId] = texWrap;
-        }
-
-        ImGui.Image(icons[iconId].ImGuiHandle, new(width == -1 ? icons[iconId].Width : width, height == -1 ? icons[iconId].Height : height));
-    }
-
-    public static void SameLineNoSpace()
-    {
-        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, default(Vector2));
-        ImGui.SameLine();
-        ImGui.PopStyleVar();
-    }
-
     public static void DrawFontAwesomeIcon(FontAwesomeIcon icon, Vector4 color)
     {
-        ImGui.PushFont(UiBuilder.IconFont);
-        ImGui.TextColored(color, icon.ToIconString());
-        ImGui.PopFont();
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            ImGui.TextColored(color, icon.ToIconString());
+        }
         ImGui.SameLine();
     }
 
@@ -104,20 +59,20 @@ public static unsafe class ImGuiUtils
 
     public static void DrawItem(Item item, uint neededCount, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
     {
-        DrawIcon(item.Icon, 20, 20);
+        Plugin.PluginWindow.TextureManager.GetIcon(item.Icon).Draw(new(20));
         ImGui.SameLine();
 
         // draw icons to the right: Gather, Vendor..
         var isLeveRequiredItem = Plugin.PluginWindow.LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
-        var color = ColorWhite;
+        var color = Colors.White;
 
         if (item.QuantityOwned >= neededCount)
-            color = ColorGreen;
+            color = Colors.Green;
         else if (item.QuantityOwned < neededCount || item.HasAllIngredients == false)
-            color = ColorGrey;
+            color = Colors.Grey;
 
-        ImGui.PushStyleColor(ImGuiCol.Text, color);
+        ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
         ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
         ImGui.PopStyleColor();
 
@@ -156,11 +111,11 @@ public static unsafe class ImGuiUtils
                 ImGui.GetWindowDrawList().AddText(
                     UiBuilder.IconFont, 12,
                     ImGui.GetWindowPos() + pos + new Vector2(2),
-                    ImGui.GetColorU32(ColorGrey),
+                    Colors.Grey,
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
+                ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
                 ImGui.EndTooltip();
             }
         }
@@ -295,7 +250,10 @@ public static unsafe class ImGuiUtils
 
             if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
             {
-                ItemFinderModule.Instance()->SearchForItem(item.RowId);
+                unsafe
+                {
+                    ItemFinderModule.Instance()->SearchForItem(item.RowId);
+                }
                 ImGui.SetWindowFocus(null);
             }
             if (ImGui.IsItemHovered())
@@ -325,11 +283,11 @@ public static unsafe class ImGuiUtils
                 ImGui.GetWindowDrawList().AddText(
                     UiBuilder.IconFont, 12,
                     ImGui.GetWindowPos() + pos + new Vector2(2),
-                    ImGui.GetColorU32(ColorGrey),
+                    Colors.Grey,
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(ColorGrey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
+                ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
                 ImGui.EndTooltip();
             }
 
@@ -343,7 +301,7 @@ public static unsafe class ImGuiUtils
             var pos = ImGui.GetCursorPos();
             var availSize = ImGui.GetContentRegionAvail();
             ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
-            DrawIcon((uint)item.ClassJobIcon, 20, 20);
+            Plugin.PluginWindow.TextureManager.GetIcon((int)item.ClassJobIcon).Draw(new(20));
         }
     }
 }

@@ -12,23 +12,16 @@ public class LevemeteFilterConfiguration
 
 public class LevemeteFilter : Filter
 {
+    private Dictionary<uint, string>? _levemetes = null;
+
     public LevemeteFilter(FilterManager manager) : base(manager)
     {
     }
 
     public static LevemeteFilterConfiguration Config => Plugin.Config.Filters.LevemeteFilter;
 
-    private Dictionary<uint, string>? Levemetes = null;
-
-    public override void Reset()
-    {
-        Config.SelectedLevemete = 0;
-    }
-
-    public override bool HasValue()
-    {
-        return Config.SelectedLevemete != 0;
-    }
+    public override void Reset() => Config.SelectedLevemete = 0;
+    public override bool HasValue() => Config.SelectedLevemete != 0;
 
     public override void Set(dynamic value)
     {
@@ -38,14 +31,14 @@ public class LevemeteFilter : Filter
 
     public override void Draw()
     {
-        if (Levemetes == null)
+        if (_levemetes == null)
             return;
 
         ImGui.TableNextColumn();
         ImGui.Text("Levemete:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", Levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All"))
+        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All"))
         {
             if (ImGui.Selectable("All##LeveHelper_LevemeteFilter_Combo_0", Config.SelectedLevemete == 0))
             {
@@ -58,7 +51,7 @@ public class LevemeteFilter : Filter
                 ImGui.SetItemDefaultFocus();
             }
 
-            foreach (var kv in Levemetes)
+            foreach (var kv in _levemetes)
             {
                 if (ImGui.Selectable($"{kv.Value}##LeveHelper_LevemeteFilter_Combo_{kv.Key}", Config.SelectedLevemete == kv.Key))
                 {
@@ -79,7 +72,7 @@ public class LevemeteFilter : Filter
     public override bool Run()
     {
         var ENpcResidentSheet = Service.Data.GetExcelSheet<ENpcResident>();
-        Levemetes = state.Leves
+        _levemetes = state.Leves
             .Select(row => row.LevelLevemete.Value?.Object)
             .Where(item => item != null)
             .Cast<uint>()

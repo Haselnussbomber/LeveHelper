@@ -1,8 +1,8 @@
 using System.Linq;
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
-using static LeveHelper.ImGuiUtils;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
@@ -17,20 +17,17 @@ public class QueueTab
 
     public void Draw()
     {
+        using var windowId = ImRaii.PushId("##QueueTab");
+
         if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
         {
             ImGui.TextDisabled("No active Levequests"); // center?
             return;
         }
 
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
+        if (ImGuiUtils.IconButton("##Refresh", FontAwesomeIcon.RedoAlt, "Refresh"))
         {
             Window.UpdateList();
-        }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            ImGui.SetTooltip("Refresh");
         }
 
         var i = 0;
@@ -42,7 +39,7 @@ public class QueueTab
                 ImGui.Text("Crystals:");
                 foreach (var entry in Window.Crystals)
                 {
-                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    ImGuiUtils.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
@@ -55,7 +52,7 @@ public class QueueTab
 
                     foreach (var entry in kv.Items)
                     {
-                        DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
+                        ImGuiUtils.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
                     }
                 }
             }
@@ -65,7 +62,7 @@ public class QueueTab
                 ImGui.Text("Other:");
                 foreach (var entry in Window.OtherSources)
                 {
-                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    ImGuiUtils.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
@@ -76,7 +73,7 @@ public class QueueTab
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
                     // TODO: sort by dependency and job???
-                    DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    ImGuiUtils.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 

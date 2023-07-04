@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ImGuiNET;
 using LeveHelper.Sheets;
+using LeveHelper.Utils;
 
 namespace LeveHelper.Filters;
 
@@ -12,23 +13,16 @@ public class TypeFilterConfiguration
 
 public class TypeFilter : Filter
 {
+    private Dictionary<string, LeveAssignmentType[]>? _groups = null;
+
     public TypeFilter(FilterManager manager) : base(manager)
     {
     }
 
     public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
-    private Dictionary<string, LeveAssignmentType[]>? Groups = null;
-
-    public override void Reset()
-    {
-        Config.SelectedType = 0;
-    }
-
-    public override bool HasValue()
-    {
-        return Config.SelectedType != 0;
-    }
+    public override void Reset() => Config.SelectedType = 0;
+    public override bool HasValue() => Config.SelectedType != 0;
 
     public override void Set(dynamic value)
     {
@@ -54,7 +48,7 @@ public class TypeFilter : Filter
                 ImGui.SetItemDefaultFocus();
             }
 
-            ImGuiUtils.DrawIcon(62501, 20, 20);
+            Plugin.PluginWindow.TextureManager.GetIcon(62501).Draw(new(20));
             ImGui.SameLine();
             if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
             {
@@ -66,15 +60,15 @@ public class TypeFilter : Filter
                 ImGui.SetItemDefaultFocus();
             }
 
-            if (Groups == null)
+            if (_groups == null)
             {
                 ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
                 return;
             }
 
-            foreach (var group in Groups)
+            foreach (var group in _groups)
             {
-                ImGui.TextColored(ImGuiUtils.ColorGroup, group.Key);
+                ImGui.TextColored(Colors.Group, group.Key);
 
                 foreach (var type in group.Value)
                 {
@@ -82,7 +76,7 @@ public class TypeFilter : Filter
 
                     if (type.Icon != 0)
                     {
-                        ImGuiUtils.DrawIcon((uint)type.Icon, 20, 20);
+                        Plugin.PluginWindow.TextureManager.GetIcon(type.Icon).Draw(new(20));
                         ImGui.SameLine();
                         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
                         indent = "";
@@ -145,7 +139,7 @@ public class TypeFilter : Filter
 
     public override bool Run()
     {
-        Groups ??= new()
+        _groups ??= new()
         {
             // HowTo#69 => Fieldcraft Leves
             { StringUtil.GetText("HowTo", 69), CreateGroup(2, 3, 4) },

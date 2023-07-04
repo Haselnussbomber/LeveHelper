@@ -1,7 +1,7 @@
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
-using static LeveHelper.ImGuiUtils;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
@@ -16,22 +16,19 @@ public class RecipeTreeTab
 
     public void Draw()
     {
+        using var windowId = ImRaii.PushId("##RecipeTreeTab");
+
         if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
         {
             ImGui.TextDisabled("No active Levequests"); // center?
             return;
         }
 
-        if (ImGuiComponents.IconButton(FontAwesomeIcon.RedoAlt))
+        if (ImGuiUtils.IconButton("##Refresh", FontAwesomeIcon.RedoAlt, "Refresh"))
         {
             Window.UpdateList();
         }
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            ImGui.SetTooltip("Refresh");
-        }
 
-        DrawIngredients("RecipeTree", Window.LeveRequiredItems, 1);
+        ImGuiUtils.DrawIngredients("RecipeTree", Window.LeveRequiredItems, 1);
     }
 }

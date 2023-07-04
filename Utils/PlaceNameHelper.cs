@@ -4,15 +4,18 @@ namespace LeveHelper;
 
 public class PlaceNameHelper
 {
-    private static bool subscribed;
+    private static bool IsSubscribed;
 
     public static uint PlaceNameId { get; private set; }
 
     public static void Connect()
     {
-        if (subscribed) return;
+        if (IsSubscribed)
+            return;
+
         Service.ClientState.TerritoryChanged += ClientState_TerritoryChanged;
-        subscribed = true;
+
+        IsSubscribed = true;
 
         Update();
     }
@@ -20,7 +23,7 @@ public class PlaceNameHelper
     public static void Disconnect()
     {
         Service.ClientState.TerritoryChanged -= ClientState_TerritoryChanged;
-        subscribed = false;
+        IsSubscribed = false;
     }
 
     private static void ClientState_TerritoryChanged(object? sender, ushort e)

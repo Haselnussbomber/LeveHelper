@@ -1,14 +1,15 @@
-using System;
 using System.Globalization;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
+using Dalamud.Interface.Raii;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Filters;
 using LeveHelper.Sheets;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
@@ -30,6 +31,8 @@ public class ListTab
 
     private unsafe void DrawInfoBar()
     {
+        using var windowId = ImRaii.PushId("##ListTab");
+
         var state = Plugin.FilterManager.State;
         var questManager = QuestManager.Instance();
 
@@ -119,7 +122,7 @@ public class ListTab
             ImGui.TableNextColumn();
             if (item.TypeIcon != 0)
             {
-                ImGuiUtils.DrawIcon((uint)item.TypeIcon, 20, 20);
+                Plugin.PluginWindow.TextureManager.GetIcon(item.TypeIcon).Draw(new(20));
 
                 if (ImGui.IsItemHovered())
                 {
@@ -136,20 +139,20 @@ public class ListTab
             // Name
             ImGui.TableNextColumn();
 
-            var color = ImGuiUtils.ColorRed;
+            var color = Colors.Red;
 
             if (item.IsReadyForTurnIn)
-                color = ImGuiUtils.ColorYellowGreen;
+                color = Colors.YellowGreen;
             else if (item.IsFailed)
-                color = ImGuiUtils.ColorFreesia;
+                color = Colors.Freesia;
             else if (item.IsAccepted)
-                color = ImGuiUtils.ColorYellow;
+                color = Colors.Yellow;
             else if (item.IsComplete)
-                color = ImGuiUtils.ColorGreen;
+                color = Colors.Green;
             else if (item.TownLocked && item.Town.Row != Plugin.StartTown)
-                color = ImGuiUtils.ColorGrey;
+                color = Colors.Grey;
 
-            ImGui.PushStyleColor(ImGuiCol.Text, color);
+            ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
             ImGui.Selectable(item.Name);
             ImGui.PopStyleColor();
 
@@ -162,51 +165,51 @@ public class ListTab
                     if (item.IsReadyForTurnIn)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGuiUtils.DrawIcon(71045, 20, 20);
-                        ImGuiUtils.SameLineNoSpace();
-                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
+                        Plugin.PluginWindow.TextureManager.GetIcon(71045).Draw(new(20));
+                        ImGui.SameLine(0, 0);
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
                         ImGui.Text("Ready for turn in");
                     }
                     else if (item.IsStarted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGuiUtils.DrawIcon(71041, 20, 20);
-                        ImGuiUtils.SameLineNoSpace();
-                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorYellowGreen);
+                        Plugin.PluginWindow.TextureManager.GetIcon(71041).Draw(new(20));
+                        ImGui.SameLine(0, 0);
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
                         ImGui.Text("Started");
                     }
                     else if (item.IsFailed)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGuiUtils.DrawIcon(60861, 20, 20);
-                        ImGuiUtils.SameLineNoSpace();
-                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, ImGuiUtils.ColorFreesia);
+                        Plugin.PluginWindow.TextureManager.GetIcon(60861).Draw(new(20));
+                        ImGui.SameLine(0, 0);
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, Colors.Freesia);
                         ImGui.Text("Failed");
                     }
                     else if (item.IsAccepted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        ImGuiUtils.DrawIcon(71041, 20, 20);
-                        ImGuiUtils.SameLineNoSpace();
-                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                        Plugin.PluginWindow.TextureManager.GetIcon(71041).Draw(new(20));
+                        ImGui.SameLine(0, 0);
+                        //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, Colors.Yellow);
                         ImGui.Text("Accepted");
                     }
                     else if (item.IsComplete)
                     {
-                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, ImGuiUtils.ColorGreen);
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.Green);
                         ImGui.Text("Complete");
                     }
 
                     else
                     {
-                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Times, ImGuiUtils.ColorRed);
+                        ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Times, Colors.Red);
                         ImGui.Text("Incomplete");
                     }
                 }
 
                 if (item.TownLocked)
                 {
-                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, ImGuiUtils.ColorYellow);
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, Colors.Yellow);
                     ImGui.Text($"Only available to characters that started in {item.TownName}.");
                 }
 
@@ -266,8 +269,8 @@ public class ListTab
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                     ImGui.BeginTooltip();
-                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
-                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, Colors.Grey);
+                    ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
                     ImGui.EndTooltip();
                 }
                 /* crashes the game?!
@@ -279,8 +282,8 @@ public class ListTab
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                     ImGui.BeginTooltip();
-                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, ImGuiUtils.ColorGrey);
-                    ImGui.TextColored(ImGuiUtils.ColorGrey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
+                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, Colors.Grey);
+                    ImGui.TextColored(Colors.Grey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
                     ImGui.EndTooltip();
                 }
                 */

@@ -1,26 +1,26 @@
 #pragma warning disable 0649
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.System.Memory;
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using LeveHelper.Sheets;
+using LeveHelper.Utils;
 using ExportedGatheringPoint = Lumina.Excel.GeneratedSheets.ExportedGatheringPoint;
 using FishParameter = Lumina.Excel.GeneratedSheets.FishParameter;
 using Level = Lumina.Excel.GeneratedSheets.Level;
+using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 
 namespace LeveHelper;
 
 public unsafe class GameFunctions
 {
+    private readonly Dictionary<uint, string> _eNpcResidentNameCache = new();
+
     public GameFunctions()
     {
         SignatureHelper.Initialise(this);
@@ -70,14 +70,13 @@ public unsafe class GameFunctions
     public readonly AgentJournal_OpenForQuestDelegate AgentJournal_OpenForQuest = null!;
     public delegate byte* AgentJournal_OpenForQuestDelegate(nint agentJournal, int id, int type, ushort a4 = 0, bool a5 = false); // type: 1 = Quest, 2 = Levequest
 
-    private readonly Dictionary<uint, string> ENpcResidentNameCache = new();
     public string GetENpcResidentName(uint npcId)
     {
-        if (!ENpcResidentNameCache.TryGetValue(npcId, out var name))
+        if (!_eNpcResidentNameCache.TryGetValue(npcId, out var name))
         {
             var textPtr = RaptureTextModule.Instance()->FormatAddonText2(2025, (int)npcId, 1);
             name = MemoryHelper.ReadSeStringNullTerminated((nint)textPtr).ToString();
-            ENpcResidentNameCache.Add(npcId, name);
+            _eNpcResidentNameCache.Add(npcId, name);
         }
 
         return name;
@@ -85,6 +84,10 @@ public unsafe class GameFunctions
 
     public bool OpenMapWithGatheringPoint(GatheringPoint? gatheringPoint, Item? item = null)
     {
+        var agentMap = AgentMap.Instance();
+        if (agentMap == null)
+            return false;
+
         if (gatheringPoint == null)
             return false;
 
@@ -109,22 +112,20 @@ public unsafe class GameFunctions
         var levelText = gatheringPointBase.GatheringLevel == 1
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
             : raptureTextModule->FormatAddonText2(35, gatheringPointBase.GatheringLevel, 0);
-        var space = MemoryUtils.FromString(" ");
         var gatheringPointName = GetGatheringPointName(
             &raptureTextModule,
             (byte)exportedPoint.GatheringType.Row,
             exportedPoint.GatheringPointType
         );
 
-        var tooltipPtr = MemoryUtils.strconcat(levelText, space, gatheringPointName);
-        var tooltip = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
-        tooltip->SetString(tooltipPtr);
+        using var tooltip = new DisposableUtf8String(levelText);
+        tooltip.AppendString(" ");
+        tooltip.AppendString(gatheringPointName);
 
         var iconId = !IsGatheringPointRare(exportedPoint.GatheringPointType)
             ? gatheringType.IconMain
             : gatheringType.IconOff;
 
-        var agentMap = AgentMap.Instance();
         agentMap->TempMapMarkerCount = 0;
         agentMap->AddGatheringTempMarker(
             4u,
@@ -148,28 +149,25 @@ public unsafe class GameFunctions
                 .AddUiForegroundOff()
                 .Add(new TextPayload(")"));
         }
-        var titlePtr = MemoryUtils.FromByteArray(titleBuilder.BuiltString.Encode());
-        var title = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
-        title->SetString(titlePtr);
+
+        using var title = new DisposableUtf8String(titleBuilder.BuiltString);
 
         var mapInfo = stackalloc OpenMapInfo[1];
-        mapInfo->Type = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType.GatheringLog;
+        mapInfo->Type = MapType.GatheringLog;
         mapInfo->MapId = territoryType.Map.Row;
         mapInfo->TerritoryId = territoryType.RowId;
-        mapInfo->TitleString = *title;
+        mapInfo->TitleString = *title.Ptr;
         agentMap->OpenMap(mapInfo);
-        title->Dtor();
-        Marshal.FreeHGlobal((nint)titlePtr);
-
-        tooltip->Dtor();
-        Marshal.FreeHGlobal((nint)tooltipPtr);
-        Marshal.FreeHGlobal((nint)space);
 
         return true;
     }
 
     public bool OpenMapWithFishingSpot(FishingSpot? fishingSpot, Item? item = null)
     {
+        var agentMap = AgentMap.Instance();
+        if (agentMap == null)
+            return false;
+
         if (fishingSpot == null)
             return false;
 
@@ -199,12 +197,10 @@ public unsafe class GameFunctions
             ? raptureTextModule->GetAddonText(242) // "Lv. ???"
             : raptureTextModule->FormatAddonText2(35, gatheringItemLevel, 0);
 
-        var tooltip = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
-        tooltip->SetString(levelText);
+        using var tooltip = new DisposableUtf8String(levelText);
 
         var iconId = fishingSpot.Rare ? 60466u : 60465u;
 
-        var agentMap = AgentMap.Instance();
         agentMap->TempMapMarkerCount = 0;
         agentMap->AddGatheringTempMarker(
             4u,
@@ -228,20 +224,15 @@ public unsafe class GameFunctions
                 .AddUiForegroundOff()
                 .Add(new TextPayload(")"));
         }
-        var titlePtr = MemoryUtils.FromByteArray(titleBuilder.BuiltString.Encode());
-        var title = IMemorySpace.GetDefaultSpace()->Create<Utf8String>();
-        title->SetString(titlePtr);
+
+        using var title = new DisposableUtf8String(titleBuilder.BuiltString);
 
         var mapInfo = stackalloc OpenMapInfo[1];
         mapInfo->Type = MapType.GatheringLog;
         mapInfo->MapId = territoryType.Map.Row;
         mapInfo->TerritoryId = territoryType.RowId;
-        mapInfo->TitleString = *title;
+        mapInfo->TitleString = *title.Ptr;
         agentMap->OpenMap(mapInfo);
-        title->Dtor();
-        Marshal.FreeHGlobal((nint)titlePtr);
-
-        tooltip->Dtor();
 
         return true;
     }
