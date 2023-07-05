@@ -7,8 +7,12 @@ namespace LeveHelper.Utils;
 
 public class Texture : IDisposable
 {
-    public Texture(string path, int version)
+    private readonly TextureManager _textureManager;
+    private TextureWrap? _textureWrap;
+
+    public Texture(TextureManager manager, string path, int version)
     {
+        _textureManager = manager;
         Path = path;
         Version = version;
     }
@@ -16,52 +20,48 @@ public class Texture : IDisposable
     public string Path { get; }
     public int Version { get; }
 
-    public TextureWrap? TextureWrap { get; private set; }
-
     public void Dispose()
     {
-        TextureWrap?.Dispose();
-        TextureWrap = null;
+        _textureWrap?.Dispose();
+        _textureWrap = null;
     }
 
     public void Draw(Vector2? drawSize = null)
     {
-        var distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
-        if (distanceY < 0 || distanceY > ImGui.GetWindowHeight())
+        if (!IsInViewport())
         {
             ImGui.Dummy(drawSize ?? default);
             return;
         }
 
-#if DEBUG
-        if (TextureWrap == null)
-        {
-            PluginLog.Verbose($"[Texture] Loading {Path}");
-        }
-#endif
+        _textureWrap ??= LoadTexture();
 
-        TextureWrap ??= Service.Data.GetImGuiTexture(Path);
-
-        if (TextureWrap == null || TextureWrap.ImGuiHandle == 0)
+        if (_textureWrap == null || _textureWrap.ImGuiHandle == 0)
         {
             ImGui.Dummy(drawSize ?? default);
             return;
         }
 
-        ImGui.Image(TextureWrap.ImGuiHandle, drawSize ?? new(TextureWrap.Width, TextureWrap.Height));
+        ImGui.Image(_textureWrap.ImGuiHandle, drawSize ?? new(_textureWrap.Width, _textureWrap.Height));
     }
 
     public void DrawPart(Vector2 partStart, Vector2 partSize, Vector2? drawSize = null)
     {
-        TextureWrap ??= Service.Data.GetImGuiTexture(Path);
-
-        if (TextureWrap == null || TextureWrap.ImGuiHandle == 0)
+        if (!IsInViewport())
         {
             ImGui.Dummy(drawSize ?? default);
             return;
         }
 
-        var texSize = new Vector2(TextureWrap.Width, TextureWrap.Height);
+        _textureWrap ??= LoadTexture();
+
+        if (_textureWrap == null || _textureWrap.ImGuiHandle == 0)
+        {
+            ImGui.Dummy(drawSize ?? default);
+            return;
+        }
+
+        var texSize = new Vector2(_textureWrap.Width, _textureWrap.Height);
 
         partStart *= Version;
         partSize *= Version;
@@ -69,6 +69,30 @@ public class Texture : IDisposable
         var partEnd = (partStart + partSize) / texSize;
         partStart /= texSize;
 
-        ImGui.Image(TextureWrap.ImGuiHandle, drawSize ?? partSize, partStart, partEnd);
+        ImGui.Image(_textureWrap.ImGuiHandle, drawSize ?? partSize, partStart, partEnd);
+    }
+
+    private TextureWrap? LoadTexture()
+    {
+        var path = Path;
+
+        try
+        {
+            if (_textureManager.PenumbraPathResolver != null)
+                path = _textureManager.PenumbraPathResolver.InvokeFunc(Path);
+        }
+        catch { }
+
+#if DEBUG
+        PluginLog.Verbose($"[Texture] Loading Texture: {path}");
+#endif
+
+        return Service.Data.GetImGuiTexture(path);
+    }
+
+    private static bool IsInViewport()
+    {
+        var distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
+        return distanceY >= 0 && distanceY <= ImGui.GetWindowHeight();
     }
 }

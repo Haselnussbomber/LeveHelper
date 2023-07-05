@@ -15,7 +15,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public string Name => "LeveHelper";
 
     internal static WindowSystem WindowSystem = new("LeveHelper");
-    internal static PluginWindow PluginWindow = null!;
+    internal static PluginWindow? PluginWindow;
 
     internal static Configuration Config = null!;
     internal static FilterManager FilterManager = null!;
@@ -40,10 +40,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         FilterManager = new();
 
-        WindowSystem.AddWindow(PluginWindow = new PluginWindow());
-
         Service.PluginInterface.UiBuilder.Draw += OnDraw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += ToggleWindow;
 
         var commandInfo = new CommandInfo(OnCommand)
         {
@@ -70,18 +68,36 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void OnCommand(string command, string args)
     {
-        PluginWindow.Toggle();
+        ToggleWindow();
     }
 
-    private void OnOpenConfigUi()
+    private static void OpenWindow()
     {
-        PluginWindow.Toggle();
+        WindowSystem.AddWindow(PluginWindow = new PluginWindow());
+    }
+
+    internal static void CloseWindow()
+    {
+        if (PluginWindow == null)
+            return;
+
+        WindowSystem.RemoveWindow(PluginWindow);
+        PluginWindow.Dispose();
+        PluginWindow = null;
+    }
+
+    private static void ToggleWindow()
+    {
+        if (PluginWindow == null)
+            OpenWindow();
+        else
+            CloseWindow();
     }
 
     void IDisposable.Dispose()
     {
         Service.PluginInterface.UiBuilder.Draw -= OnDraw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= ToggleWindow;
 
         PlaceNameHelper.Disconnect();
         WantedTargetScanner.Disconnect();
@@ -92,8 +108,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         WindowSystem.RemoveAllWindows();
         WindowSystem = null!;
 
-        PluginWindow.Dispose();
-        PluginWindow = null!;
+        PluginWindow?.Dispose();
+        PluginWindow = null;
 
         Config.Save();
         Config = null!;

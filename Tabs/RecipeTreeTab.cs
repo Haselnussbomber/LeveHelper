@@ -29,6 +29,6 @@ public class RecipeTreeTab
             Window.UpdateList();
         }
 
-        ImGuiUtils.DrawIngredients("RecipeTree", Window.LeveRequiredItems, 1);
+        Window.DrawIngredients("RecipeTree", Window.LeveRequiredItems, 1);
     }
 }

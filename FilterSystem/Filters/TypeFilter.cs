@@ -48,7 +48,7 @@ public class TypeFilter : Filter
                 ImGui.SetItemDefaultFocus();
             }
 
-            Plugin.PluginWindow.TextureManager.GetIcon(62501).Draw(new(20));
+            Plugin.PluginWindow!.TextureManager.GetIcon(62501).Draw(new(20));
             ImGui.SameLine();
             if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
             {
