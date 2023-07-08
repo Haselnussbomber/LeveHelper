@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.4] (2023-07-08)
+
+Maintenance update with optimizations and a lot of behind-the-scenes changes:
+
+- The plugin now starts asynchronously, which should result in a slightly faster startup of the game.
+- Instead of loading all item icons at once when opening the window, the icons are now only loaded when they scroll into the viewport.
+- Instead of creating the LeveHelper window when the plugin loads, it's now created only when the player wants to open it. Likewise, the window and it's icons are now unloaded when the window gets closed.
+- Instead of manually caching levequests and items, I extended the Lumina sheets and now let Lumina do most of the caching.
+
 ## [2.0.3] (2023-04-26)
 
 Updated for Patch 6.4.
@@ -129,7 +138,8 @@ Please report if you found something is not working or if you discover a wanted 
 
 First release! 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.0.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.0...v2.0.1
