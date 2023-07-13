@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.5] (2023-07-13)
+
+- **Fixed:** Icon textures wouldn't load if the path was redirected by Penumbra.
+
 ## [2.0.4] (2023-07-08)
 
 Maintenance update with optimizations and a lot of behind-the-scenes changes:
@@ -139,6 +143,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.0.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.1...v2.0.2
