@@ -24,6 +24,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
+        Service.TextureCache = new();
         Task.Run(Setup);
     }
 
@@ -82,7 +83,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
             return;
 
         WindowSystem.RemoveWindow(PluginWindow);
-        PluginWindow.Dispose();
         PluginWindow = null;
     }
 
@@ -107,14 +107,14 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         WindowSystem.RemoveAllWindows();
         WindowSystem = null!;
-
-        PluginWindow?.Dispose();
         PluginWindow = null;
 
         Config.Save();
         Config = null!;
 
         FilterManager = null!;
+
+        Service.TextureCache.Dispose();
     }
 
     [Signature("E8 ?? ?? ?? ?? 8B 83 ?? ?? ?? ?? C1 E8 14 ?? ??", DetourName = nameof(AddonSetup))]

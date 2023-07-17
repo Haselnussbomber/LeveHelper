@@ -16,7 +16,7 @@ using LeveHelper.Utils;
 
 namespace LeveHelper;
 
-public unsafe class PluginWindow : Window, IDisposable
+public unsafe class PluginWindow : Window
 {
     public const int TextWrapBreakpoint = 820;
 
@@ -50,12 +50,6 @@ public unsafe class PluginWindow : Window, IDisposable
         IsOpen = true;
     }
 
-    public void Dispose()
-    {
-        TextureManager.Dispose();
-    }
-
-    public TextureManager TextureManager { get; private set; } = new();
     public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
     public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
@@ -330,7 +324,7 @@ public unsafe class PluginWindow : Window, IDisposable
 
     public void DrawItem(Item item, uint neededCount, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
     {
-        TextureManager.GetIcon(item.Icon).Draw(new(20));
+        Service.TextureCache.GetIcon(item.Icon).Draw(20);
         ImGui.SameLine();
 
         // draw icons to the right: Gather, Vendor..
@@ -572,7 +566,7 @@ public unsafe class PluginWindow : Window, IDisposable
             var pos = ImGui.GetCursorPos();
             var availSize = ImGui.GetContentRegionAvail();
             ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
-            TextureManager.GetIcon((int)item.ClassJobIcon).Draw(new(20));
+            Service.TextureCache.GetIcon((int)item.ClassJobIcon).Draw(20);
         }
     }
 }
