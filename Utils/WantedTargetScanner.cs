@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using LeveHelper.Extensions;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;

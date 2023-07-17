@@ -15,9 +15,10 @@ public partial class ImGuiUtils
 
     public static bool IconButton(string key, FontAwesomeIcon icon, string tooltip, Vector2 size = default, bool disabled = false)
     {
-        using var iconFont = ImRaii.PushFont(UiBuilder.IconFont);
-        if (!key.StartsWith("##")) key = "##" + key;
+        if (!key.StartsWith("##"))
+            key = "##" + key;
 
+        using var iconFont = ImRaii.PushFont(UiBuilder.IconFont);
         var a = disabled ? ImRaii.PushColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.TextDisabled]) : null;
         var b = disabled ? ImRaii.PushColor(ImGuiCol.ButtonActive, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]) : null;
         var c = disabled ? ImRaii.PushColor(ImGuiCol.ButtonHovered, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]) : null;

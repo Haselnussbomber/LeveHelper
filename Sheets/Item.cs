@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Memory;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using Recipe = Lumina.Excel.GeneratedSheets.Recipe;
@@ -40,7 +41,7 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
 
             return !string.IsNullOrEmpty(_name)
                 ? _name
-                : base.Name.ClearString() ?? "";
+                : base.Name.ToDalamudString().ToString() ?? "";
         }
     }
 

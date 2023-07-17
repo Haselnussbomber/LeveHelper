@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Dalamud.Memory;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using Lumina.Excel.GeneratedSheets;
 
@@ -41,11 +42,11 @@ internal class StringUtil
         {
             var text = sheet switch
             {
-                "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ClearString(),
-                "ClassJob" => Service.Data.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ClearString(),
-                "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ClearString(),
-                "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ClearString(),
-                "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ClearString(),
+                "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
+                "ClassJob" => Service.Data.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
+                "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
                 _ => null
             };
 

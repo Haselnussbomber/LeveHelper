@@ -7,6 +7,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using LeveHelper.Extensions;
 using LeveHelper.Filters;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;

@@ -1,9 +1,9 @@
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Lumina.Excel.GeneratedSheets;
 
-namespace LeveHelper;
+namespace LeveHelper.Extensions;
 
-public static class LevelExtension
+public static class LevelExtensions
 {
     public static void OpenMapLocation(this Level level)
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 
@@ -86,7 +87,7 @@ public class LocationFilter : Filter
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
             .Select(group => group.First())
-            .Select(item => (item.RowId, Name: item.Name.ClearString()))
+            .Select(item => (item.RowId, Name: item.Name.ToDalamudString().ToString()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 

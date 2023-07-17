@@ -1,3 +1,5 @@
+using Dalamud.Utility;
+
 namespace LeveHelper.Sheets;
 
 public class LeveAssignmentType : Lumina.Excel.GeneratedSheets.LeveAssignmentType
@@ -5,5 +7,5 @@ public class LeveAssignmentType : Lumina.Excel.GeneratedSheets.LeveAssignmentTyp
     private string? _name { get; set; } = null;
 
     public new string Name
-        => _name ??= base.Name.ClearString() ?? "";
+        => _name ??= base.Name.ToDalamudString().ToString() ?? "";
 }

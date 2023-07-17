@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 
@@ -16,7 +17,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
         => QuestManager.Instance()->GetLeveQuestById((ushort)RowId);
 
     public new string Name
-        => _name ??= base.Name?.ClearString() ?? $"<{RowId}>";
+        => _name ??= base.Name?.ToDalamudString().ToString() ?? $"<{RowId}>";
 
     public string? LevemeteName
     {
@@ -36,7 +37,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
         => LeveAssignmentType.Value?.Name ?? "";
 
     public string TownName
-        => _townName ??= Town.Value?.Name.ClearString() ?? "???";
+        => _townName ??= Town.Value?.Name.ToDalamudString().ToString() ?? "???";
 
     public bool TownLocked
         => RowId == 546 || RowId == 556 || RowId == 566;

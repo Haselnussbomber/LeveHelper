@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 
@@ -80,7 +81,7 @@ public class LevemeteFilter : Filter
             .Select(group => ENpcResidentSheet?.GetRow(group.First()))
             .Where(item => item != null)
             .Cast<ENpcResident>()
-            .Select(item => (item.RowId, Name: item.Singular.ClearString()))
+            .Select(item => (item.RowId, Name: item.Singular.ToDalamudString().ToString()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 
