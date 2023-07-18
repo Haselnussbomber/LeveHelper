@@ -324,11 +324,11 @@ public unsafe class PluginWindow : Window
 
     public void DrawItem(Item item, uint neededCount, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
     {
-        Service.TextureCache.GetIcon(item.Icon).Draw(20);
-        ImGui.SameLine();
-
         // draw icons to the right: Gather, Vendor..
         var isLeveRequiredItem = LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
+
+        Service.TextureCache.GetIcon(item.Icon, isLeveRequiredItem).Draw(20);
+        ImGui.SameLine();
 
         var color = Colors.White;
 
