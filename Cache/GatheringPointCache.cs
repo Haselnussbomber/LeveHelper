@@ -25,7 +25,8 @@ public static class GatheringPointCache
 
             foreach (var itemRowId in point.GatheringPointBase.Value.Item)
             {
-                if (itemRowId == 0) break;
+                if (itemRowId == 0)
+                    continue;
 
                 var itemRow = Service.Data.GetExcelSheet<GatheringItem>()?.GetRow((uint)itemRowId);
                 if (itemRow == null)
