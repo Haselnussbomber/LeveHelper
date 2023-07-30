@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.6] (2023-07-30)
+
+- **Changed**: Result items are now displayed as HQ items. You don't need to craft them in HQ, but why miss out on bonus rewards? Now it's easier to see when it's an item you have to turn in. :)
+- **Fixed:** Not all items that can be gathered were categorized as such due to prematurely aborting a loop.
+
 ## [2.0.5] (2023-07-13)
 
 - **Fixed:** Icon textures wouldn't load if the path was redirected by Penumbra.
@@ -143,6 +148,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.0.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.2...v2.0.3
