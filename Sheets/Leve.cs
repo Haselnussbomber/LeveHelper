@@ -3,6 +3,7 @@ using System.Linq;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Sheets;
 
@@ -69,7 +70,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
 
             if (IsCraftLeve)
             {
-                var craftLeve = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLeve>()?.GetRow((uint)DataId);
+                var craftLeve = GetRow<CraftLeve>((uint)DataId);
                 if (craftLeve != null)
                 {
                     return _requiredItems = craftLeve.UnkData3
@@ -80,7 +81,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
                             {
                                 if (!dict.TryGetValue(entry.Item, out var reqItem))
                                 {
-                                    reqItem = new RequiredItem(Service.DataManager.GetExcelSheet<Item>()!.GetRow((uint)entry.Item)!, 0);
+                                    reqItem = new RequiredItem(GetRow<Item>((uint)entry.Item)!, 0);
                                     dict.Add(entry.Item, reqItem);
                                 }
 

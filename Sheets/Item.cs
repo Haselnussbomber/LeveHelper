@@ -49,7 +49,7 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
         => ItemUICategory.Row == 59;
 
     public Recipe? Recipe
-        => _recipe ??= Service.DataManager.GetExcelSheet<Recipe>()?.FirstOrDefault(recipe => recipe.ItemResult.Value?.RowId == RowId);
+        => _recipe ??= FindRow<Recipe>(recipe => recipe?.ItemResult.Value?.RowId == RowId);
 
     public bool IsCraftable
         => _isCraftable ??= Recipe != null;
@@ -94,7 +94,7 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
         => _isFish ??= FishingSpots.Any();
 
     public bool IsSpearfishing
-        => _isSpearfishing ??= Service.DataManager.GetExcelSheet<SpearfishingItem>()?.Any(row => row.Item.Row == RowId) ?? false;
+        => _isSpearfishing ??= GetSheet<SpearfishingItem>().Any(row => row.Item.Row == RowId);
 
     public RequiredItem[] Ingredients
     {
@@ -113,7 +113,7 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
                 if (ingredient.ItemIngredient == 0 || ingredient.AmountIngredient == 0)
                     continue;
 
-                list.Add(new(Service.DataManager.GetExcelSheet<Item>()!.GetRow((uint)ingredient.ItemIngredient)!, ingredient.AmountIngredient));
+                list.Add(new(GetRow<Item>((uint)ingredient.ItemIngredient)!, ingredient.AmountIngredient));
             }
 
             return _ingredients = list.ToArray();

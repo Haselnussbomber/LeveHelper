@@ -42,11 +42,11 @@ internal class StringUtil
         {
             var text = sheet switch
             {
-                "Addon" => Service.DataManager.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
-                "ClassJob" => Service.DataManager.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
-                "Completion" => Service.DataManager.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
-                "HowTo" => Service.DataManager.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
-                "LeveAssignmentType" => Service.DataManager.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "Addon" => GetRow<Addon>(rowId)?.Text.ToDalamudString().ToString(),
+                "ClassJob" => GetRow<ClassJob>(rowId)?.Name.ToDalamudString().ToString(),
+                "Completion" => GetRow<Completion>(rowId)?.Text.ToDalamudString().ToString(),
+                "HowTo" => GetRow<HowTo>(rowId)?.Name.ToDalamudString().ToString(),
+                "LeveAssignmentType" => GetRow<LeveAssignmentType>(rowId)?.Name.ToDalamudString().ToString(),
                 _ => null
             };
 

@@ -11,10 +11,12 @@ public static class GameObjectExtensions
     public static SeString? GetMapLink(this GameObject obj)
     {
         var territoryId = Service.ClientState.TerritoryType;
-        if (territoryId == 0) return null;
+        if (territoryId == 0)
+            return null;
 
-        var territoryType = Service.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(territoryId);
-        if (territoryType == null) return null;
+        var territoryType = GetRow<TerritoryType>(territoryId);
+        if (territoryType == null)
+            return null;
 
         var mapLinkPayload = new MapLinkPayload(
             territoryId,

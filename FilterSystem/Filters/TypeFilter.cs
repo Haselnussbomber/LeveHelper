@@ -133,7 +133,7 @@ public class TypeFilter : Filter
 
     private static LeveAssignmentType[] CreateGroup(params uint[] ids)
         => ids
-            .Select((rowId) => Service.DataManager.GetExcelSheet<LeveAssignmentType>()!.GetRow(rowId)!)
+            .Select((rowId) => GetRow<LeveAssignmentType>(rowId)!)
             .OrderBy(entry => entry.Name)
             .ToArray();
 

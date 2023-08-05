@@ -101,7 +101,7 @@ public static class WantedTargetScanner
         var territoryTypeId = Service.ClientState.TerritoryType;
         if (territoryTypeId == 0) return;
 
-        var territoryType = Service.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(territoryTypeId);
+        var territoryType = GetRow<TerritoryType>(territoryTypeId);
         if (territoryType == null) return;
 
         foreach (var obj in Service.ObjectTable)

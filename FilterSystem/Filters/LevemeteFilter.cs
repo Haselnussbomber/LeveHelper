@@ -72,13 +72,12 @@ public class LevemeteFilter : Filter
 
     public override bool Run()
     {
-        var ENpcResidentSheet = Service.DataManager.GetExcelSheet<ENpcResident>();
         _levemetes = state.Leves
             .Select(row => row.LevelLevemete.Value?.Object)
             .Where(item => item != null)
             .Cast<uint>()
             .GroupBy(item => item)
-            .Select(group => ENpcResidentSheet?.GetRow(group.First()))
+            .Select(group => GetRow<ENpcResident>(group.First()))
             .Where(item => item != null)
             .Cast<ENpcResident>()
             .Select(item => (item.RowId, Name: item.Singular.ToDalamudString().ToString()))

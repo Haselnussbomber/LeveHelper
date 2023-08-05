@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Lumina.Excel;
 using Item = Lumina.Excel.GeneratedSheets.Item;
 
 namespace LeveHelper;
@@ -12,9 +13,9 @@ public static class FishingSpotCache
     {
         if (!CacheByItemId.TryGetValue(id, out var cachedFishingSpot))
         {
-            cachedFishingSpot = Service.DataManager.GetExcelSheet<FishingSpot>()?
-                .Where(row => row.TerritoryType.Row != 0 && row.Item.Any<Lumina.Excel.LazyRow<Item>>(i => i.Row == id))
-                .Select(row => Service.DataManager.GetExcelSheet<FishingSpot>()!.GetRow(row.RowId)!)
+            cachedFishingSpot = GetSheet<FishingSpot>()
+                .Where(row => row.TerritoryType.Row != 0 && row.Item.Any<LazyRow<Item>>(i => i.Row == id))
+                .Select(row => GetRow<FishingSpot>(row.RowId)!)
                 .ToArray();
 
             CacheByItemId.Add(id, cachedFishingSpot);

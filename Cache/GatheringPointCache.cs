@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using GatheringItem = Lumina.Excel.GeneratedSheets.GatheringItem;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
@@ -14,11 +14,7 @@ public static class GatheringPointCache
 
     public static void Load()
     {
-        var gatheringPointSheet = Service.DataManager.GetExcelSheet<GatheringPoint>();
-        if (gatheringPointSheet == null)
-            return;
-
-        foreach (var point in gatheringPointSheet)
+        foreach (var point in GetSheet<GatheringPoint>())
         {
             if (point.GatheringPointBase.Value == null || point.TerritoryType.Row == 1)
                 continue;
@@ -28,19 +24,19 @@ public static class GatheringPointCache
                 if (itemRowId == 0)
                     continue;
 
-                var itemRow = Service.DataManager.GetExcelSheet<GatheringItem>()?.GetRow((uint)itemRowId);
+                var itemRow = GetRow<GatheringItem>((uint)itemRowId);
                 if (itemRow == null)
                     continue;
 
                 if (CacheByItemId.TryGetValue((uint)itemRow.Item, out var cachedGatheringPoints))
                 {
                     var list = cachedGatheringPoints.ToList();
-                    list.Add(Service.DataManager.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)!);
+                    list.Add(GetRow<GatheringPoint>(point.RowId)!);
                     CacheByItemId[(uint)itemRow.Item] = list.ToArray();
                 }
                 else
                 {
-                    CacheByItemId.Add((uint)itemRow.Item, new[] { Service.DataManager.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)! });
+                    CacheByItemId.Add((uint)itemRow.Item, new[] { GetRow<GatheringPoint>(point.RowId)! });
                 }
             }
         }

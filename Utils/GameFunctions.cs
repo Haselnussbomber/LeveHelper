@@ -1,6 +1,5 @@
 #pragma warning disable 0649
 using System.Collections.Generic;
-using System.Linq;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Memory;
@@ -51,7 +50,7 @@ public unsafe class GameFunctions
             foreach (var entry in QuestManager.Instance()->LeveQuestsSpan)
             {
                 if (entry.LeveId != 0)
-                    ids.Add(Service.DataManager.GetExcelSheet<Leve>()!.GetRow(entry.LeveId)!);
+                    ids.Add(GetRow<Leve>(entry.LeveId)!);
             }
 
             return ids.ToArray();
@@ -99,7 +98,7 @@ public unsafe class GameFunctions
         if (gatheringPointBase == null)
             return false;
 
-        var exportedPoint = Service.DataManager.GetExcelSheet<ExportedGatheringPoint>()?.GetRow(gatheringPointBase.RowId);
+        var exportedPoint = GetRow<ExportedGatheringPoint>(gatheringPointBase.RowId);
         if (exportedPoint == null)
             return false;
 
@@ -178,8 +177,7 @@ public unsafe class GameFunctions
         var gatheringItemLevel = 0;
         if (item != null)
         {
-            gatheringItemLevel = Service.DataManager.GetExcelSheet<FishParameter>()
-                ?.FirstOrDefault(row => row.Item == (item?.RowId ?? 0))
+            gatheringItemLevel = FindRow<FishParameter>(row => row?.Item == (item?.RowId ?? 0))
                 ?.GatheringItemLevel.Value
                 ?.GatheringItemLevel ?? 0;
         }

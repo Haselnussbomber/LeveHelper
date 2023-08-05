@@ -33,7 +33,7 @@ public class PlaceNameHelper
 
     private static void Update()
     {
-        var curTerritory = Service.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(Service.ClientState.TerritoryType);
+        var curTerritory = GetRow<TerritoryType>(Service.ClientState.TerritoryType);
         PlaceNameId = curTerritory?.PlaceName?.Row ?? 0;
     }
 }
