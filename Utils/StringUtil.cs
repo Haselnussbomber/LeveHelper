@@ -42,11 +42,11 @@ internal class StringUtil
         {
             var text = sheet switch
             {
-                "Addon" => Service.Data.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
-                "ClassJob" => Service.Data.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
-                "Completion" => Service.Data.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
-                "HowTo" => Service.Data.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
-                "LeveAssignmentType" => Service.Data.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "Addon" => Service.DataManager.GetExcelSheet<Addon>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
+                "ClassJob" => Service.DataManager.GetExcelSheet<ClassJob>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "Completion" => Service.DataManager.GetExcelSheet<Completion>()?.GetRow(rowId)?.Text.ToDalamudString().ToString(),
+                "HowTo" => Service.DataManager.GetExcelSheet<HowTo>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
+                "LeveAssignmentType" => Service.DataManager.GetExcelSheet<LeveAssignmentType>()?.GetRow(rowId)?.Name.ToDalamudString().ToString(),
                 _ => null
             };
 

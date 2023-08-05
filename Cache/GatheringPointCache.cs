@@ -14,7 +14,7 @@ public static class GatheringPointCache
 
     public static void Load()
     {
-        var gatheringPointSheet = Service.Data.GetExcelSheet<GatheringPoint>();
+        var gatheringPointSheet = Service.DataManager.GetExcelSheet<GatheringPoint>();
         if (gatheringPointSheet == null)
             return;
 
@@ -28,19 +28,19 @@ public static class GatheringPointCache
                 if (itemRowId == 0)
                     continue;
 
-                var itemRow = Service.Data.GetExcelSheet<GatheringItem>()?.GetRow((uint)itemRowId);
+                var itemRow = Service.DataManager.GetExcelSheet<GatheringItem>()?.GetRow((uint)itemRowId);
                 if (itemRow == null)
                     continue;
 
                 if (CacheByItemId.TryGetValue((uint)itemRow.Item, out var cachedGatheringPoints))
                 {
                     var list = cachedGatheringPoints.ToList();
-                    list.Add(Service.Data.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)!);
+                    list.Add(Service.DataManager.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)!);
                     CacheByItemId[(uint)itemRow.Item] = list.ToArray();
                 }
                 else
                 {
-                    CacheByItemId.Add((uint)itemRow.Item, new[] { Service.Data.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)! });
+                    CacheByItemId.Add((uint)itemRow.Item, new[] { Service.DataManager.GetExcelSheet<GatheringPoint>()!.GetRow(point.RowId)! });
                 }
             }
         }

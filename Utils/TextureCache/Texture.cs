@@ -75,8 +75,8 @@ public record Texture : IDisposable
 #endif
 
         var tex = System.IO.Path.IsPathRooted(Path)
-            ? Service.Data.GameData.GetFileFromDisk<TexFile>(Path)
-            : Service.Data.GameData.GetFile<TexFile>(Path);
+            ? Service.DataManager.GameData.GetFileFromDisk<TexFile>(Path)
+            : Service.DataManager.GameData.GetFile<TexFile>(Path);
 
         if (tex == null)
             return null;
@@ -94,6 +94,6 @@ public record Texture : IDisposable
         Uv0 = Uv0.Value / texSize;
         Uv1 = Uv1.Value / texSize;
 
-        return Service.Data.GetImGuiTexture(tex);
+        return Service.DataManager.GetImGuiTexture(tex);
     }
 }

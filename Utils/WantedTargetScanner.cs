@@ -101,7 +101,7 @@ public static class WantedTargetScanner
         var territoryTypeId = Service.ClientState.TerritoryType;
         if (territoryTypeId == 0) return;
 
-        var territoryType = Service.Data.GetExcelSheet<TerritoryType>()?.GetRow(territoryTypeId);
+        var territoryType = Service.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(territoryTypeId);
         if (territoryType == null) return;
 
         foreach (var obj in Service.ObjectTable)
@@ -129,7 +129,7 @@ public static class WantedTargetScanner
                     _ => " discovered."
                 });
 
-                Service.Chat.Print(sb.Build());
+                Service.ChatGui.Print(sb.Build());
 
                 FoundTreasures.Add(obj.ObjectId);
                 continue;
@@ -168,7 +168,7 @@ public static class WantedTargetScanner
                     _ => " discovered."
                 });
 
-                Service.Chat.Print(sb.Build());
+                Service.ChatGui.Print(sb.Build());
 
                 FoundWantedTargets.Add(obj.ObjectId);
             }

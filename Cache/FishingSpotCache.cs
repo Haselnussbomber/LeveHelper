@@ -12,9 +12,9 @@ public static class FishingSpotCache
     {
         if (!CacheByItemId.TryGetValue(id, out var cachedFishingSpot))
         {
-            cachedFishingSpot = Service.Data.GetExcelSheet<FishingSpot>()?
+            cachedFishingSpot = Service.DataManager.GetExcelSheet<FishingSpot>()?
                 .Where(row => row.TerritoryType.Row != 0 && row.Item.Any<Lumina.Excel.LazyRow<Item>>(i => i.Row == id))
-                .Select(row => Service.Data.GetExcelSheet<FishingSpot>()!.GetRow(row.RowId)!)
+                .Select(row => Service.DataManager.GetExcelSheet<FishingSpot>()!.GetRow(row.RowId)!)
                 .ToArray();
 
             CacheByItemId.Add(id, cachedFishingSpot);

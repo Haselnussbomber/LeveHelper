@@ -69,7 +69,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
 
             if (IsCraftLeve)
             {
-                var craftLeve = Service.Data.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLeve>()?.GetRow((uint)DataId);
+                var craftLeve = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.CraftLeve>()?.GetRow((uint)DataId);
                 if (craftLeve != null)
                 {
                     return _requiredItems = craftLeve.UnkData3
@@ -80,7 +80,7 @@ public class Leve : Lumina.Excel.GeneratedSheets.Leve
                             {
                                 if (!dict.TryGetValue(entry.Item, out var reqItem))
                                 {
-                                    reqItem = new RequiredItem(Service.Data.GetExcelSheet<Item>()!.GetRow((uint)entry.Item)!, 0);
+                                    reqItem = new RequiredItem(Service.DataManager.GetExcelSheet<Item>()!.GetRow((uint)entry.Item)!, 0);
                                     dict.Add(entry.Item, reqItem);
                                 }
 

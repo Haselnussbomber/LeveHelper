@@ -72,7 +72,7 @@ public class LevemeteFilter : Filter
 
     public override bool Run()
     {
-        var ENpcResidentSheet = Service.Data.GetExcelSheet<ENpcResident>();
+        var ENpcResidentSheet = Service.DataManager.GetExcelSheet<ENpcResident>();
         _levemetes = state.Leves
             .Select(row => row.LevelLevemete.Value?.Object)
             .Where(item => item != null)

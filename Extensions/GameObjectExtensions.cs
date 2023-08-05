@@ -13,7 +13,7 @@ public static class GameObjectExtensions
         var territoryId = Service.ClientState.TerritoryType;
         if (territoryId == 0) return null;
 
-        var territoryType = Service.Data.GetExcelSheet<TerritoryType>()?.GetRow(territoryId);
+        var territoryType = Service.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(territoryId);
         if (territoryType == null) return null;
 
         var mapLinkPayload = new MapLinkPayload(

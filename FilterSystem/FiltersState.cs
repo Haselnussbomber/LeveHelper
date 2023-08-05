@@ -30,7 +30,7 @@ public class FiltersState
 
     public FiltersState()
     {
-        AllLeves = Service.Data.GetExcelSheet<Leve>()!
+        AllLeves = Service.DataManager.GetExcelSheet<Leve>()!
             .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))
             .ToArray();
     }

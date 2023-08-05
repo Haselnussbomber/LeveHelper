@@ -224,12 +224,12 @@ public unsafe class PluginWindow : Window
                     .First();
 
                 if (!groupedGatherables.ContainsKey(zone.Key))
-                    groupedGatherables.Add(zone.Key, new(Service.Data.GetExcelSheet<TerritoryType>()!.GetRow(zone.Key)!, zone.Value));
+                    groupedGatherables.Add(zone.Key, new(Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(zone.Key)!, zone.Value));
             }
 
             // sorting by cheapest teleport costs
             var zoneItems = groupedGatherables.Values.ToList();
-            zoneItems.Insert(0, new(Service.Data.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType)!, new())); // add starting zone
+            zoneItems.Insert(0, new(Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType)!, new())); // add starting zone
 
             var nodes = new Dictionary<(ZoneItems, ZoneItems), uint>();
             foreach (var zoneItemFrom in zoneItems)

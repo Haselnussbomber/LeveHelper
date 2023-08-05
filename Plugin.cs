@@ -49,8 +49,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
             HelpMessage = "Show Window"
         };
 
-        Service.Commands.AddHandler("/levehelper", commandInfo);
-        Service.Commands.AddHandler("/lh", commandInfo);
+        Service.CommandManager.AddHandler("/levehelper", commandInfo);
+        Service.CommandManager.AddHandler("/lh", commandInfo);
 
         GatheringPointCache.Load();
     }
@@ -102,8 +102,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         PlaceNameHelper.Disconnect();
         WantedTargetScanner.Disconnect();
 
-        Service.Commands.RemoveHandler("/levehelper");
-        Service.Commands.RemoveHandler("/lh");
+        Service.CommandManager.RemoveHandler("/levehelper");
+        Service.CommandManager.RemoveHandler("/lh");
 
         WindowSystem.RemoveAllWindows();
         WindowSystem = null!;

@@ -51,7 +51,7 @@ public unsafe class GameFunctions
             foreach (var entry in QuestManager.Instance()->LeveQuestsSpan)
             {
                 if (entry.LeveId != 0)
-                    ids.Add(Service.Data.GetExcelSheet<Leve>()!.GetRow(entry.LeveId)!);
+                    ids.Add(Service.DataManager.GetExcelSheet<Leve>()!.GetRow(entry.LeveId)!);
             }
 
             return ids.ToArray();
@@ -99,7 +99,7 @@ public unsafe class GameFunctions
         if (gatheringPointBase == null)
             return false;
 
-        var exportedPoint = Service.Data.GetExcelSheet<ExportedGatheringPoint>()?.GetRow(gatheringPointBase.RowId);
+        var exportedPoint = Service.DataManager.GetExcelSheet<ExportedGatheringPoint>()?.GetRow(gatheringPointBase.RowId);
         if (exportedPoint == null)
             return false;
 
@@ -178,7 +178,7 @@ public unsafe class GameFunctions
         var gatheringItemLevel = 0;
         if (item != null)
         {
-            gatheringItemLevel = Service.Data.GetExcelSheet<FishParameter>()
+            gatheringItemLevel = Service.DataManager.GetExcelSheet<FishParameter>()
                 ?.FirstOrDefault(row => row.Item == (item?.RowId ?? 0))
                 ?.GatheringItemLevel.Value
                 ?.GatheringItemLevel ?? 0;
