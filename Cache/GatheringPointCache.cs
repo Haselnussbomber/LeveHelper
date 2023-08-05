@@ -6,7 +6,6 @@ namespace LeveHelper;
 
 public static class GatheringPointCache
 {
-    public static readonly Dictionary<uint, GatheringPoint> Cache = new();
     public static readonly Dictionary<uint, GatheringPoint[]> CacheByItemId = new();
 
     public static GatheringPoint[]? FindByItemId(uint id)
@@ -16,7 +15,7 @@ public static class GatheringPointCache
     {
         foreach (var point in GetSheet<GatheringPoint>())
         {
-            if (point.GatheringPointBase.Value == null || point.TerritoryType.Row == 1)
+            if (point.GatheringPointBase.Value == null)
                 continue;
 
             foreach (var itemRowId in point.GatheringPointBase.Value.Item)
@@ -26,6 +25,11 @@ public static class GatheringPointCache
 
                 var itemRow = GetRow<GatheringItem>((uint)itemRowId);
                 if (itemRow == null)
+                    continue;
+
+                var isCollectable = itemRow.Item is > 500000 and < 1000000;
+                var isEventItem = itemRow.Item > 2000000;
+                if (isCollectable || isEventItem)
                     continue;
 
                 if (CacheByItemId.TryGetValue((uint)itemRow.Item, out var cachedGatheringPoints))
