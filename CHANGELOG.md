@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.7] (2023-08-06)
+
+- **Fixed**: Hidden gatherables weren't categorized as gatherable.
+
 ## [2.0.6] (2023-07-30)
 
 - **Changed**: Result items are now displayed as HQ items. You don't need to craft them in HQ, but why miss out on bonus rewards? Now it's easier to see when it's an item you have to turn in. :)
@@ -148,6 +152,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.0.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.3...v2.0.4
