@@ -17,9 +17,9 @@ public static partial class ImGuiUtils
         ImGui.SameLine();
     }
 
-    public static bool IsInViewport()
+    public static bool IsInViewport(Vector2 size)
     {
         var distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
-        return distanceY >= 0 && distanceY <= ImGui.GetWindowHeight();
+        return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
     }
 }
