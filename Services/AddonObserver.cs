@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 
-namespace LeveHelper.Utils;
+namespace LeveHelper.Services;
 
 public unsafe class AddonObserver : IDisposable
 {
@@ -62,9 +62,7 @@ public unsafe class AddonObserver : IDisposable
             var name = MemoryHelper.ReadStringNullTerminated((nint)unitBase->Name);
 
             if (!_nameCache.ContainsKey(address))
-            {
                 _nameCache.Add(address, name);
-            }
 
             AddonOpen?.Invoke(name);
         }
@@ -84,9 +82,7 @@ public unsafe class AddonObserver : IDisposable
             }
 
             if (!isLoaded)
-            {
                 _removedUnits.Add(address);
-            }
         }
 
         foreach (var address in _removedUnits)

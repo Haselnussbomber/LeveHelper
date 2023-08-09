@@ -4,8 +4,6 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using LeveHelper.Services;
-using LeveHelper.Utils;
-using LeveHelper.Utils.TextureCache;
 
 namespace LeveHelper;
 
@@ -15,7 +13,7 @@ public class Service
 
     public static AddonObserver AddonObserver { get; internal set; } = null!;
     public static GameFunctions GameFunctions { get; internal set; } = null!;
-    public static TextureCache TextureCache { get; internal set; } = null!;
+    public static TextureManager TextureManager { get; internal set; } = null!;
     public static WantedTargetScanner WantedTargetScanner { get; internal set; } = null!;
 
     [PluginService] public static ChatGui ChatGui { get; private set; } = null!;
@@ -33,7 +31,7 @@ public class Service
         PluginInterface.Create<Service>();
         AddonObserver = new();
         GameFunctions = new();
-        TextureCache = new();
+        TextureManager = new();
         WantedTargetScanner = new();
     }
 
@@ -41,7 +39,7 @@ public class Service
     {
         AddonObserver.Dispose();
         GameFunctions.Dispose();
-        TextureCache.Dispose();
+        TextureManager.Dispose();
         WantedTargetScanner.Dispose();
     }
 }

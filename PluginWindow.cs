@@ -328,7 +328,7 @@ public unsafe class PluginWindow : Window, IDisposable
         // draw icons to the right: Gather, Vendor..
         var isLeveRequiredItem = LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
-        Service.TextureCache.GetIcon(item.Icon, isLeveRequiredItem).Draw(20);
+        Service.TextureManager.GetIcon(item.Icon, isLeveRequiredItem).Draw(20);
         ImGui.SameLine();
 
         var color = Colors.White;
@@ -567,7 +567,7 @@ public unsafe class PluginWindow : Window, IDisposable
             var pos = ImGui.GetCursorPos();
             var availSize = ImGui.GetContentRegionAvail();
             ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
-            Service.TextureCache.GetIcon((int)item.ClassJobIcon).Draw(20);
+            Service.TextureManager.GetIcon((int)item.ClassJobIcon).Draw(20);
         }
     }
 }

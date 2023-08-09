@@ -128,7 +128,7 @@ public class ListTab
             ImGui.TableNextColumn();
             if (item.TypeIcon != 0)
             {
-                Service.TextureCache.GetIcon(item.TypeIcon).Draw(20);
+                Service.TextureManager.GetIcon(item.TypeIcon).Draw(20);
 
                 if (ImGui.IsItemHovered())
                 {
@@ -171,7 +171,7 @@ public class ListTab
                     if (item.IsReadyForTurnIn)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureCache.GetIcon(71045).Draw(20);
+                        Service.TextureManager.GetIcon(71045).Draw(20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
                         ImGui.Text("Ready for turn in");
@@ -179,7 +179,7 @@ public class ListTab
                     else if (item.IsStarted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureCache.GetIcon(71041).Draw(20);
+                        Service.TextureManager.GetIcon(71041).Draw(20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
                         ImGui.Text("Started");
@@ -187,7 +187,7 @@ public class ListTab
                     else if (item.IsFailed)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureCache.GetIcon(60861).Draw(20);
+                        Service.TextureManager.GetIcon(60861).Draw(20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, Colors.Freesia);
                         ImGui.Text("Failed");
@@ -195,7 +195,7 @@ public class ListTab
                     else if (item.IsAccepted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureCache.GetIcon(71041).Draw(20);
+                        Service.TextureManager.GetIcon(71041).Draw(20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, Colors.Yellow);
                         ImGui.Text("Accepted");

@@ -60,7 +60,7 @@ public class TypeFilter : Filter
                     ImGui.SetItemDefaultFocus();
                 }
 
-                Service.TextureCache.GetIcon(62501).Draw(20);
+                Service.TextureManager.GetIcon(62501).Draw(20);
                 ImGui.SameLine();
                 if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##Battlecraft", Config.SelectedType == 1))
                 {
@@ -88,7 +88,7 @@ public class TypeFilter : Filter
 
                         if (type.Icon != 0)
                         {
-                            Service.TextureCache.GetIcon(type.Icon).Draw(20);
+                            Service.TextureManager.GetIcon(type.Icon).Draw(20);
                             ImGui.SameLine();
                             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
                             indent = "";

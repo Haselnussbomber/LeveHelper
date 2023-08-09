@@ -2,8 +2,9 @@ using System.IO;
 using System.Numerics;
 using ImGuiNET;
 using ImGuiScene;
+using LeveHelper.Utils;
 
-namespace LeveHelper.Utils.TextureCache;
+namespace LeveHelper.Records;
 
 public record Texture : IDisposable
 {
@@ -47,9 +48,7 @@ public record Texture : IDisposable
             ImGui.Dummy(size);
 
             if (_textureWrap != null && _lastRender < DateTime.UtcNow - KeepAliveTime)
-            {
                 Unload();
-            }
             return;
         }
 
