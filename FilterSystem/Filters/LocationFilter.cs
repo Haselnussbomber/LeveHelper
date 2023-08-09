@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface.Raii;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 
@@ -13,16 +15,25 @@ public class LocationFilterConfiguration
 
 public class LocationFilter : Filter
 {
-    private Dictionary<uint, string>? _locations = null;
-
     public LocationFilter(FilterManager manager) : base(manager)
     {
     }
 
-    public static LocationFilterConfiguration Config => Plugin.Config.Filters.LocationFilter;
+    private static LocationFilterConfiguration Config => Plugin.Config.Filters.LocationFilter;
 
-    public override void Reset() => Config.SelectedLocation = 0;
-    public override bool HasValue() => Config.SelectedLocation != 0;
+    private Dictionary<uint, string>? _locations { get; set; }
+    private uint _lastTerritoryId { get; set; }
+    private uint _currentPlaceNameId { get; set; }
+
+    public override void Reset()
+    {
+        Config.SelectedLocation = 0;
+    }
+
+    public override bool HasValue()
+    {
+        return Config.SelectedLocation != 0;
+    }
 
     public override void Set(dynamic value)
     {
@@ -35,46 +46,61 @@ public class LocationFilter : Filter
         if (_locations == null)
             return;
 
+        using var id = ImRaii.PushId("LocationFilter");
+
         ImGui.TableNextColumn();
         ImGui.Text("Location:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LocationFilter_Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
+        using (var combo = ImRaii.Combo("##Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
         {
-            if (ImGui.Selectable("All##LeveHelper_LocationFilter_Combo_0", Config.SelectedLocation == 0))
+            if (combo.Success)
             {
-                Set(0);
-                manager.Update();
-            }
-
-            if (Config.SelectedLocation == 0)
-            {
-                ImGui.SetItemDefaultFocus();
-            }
-
-            foreach (var kv in _locations)
-            {
-                if (ImGui.Selectable($"{kv.Value}##LeveHelper_LocationFilter_Combo_{kv.Key}", Config.SelectedLocation == kv.Key))
+                if (ImGui.Selectable("All##All", Config.SelectedLocation == 0))
                 {
-                    Set(kv.Key);
+                    Set(0);
                     manager.Update();
                 }
 
-                if (Config.SelectedLocation == kv.Key)
+                if (Config.SelectedLocation == 0)
                 {
                     ImGui.SetItemDefaultFocus();
                 }
-            }
 
-            ImGui.EndCombo();
+                foreach (var kv in _locations)
+                {
+                    if (ImGui.Selectable($"{kv.Value}##Entry{kv.Key}", Config.SelectedLocation == kv.Key))
+                    {
+                        Set(kv.Key);
+                        manager.Update();
+                    }
+
+                    if (Config.SelectedLocation == kv.Key)
+                    {
+                        ImGui.SetItemDefaultFocus();
+                    }
+                }
+            }
         }
 
         ImGui.SameLine();
 
-        var placeNameId = PlaceNameHelper.PlaceNameId;
-        if (placeNameId != 0 && Config.SelectedLocation != placeNameId && _locations.ContainsKey(placeNameId) && ImGui.Button("Set Current Zone"))
+        unsafe
         {
-            Config.SelectedLocation = placeNameId;
+            var territoryId = GameMain.Instance()->CurrentTerritoryTypeId;
+            if (_lastTerritoryId != territoryId)
+            {
+                _lastTerritoryId = territoryId;
+                _currentPlaceNameId = GetRow<TerritoryType>(territoryId)?.PlaceName?.Row ?? 0;
+            }
+        }
+
+        if (_currentPlaceNameId != 0 &&
+            Config.SelectedLocation != _currentPlaceNameId &&
+            _locations.ContainsKey(_currentPlaceNameId) &&
+            ImGui.Button("Set Current Zone"))
+        {
+            Config.SelectedLocation = _currentPlaceNameId;
             manager.Update();
         }
     }

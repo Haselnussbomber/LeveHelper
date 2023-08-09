@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
@@ -13,16 +14,23 @@ public class TypeFilterConfiguration
 
 public class TypeFilter : Filter
 {
-    private Dictionary<string, LeveAssignmentType[]>? _groups = null;
-
     public TypeFilter(FilterManager manager) : base(manager)
     {
     }
 
     public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
-    public override void Reset() => Config.SelectedType = 0;
-    public override bool HasValue() => Config.SelectedType != 0;
+    private Dictionary<string, LeveAssignmentType[]>? _groups { get; set; }
+
+    public override void Reset()
+    {
+        Config.SelectedType = 0;
+    }
+
+    public override bool HasValue()
+    {
+        return Config.SelectedType != 0;
+    }
 
     public override void Set(dynamic value)
     {
@@ -32,70 +40,73 @@ public class TypeFilter : Filter
 
     public override void Draw()
     {
+        using var id = ImRaii.PushId("TypeFilter");
+
         ImGui.TableNextColumn();
         ImGui.Text("Type:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_TypeFilter_Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
+        using (var combo = ImRaii.Combo("##Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
         {
-            if (ImGui.Selectable("All##LeveHelper_TypeFilter_Combo_0", Config.SelectedType == 0))
+            if (combo.Success)
             {
-                Set(0);
-                manager.Update();
-            }
-            if (Config.SelectedType == 0)
-            {
-                ImGui.SetItemDefaultFocus();
-            }
-
-            Service.TextureCache.GetIcon(62501).Draw(20);
-            ImGui.SameLine();
-            if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##LeveHelper_TypeFilter_Combo_1", Config.SelectedType == 1))
-            {
-                Set(1);
-                manager.Update();
-            }
-            if (Config.SelectedType == 1)
-            {
-                ImGui.SetItemDefaultFocus();
-            }
-
-            if (_groups == null)
-            {
-                ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
-                return;
-            }
-
-            foreach (var group in _groups)
-            {
-                ImGui.TextColored(Colors.Group, group.Key);
-
-                foreach (var type in group.Value)
+                if (ImGui.Selectable("All##All", Config.SelectedType == 0))
                 {
-                    var indent = "    ";
+                    Set(0);
+                    manager.Update();
+                }
+                if (Config.SelectedType == 0)
+                {
+                    ImGui.SetItemDefaultFocus();
+                }
 
-                    if (type.Icon != 0)
-                    {
-                        Service.TextureCache.GetIcon(type.Icon).Draw(20);
-                        ImGui.SameLine();
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
-                        indent = "";
-                    }
+                Service.TextureCache.GetIcon(62501).Draw(20);
+                ImGui.SameLine();
+                if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##Battlecraft", Config.SelectedType == 1))
+                {
+                    Set(1);
+                    manager.Update();
+                }
+                if (Config.SelectedType == 1)
+                {
+                    ImGui.SetItemDefaultFocus();
+                }
 
-                    if (ImGui.Selectable($"{indent}{type.Name}##LeveHelper_TypeFilter_Combo_{type.RowId}", Config.SelectedType == type.RowId))
-                    {
-                        Set(type.RowId);
-                        manager.Update();
-                    }
+                if (_groups == null)
+                {
+                    ImGui.EndCombo(); // Combo
+                    return;
+                }
 
-                    if (Config.SelectedType == type.RowId)
+                foreach (var group in _groups)
+                {
+                    ImGui.TextColored(Colors.Group, group.Key);
+
+                    foreach (var type in group.Value)
                     {
-                        ImGui.SetItemDefaultFocus();
+                        var indent = "    ";
+
+                        if (type.Icon != 0)
+                        {
+                            Service.TextureCache.GetIcon(type.Icon).Draw(20);
+                            ImGui.SameLine();
+                            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
+                            indent = "";
+                        }
+
+                        if (ImGui.Selectable($"{indent}{type.Name}##Entry_{type.RowId}", Config.SelectedType == type.RowId))
+                        {
+                            Set(type.RowId);
+                            manager.Update();
+                        }
+
+                        if (Config.SelectedType == type.RowId)
+                        {
+                            ImGui.SetItemDefaultFocus();
+                        }
                     }
                 }
             }
-
-            ImGui.EndCombo(); // LeveHelper_TypeFilter_Combo
         }
 
         ImGui.SameLine();

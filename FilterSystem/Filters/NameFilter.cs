@@ -1,4 +1,5 @@
 using System.Linq;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
 
 namespace LeveHelper.Filters;
@@ -34,12 +35,14 @@ public class NameFilter : Filter
 
     public override void Draw()
     {
+        using var id = ImRaii.PushId("NameFilter");
+
         ImGui.TableNextColumn();
         ImGui.Text("Name:");
 
         ImGui.TableNextColumn();
         var currentName = Config.CurrentName;
-        if (ImGui.InputText("##LeveHelper_NameFilter_Input", ref currentName, 255))
+        if (ImGui.InputText("##Input", ref currentName, 255))
         {
             Set(currentName);
             manager.Update();

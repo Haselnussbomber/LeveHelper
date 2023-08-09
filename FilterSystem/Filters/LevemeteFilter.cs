@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface.Raii;
 using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
@@ -13,16 +14,23 @@ public class LevemeteFilterConfiguration
 
 public class LevemeteFilter : Filter
 {
-    private Dictionary<uint, string>? _levemetes = null;
-
     public LevemeteFilter(FilterManager manager) : base(manager)
     {
     }
 
     public static LevemeteFilterConfiguration Config => Plugin.Config.Filters.LevemeteFilter;
 
-    public override void Reset() => Config.SelectedLevemete = 0;
-    public override bool HasValue() => Config.SelectedLevemete != 0;
+    private Dictionary<uint, string>? _levemetes { get; set; }
+
+    public override void Reset()
+    {
+        Config.SelectedLevemete = 0;
+    }
+
+    public override bool HasValue()
+    {
+        return Config.SelectedLevemete != 0;
+    }
 
     public override void Set(dynamic value)
     {
@@ -35,38 +43,39 @@ public class LevemeteFilter : Filter
         if (_levemetes == null)
             return;
 
+        using var id = ImRaii.PushId("LevemeteFilter");
+
         ImGui.TableNextColumn();
         ImGui.Text("Levemete:");
 
         ImGui.TableNextColumn();
-        if (ImGui.BeginCombo("##LeveHelper_LevemeteFilter_Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All"))
+        using var combo = ImRaii.Combo("##Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All");
+        if (!combo.Success)
+            return;
+
+        if (ImGui.Selectable("All##All", Config.SelectedLevemete == 0))
         {
-            if (ImGui.Selectable("All##LeveHelper_LevemeteFilter_Combo_0", Config.SelectedLevemete == 0))
+            Set(0);
+            manager.Update();
+        }
+
+        if (Config.SelectedLevemete == 0)
+        {
+            ImGui.SetItemDefaultFocus();
+        }
+
+        foreach (var kv in _levemetes)
+        {
+            if (ImGui.Selectable($"{kv.Value}##Entry_{kv.Key}", Config.SelectedLevemete == kv.Key))
             {
-                Set(0);
+                Set(kv.Key);
                 manager.Update();
             }
 
-            if (Config.SelectedLevemete == 0)
+            if (Config.SelectedLevemete == kv.Key)
             {
                 ImGui.SetItemDefaultFocus();
             }
-
-            foreach (var kv in _levemetes)
-            {
-                if (ImGui.Selectable($"{kv.Value}##LeveHelper_LevemeteFilter_Combo_{kv.Key}", Config.SelectedLevemete == kv.Key))
-                {
-                    Set(kv.Key);
-                    manager.Update();
-                }
-
-                if (Config.SelectedLevemete == kv.Key)
-                {
-                    ImGui.SetItemDefaultFocus();
-                }
-            }
-
-            ImGui.EndCombo();
         }
     }
 

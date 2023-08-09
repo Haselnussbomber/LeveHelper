@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
 using LeveHelper.Filters;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
@@ -91,31 +93,33 @@ public class FilterManager
 
     public void Draw()
     {
+        using var id = ImRaii.PushId("Filters");
+
         var someFilterSet = Filters.Any(filter => filter.HasValue());
 
-        if (ImGui.TreeNode("LeveHelper_Filters_TreeNode", "Filters" + (someFilterSet ? " (Active)" : "")))
+        using var treeNodeColor = someFilterSet ? ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Green) : null;
+        using var treeNode = ImRaii.TreeNode("Filters", ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
+        if (!treeNode.Success)
+            return;
+        treeNodeColor?.Dispose();
+
+        using var table = ImRaii.Table("Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100));
+        if (!table.Success)
+            return;
+
+        foreach (var filter in Filters)
         {
-            if (!ImGui.BeginTable("LeveHelper_Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100)))
-                return;
-
-            foreach (var filter in Filters)
-            {
-                ImGui.TableNextRow();
-                filter.Draw();
-            }
-
             ImGui.TableNextRow();
-            ImGui.TableNextColumn();
-            ImGui.TableNextColumn();
+            filter.Draw();
+        }
 
-            if (ImGui.Button("Clear Filters"))
-            {
-                Reset();
-            }
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableNextColumn();
 
-            ImGui.EndTable(); // LeveHelper_Filters
-
-            ImGui.TreePop();
+        if (ImGui.Button("Clear Filters"))
+        {
+            Reset();
         }
     }
 }

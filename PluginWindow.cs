@@ -9,19 +9,17 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
 
 namespace LeveHelper;
 
-public unsafe class PluginWindow : Window
+public unsafe class PluginWindow : Window, IDisposable
 {
     public const int TextWrapBreakpoint = 820;
 
-    private Vector2 _position;
-    private Vector2 _size;
+    private readonly Plugin _plugin;
 
     private readonly QueueTab _queueTab;
     private readonly ConfigurationTab _configurationTab;
@@ -30,9 +28,11 @@ public unsafe class PluginWindow : Window
 
     private ushort[] _lastActiveLevequestIds = Array.Empty<ushort>();
 
-    public PluginWindow() : base("LeveHelper")
+    public PluginWindow(Plugin plugin) : base("LeveHelper")
     {
-        Namespace = "##LeveHelper";
+        _plugin = plugin;
+
+        Namespace = "LeveHelper";
 
         Size = new Vector2(830, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
@@ -48,6 +48,15 @@ public unsafe class PluginWindow : Window
         _configurationTab = new(this);
 
         IsOpen = true;
+
+        Service.AddonObserver.AddonOpen += OnAddonOpen;
+        Service.AddonObserver.AddonClose += OnAddonClose;
+    }
+
+    public void Dispose()
+    {
+        Service.AddonObserver.AddonOpen -= OnAddonOpen;
+        Service.AddonObserver.AddonClose -= OnAddonClose;
     }
 
     public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
@@ -57,23 +66,18 @@ public unsafe class PluginWindow : Window
     public QueuedItem[] OtherSources { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Craftable { get; private set; } = Array.Empty<QueuedItem>();
 
-    public override void OnOpen()
-    {
-        Plugin.StartTown = PlayerState.Instance()->StartTown;
-    }
-
     public override void OnClose()
     {
-        Plugin.CloseWindow();
+        _plugin.CloseWindow();
     }
 
-    public void OnAddonOpen(string addonName, AtkUnitBase* unitbase)
+    private void OnAddonOpen(string addonName)
     {
         if (addonName is "Catch")
             Refresh();
     }
 
-    public void OnAddonClose(string addonName, AtkUnitBase* unitbase)
+    private void OnAddonClose(string addonName)
     {
         if (addonName is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
             Refresh();
@@ -104,9 +108,6 @@ public unsafe class PluginWindow : Window
 
     public override void Draw()
     {
-        _position = ImGui.GetWindowPos();
-        _size = ImGui.GetWindowSize();
-
         if (ImGui.BeginTabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
         {
             if (ImGui.BeginTabItem("Levequest List"))

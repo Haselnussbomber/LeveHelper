@@ -5,6 +5,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Extensions;
@@ -86,6 +87,10 @@ public class ListTab
         }
 
         var state = Plugin.FilterManager.State;
+        var startTown = 0;
+        unsafe {
+            startTown = PlayerState.Instance()->StartTown;
+        }
 
         ImGui.TableSetupColumn("Id", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.DefaultHide, 50);
         ImGui.TableSetupColumn("Level", ImGuiTableColumnFlags.WidthFixed, 50);
@@ -150,7 +155,7 @@ public class ListTab
                 color = Colors.Yellow;
             else if (item.IsComplete)
                 color = Colors.Green;
-            else if (item.TownLocked && item.Town.Row != Plugin.StartTown)
+            else if (item.TownLocked && item.Town.Row != startTown)
                 color = Colors.Grey;
 
             ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
@@ -161,7 +166,7 @@ public class ListTab
             {
                 ImGui.BeginTooltip();
 
-                if (!item.TownLocked || (item.TownLocked && item.Town.Row == Plugin.StartTown))
+                if (!item.TownLocked || (item.TownLocked && item.Town.Row == startTown))
                 {
                     if (item.IsReadyForTurnIn)
                     {

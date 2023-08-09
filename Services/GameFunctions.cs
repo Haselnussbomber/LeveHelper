@@ -1,4 +1,3 @@
-#pragma warning disable 0649
 using System.Collections.Generic;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
@@ -14,15 +13,20 @@ using FishParameter = Lumina.Excel.GeneratedSheets.FishParameter;
 using Level = Lumina.Excel.GeneratedSheets.Level;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 
-namespace LeveHelper;
+namespace LeveHelper.Services;
 
-public unsafe class GameFunctions
+public unsafe class GameFunctions : IDisposable
 {
     private readonly Dictionary<uint, string> _eNpcResidentNameCache = new();
 
     public GameFunctions()
     {
         SignatureHelper.Initialise(this);
+    }
+
+    public void Dispose()
+    {
+        _eNpcResidentNameCache.Clear();
     }
 
     public ushort[] ActiveLevequestsIds

@@ -1,4 +1,5 @@
 using System.Linq;
+using Dalamud.Interface.Raii;
 using ImGuiNET;
 
 namespace LeveHelper.Filters;
@@ -42,6 +43,8 @@ public class StatusFilter : Filter
 
     public override void Draw()
     {
+        using var id = ImRaii.PushId("StatusFilter");
+
         ImGui.TableNextColumn();
         ImGui.Text("Status:");
 
@@ -52,7 +55,7 @@ public class StatusFilter : Filter
         {
             var value = values[i];
             var radio = Config.SelectedStatus == value;
-            if (ImGui.RadioButton(Enum.GetName(typeof(CompletedStatus), value) + $"##LeveHelper_StatusFilter_Radio-{i}", radio))
+            if (ImGui.RadioButton(Enum.GetName(typeof(CompletedStatus), value) + $"##Entry_{i}", radio))
             {
                 Set(value);
                 manager.Update();

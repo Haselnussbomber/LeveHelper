@@ -4,17 +4,16 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using LeveHelper.Extensions;
 using Lumina.Excel.GeneratedSheets;
 
-namespace LeveHelper;
+namespace LeveHelper.Services;
 
-public static class WantedTargetScanner
+public unsafe class WantedTargetScanner : IDisposable
 {
-    private static bool IsSubscribed;
-
     // name ids (= rowid of BNpcName sheet)
-    private static readonly List<uint> WantedTargetIds = new()
+    private readonly List<uint> _wantedTargetIds = new()
     {
         471, // Angry Sow
         472, // Rotting Sentinel
@@ -46,57 +45,48 @@ public static class WantedTargetScanner
         7169, // Sabotender Corrido
     };
 
-    private static DateTime LastCheck = DateTime.Now;
-    private static readonly List<uint> FoundWantedTargets = new();
-    private static readonly List<uint> FoundTreasures = new();
+    private readonly List<uint> _foundWantedTargets = new();
+    private readonly List<uint> _foundTreasures = new();
+    private DateTime _lastCheck = DateTime.Now;
+    private Director* _lastDirector;
 
-    public static unsafe void Connect()
+    public WantedTargetScanner()
     {
-        if (IsSubscribed)
-            return;
-
-        DirectorHelper.DirectorChanged += OnDirectorChanged;
         Service.Framework.Update += Framework_Update;
-
-        IsSubscribed = true;
     }
 
-    public static unsafe void Disconnect()
+    public void Dispose()
     {
-        DirectorHelper.DirectorChanged -= OnDirectorChanged;
         Service.Framework.Update -= Framework_Update;
-
-        IsSubscribed = false;
     }
 
-    private static unsafe void OnDirectorChanged(Director* NewDirector)
-    {
-        FoundWantedTargets.Clear();
-        FoundTreasures.Clear();
-    }
+    public bool IsBattleLeveDirector(Director* director)
+        => director != null &&
+           director->EventHandlerInfo != null &&
+           director->EventHandlerInfo->EventId.Type == EventHandlerType.BattleLeveDirector;
 
-    private static void Framework_Update(Dalamud.Game.Framework framework)
+    private void Framework_Update(Dalamud.Game.Framework framework)
     {
         var config = Plugin.Config;
 
         if (!config.NotifyTreasure && !config.NotifyWantedTarget)
-        {
             return;
+
+        if (DateTime.Now - _lastCheck < TimeSpan.FromSeconds(1))
+            return;
+
+        _lastCheck = DateTime.Now;
+
+        var activeDirector = UIState.Instance()->ActiveDirector;
+        if (_lastDirector != activeDirector)
+        {
+            _lastDirector = activeDirector;
+            _foundWantedTargets.Clear();
+            _foundTreasures.Clear();
         }
 
-        if (DateTime.Now - LastCheck < TimeSpan.FromSeconds(1))
-        {
+        if (!IsBattleLeveDirector(activeDirector))
             return;
-        }
-
-        LastCheck = DateTime.Now;
-
-        DirectorHelper.Update();
-
-        if (!DirectorHelper.IsBattleLeveDirectorActive)
-        {
-            return;
-        }
 
         var territoryTypeId = Service.ClientState.TerritoryType;
         if (territoryTypeId == 0) return;
@@ -108,7 +98,7 @@ public static class WantedTargetScanner
         {
             if (config.NotifyTreasure
                 && obj.ObjectKind == ObjectKind.Treasure
-                && !FoundTreasures.Contains(obj.ObjectId))
+                && !_foundTreasures.Contains(obj.ObjectId))
             {
                 var mapLink = obj.GetMapLink();
                 if (mapLink == null) continue;
@@ -131,16 +121,16 @@ public static class WantedTargetScanner
 
                 Service.ChatGui.Print(sb.Build());
 
-                FoundTreasures.Add(obj.ObjectId);
+                _foundTreasures.Add(obj.ObjectId);
                 continue;
             }
 
             if (config.NotifyWantedTarget
                 && obj.ObjectKind == ObjectKind.BattleNpc
                 && obj.SubKind == (byte)BattleNpcSubKind.Enemy
-                && !FoundWantedTargets.Contains(obj.ObjectId)
+                && !_foundWantedTargets.Contains(obj.ObjectId)
                 && obj is BattleNpc battleNpc
-                && WantedTargetIds.Contains(battleNpc.NameId))
+                && _wantedTargetIds.Contains(battleNpc.NameId))
             {
                 var mapLink = obj.GetMapLink();
                 if (mapLink == null) continue;
@@ -170,7 +160,7 @@ public static class WantedTargetScanner
 
                 Service.ChatGui.Print(sb.Build());
 
-                FoundWantedTargets.Add(obj.ObjectId);
+                _foundWantedTargets.Add(obj.ObjectId);
             }
         }
     }
