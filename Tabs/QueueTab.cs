@@ -37,6 +37,7 @@ public class QueueTab
             if (Window.Crystals.Any())
             {
                 ImGui.Text("Crystals:");
+                using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.Crystals)
                 {
                     Window.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
@@ -46,10 +47,12 @@ public class QueueTab
             if (Window.Gatherable.Any())
             {
                 ImGui.Text("Gather:");
+                using var indent = ImRaii.PushIndent();
                 foreach (var kv in Window.Gatherable)
                 {
                     ImGui.Text(kv.TerritoryType.PlaceName);
 
+                    using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
                     {
                         Window.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
@@ -60,6 +63,7 @@ public class QueueTab
             if (Window.OtherSources.Any())
             {
                 ImGui.Text("Other:");
+                using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.OtherSources)
                 {
                     Window.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
@@ -69,6 +73,7 @@ public class QueueTab
             if (Window.Craftable.Any())
             {
                 ImGui.Text("Craft:");
+                using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.Craftable)
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
