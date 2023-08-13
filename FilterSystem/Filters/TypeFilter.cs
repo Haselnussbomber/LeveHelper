@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Raii;
 using ImGuiNET;
-using LeveHelper.Sheets;
 using LeveHelper.Utils;
+using Lumina.Excel.GeneratedSheets;
+using LeveAssignmentType = LeveHelper.Sheets.LeveAssignmentType;
 
 namespace LeveHelper.Filters;
 
@@ -46,7 +47,7 @@ public class TypeFilter : Filter
         ImGui.Text("Type:");
 
         ImGui.TableNextColumn();
-        using (var combo = ImRaii.Combo("##Combo", Config.SelectedType == 0 ? "All" : StringUtil.GetText("LeveAssignmentType", Config.SelectedType, "Unknown")))
+        using (var combo = ImRaii.Combo("##Combo", Config.SelectedType == 0 ? "All" : GetSheetText<LeveAssignmentType>(Config.SelectedType, "Name")))
         {
             if (combo.Success)
             {
@@ -62,7 +63,7 @@ public class TypeFilter : Filter
 
                 Service.TextureManager.GetIcon(62501).Draw(20);
                 ImGui.SameLine();
-                if (ImGui.Selectable(StringUtil.GetText("LeveAssignmentType", 1, "Battlecraft") + "##Battlecraft", Config.SelectedType == 1))
+                if (ImGui.Selectable(GetSheetText<LeveAssignmentType>(1, "Name") + "##Battlecraft", Config.SelectedType == 1))
                 {
                     Set(1);
                     manager.Update();
@@ -132,7 +133,7 @@ public class TypeFilter : Filter
         if (Config.SelectedType != suggestedType)
         {
             var suggestedName = suggestedType == 1
-                ? StringUtil.GetText("LeveAssignmentType", 1)
+                ? GetSheetText<LeveAssignmentType>(1, "Name")
                 : Service.ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
             if (suggestedName != null && ImGui.Button($"Set {suggestedName}"))
             {
@@ -153,13 +154,13 @@ public class TypeFilter : Filter
         _groups ??= new()
         {
             // HowTo#69 => Fieldcraft Leves
-            { StringUtil.GetText("HowTo", 69), CreateGroup(2, 3, 4) },
+            { GetSheetText<HowTo>(69, "Name"), CreateGroup(2, 3, 4) },
 
             // HowTo#67 => Tradecraft Leves
-            { StringUtil.GetText("HowTo", 67), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12) },
+            { GetSheetText<HowTo>(67, "Name"), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12) },
 
             // HowTo#112 => Grand Company Leves
-            { StringUtil.GetText("HowTo", 112), CreateGroup(16, 17, 18) },
+            { GetSheetText<HowTo>(112, "Name"), CreateGroup(16, 17, 18) },
 
             // HowTo#218 => Temple Leves -- no leve is assigned to these
             // { StringUtil.GetText("HowTo", 218), CreateGroup(13, 14, 15) }

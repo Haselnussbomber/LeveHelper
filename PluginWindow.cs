@@ -372,22 +372,22 @@ public unsafe class PluginWindow : Window, IDisposable
 
             if (item.IsCraftable == true)
             {
-                ImGui.SetTooltip(StringUtil.GetAddonText(1414)); // "Search for Item by Crafting Method"
+                ImGui.SetTooltip(GetAddonText(1414)); // "Search for Item by Crafting Method"
             }
             else if (item.IsGatherable == true)
             {
                 if (territoryType != null)
                 {
-                    ImGui.SetTooltip(StringUtil.GetAddonText(8506)); // "Open Map"
+                    ImGui.SetTooltip(GetAddonText(8506)); // "Open Map"
                 }
                 else
                 {
-                    ImGui.SetTooltip(StringUtil.GetAddonText(1472)); // "Search for Item by Gathering Method"
+                    ImGui.SetTooltip(GetAddonText(1472)); // "Search for Item by Gathering Method"
                 }
             }
             else if (item.IsFish == true)
             {
-                ImGui.SetTooltip(StringUtil.GetAddonText(8506)); // "Open Map"
+                ImGui.SetTooltip(GetAddonText(8506)); // "Open Map"
             }
             else
             {
@@ -453,7 +453,7 @@ public unsafe class PluginWindow : Window, IDisposable
 
             if (item.IsCraftable == true)
             {
-                if (ImGui.Selectable(StringUtil.GetAddonText(1414))) // "Search for Item by Crafting Method"
+                if (ImGui.Selectable(GetAddonText(1414))) // "Search for Item by Crafting Method"
                 {
                     unsafe
                     {
@@ -473,7 +473,7 @@ public unsafe class PluginWindow : Window, IDisposable
             {
                 if (territoryType != null)
                 {
-                    if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
+                    if (ImGui.Selectable(GetAddonText(8506))) // "Open Map"
                     {
                         var point = item.GatheringPoints.First(point => point.TerritoryType.Row == territoryType.RowId);
                         Service.GameFunctions.OpenMapWithGatheringPoint(point, item);
@@ -485,7 +485,7 @@ public unsafe class PluginWindow : Window, IDisposable
                     }
                 }
 
-                if (ImGui.Selectable(StringUtil.GetAddonText(1472))) // "Search for Item by Gathering Method"
+                if (ImGui.Selectable(GetAddonText(1472))) // "Search for Item by Gathering Method"
                 {
                     unsafe
                     {
@@ -505,7 +505,7 @@ public unsafe class PluginWindow : Window, IDisposable
             {
                 if (territoryType != null)
                 {
-                    if (ImGui.Selectable(StringUtil.GetAddonText(8506))) // "Open Map"
+                    if (ImGui.Selectable(GetAddonText(8506))) // "Open Map"
                     {
                         Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First(), item);
                         ImGui.SetWindowFocus(null);
@@ -536,7 +536,7 @@ public unsafe class PluginWindow : Window, IDisposable
             if (showSeparator)
                 ImGui.Separator();
 
-            if (ImGui.Selectable(StringUtil.GetAddonText(4379))) // "Search for Item"
+            if (ImGui.Selectable(GetAddonText(4379))) // "Search for Item"
             {
                 unsafe
                 {
@@ -549,7 +549,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             }
 
-            if (ImGui.Selectable(StringUtil.GetAddonText(159))) // "Copy Item Name"
+            if (ImGui.Selectable(GetAddonText(159))) // "Copy Item Name"
             {
                 ImGui.SetClipboardText(item.Name);
             }
@@ -586,9 +586,17 @@ public unsafe class PluginWindow : Window, IDisposable
 
         if (showIndicators && item.ClassJobIcon != null)
         {
-            var pos = ImGui.GetCursorPos();
-            var availSize = ImGui.GetContentRegionAvail();
-            ImGui.SameLine(availSize.X - pos.X, 0); // TODO: no -20 here??
+            var availSize = ImGui.GetContentRegionMax();
+
+            if (item.IsGatherable && !item.GatheringItems.Any(gi => !gi.IsHidden))
+            {
+                var text = GetAddonText(627); // or 629? "Hidden"
+                var textWidth = ImGui.CalcTextSize(text).X;
+                ImGui.SameLine(availSize.X - textWidth - ImGui.GetStyle().ItemInnerSpacing.X - 20, 0);
+                ImGui.TextUnformatted(text);
+            }
+
+            ImGui.SameLine(availSize.X - 20, 0);
             Service.TextureManager.GetIcon((int)item.ClassJobIcon).Draw(20);
         }
     }

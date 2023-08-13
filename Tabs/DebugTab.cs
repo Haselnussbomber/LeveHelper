@@ -26,6 +26,7 @@ public class DebugTab
                 ImGui.TableSetupColumn("RowId", ImGuiTableColumnFlags.WidthFixed, 50);
                 ImGui.TableSetupColumn("Item", ImGuiTableColumnFlags.WidthStretch);
                 ImGui.TableSetupColumn("GatheringPoints", ImGuiTableColumnFlags.WidthStretch);
+                ImGui.TableHeadersRow();
 
                 var itemSheet = GetSheet<Item>();
                 foreach (var item in GetSheet<GatheringItem>())

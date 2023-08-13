@@ -13,6 +13,7 @@ public class Service
 
     public static AddonObserver AddonObserver { get; internal set; } = null!;
     public static GameFunctions GameFunctions { get; internal set; } = null!;
+    public static StringManager StringManager { get; internal set; } = null!;
     public static TextureManager TextureManager { get; internal set; } = null!;
     public static WantedTargetScanner WantedTargetScanner { get; internal set; } = null!;
 
@@ -31,6 +32,7 @@ public class Service
         PluginInterface.Create<Service>();
         AddonObserver = new();
         GameFunctions = new();
+        StringManager = new();
         TextureManager = new();
         WantedTargetScanner = new();
     }
@@ -39,6 +41,7 @@ public class Service
     {
         AddonObserver.Dispose();
         GameFunctions.Dispose();
+        StringManager.Dispose();
         TextureManager.Dispose();
         WantedTargetScanner.Dispose();
     }
