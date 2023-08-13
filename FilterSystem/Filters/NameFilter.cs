@@ -38,9 +38,10 @@ public class NameFilter : Filter
         using var id = ImRaii.PushId("NameFilter");
 
         ImGui.TableNextColumn();
-        ImGui.Text("Name:");
+        ImGui.TextUnformatted(t("NameFilter.Label"));
 
         ImGui.TableNextColumn();
+        ImGui.SetNextItemWidth(InputWidth);
         var currentName = Config.CurrentName;
         if (ImGui.InputText("##Input", ref currentName, 255))
         {

@@ -49,14 +49,15 @@ public class LocationFilter : Filter
         using var id = ImRaii.PushId("LocationFilter");
 
         ImGui.TableNextColumn();
-        ImGui.Text("Location:");
+        ImGui.TextUnformatted(t("LocationFilter.Label"));
 
         ImGui.TableNextColumn();
-        using (var combo = ImRaii.Combo("##Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : "All"))
+        ImGui.SetNextItemWidth(InputWidth);
+        using (var combo = ImRaii.Combo("##Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : t("LocationFilter.Selectable.All")))
         {
             if (combo.Success)
             {
-                if (ImGui.Selectable("All##All", Config.SelectedLocation == 0))
+                if (ImGui.Selectable(t("LocationFilter.Selectable.All") + "##All", Config.SelectedLocation == 0))
                 {
                     Set(0);
                     manager.Update();
@@ -98,7 +99,7 @@ public class LocationFilter : Filter
         if (_currentPlaceNameId != 0 &&
             Config.SelectedLocation != _currentPlaceNameId &&
             _locations.ContainsKey(_currentPlaceNameId) &&
-            ImGui.Button("Set Current Zone"))
+            ImGui.Button(t("LocationFilter.SetCurrentZone")))
         {
             Config.SelectedLocation = _currentPlaceNameId;
             manager.Update();

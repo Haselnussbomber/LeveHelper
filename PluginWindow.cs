@@ -41,7 +41,7 @@ public unsafe class PluginWindow : Window, IDisposable
         SizeCondition = ImGuiCond.FirstUseEver;
         SizeConstraints = new()
         {
-            MinimumSize = new Vector2(350, 400),
+            MinimumSize = new Vector2(400, 400),
             MaximumSize = new Vector2(4096, 2160)
         };
 
@@ -116,7 +116,7 @@ public unsafe class PluginWindow : Window, IDisposable
     {
         if (ImGui.BeginTabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
         {
-            if (ImGui.BeginTabItem("Levequest List"))
+            if (ImGui.BeginTabItem(t("Tabs.Levequest")))
             {
                 RespectCloseHotkey = true;
 
@@ -124,7 +124,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
 
-            if (ImGui.BeginTabItem("Queue"))
+            if (ImGui.BeginTabItem(t("Tabs.Queue")))
             {
                 RespectCloseHotkey = false;
 
@@ -132,7 +132,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
 
-            if (ImGui.BeginTabItem("Recipe Tree"))
+            if (ImGui.BeginTabItem(t("Tabs.RecipeTree")))
             {
                 RespectCloseHotkey = true;
 
@@ -140,7 +140,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
 
-            if (ImGui.BeginTabItem("Configuration"))
+            if (ImGui.BeginTabItem(t("Tabs.Configuration")))
             {
                 RespectCloseHotkey = true;
 
@@ -393,7 +393,7 @@ public unsafe class PluginWindow : Window, IDisposable
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 ImGui.BeginTooltip();
-                ImGui.Text("Open on GarlandTools");
+                ImGui.TextUnformatted(t("ItemContextMenu.OpenOnGarlandTools"));
 
                 var pos = ImGui.GetCursorPos();
                 ImGui.GetWindowDrawList().AddText(
@@ -516,7 +516,7 @@ public unsafe class PluginWindow : Window, IDisposable
                     }
                 }
 
-                if (ImGui.Selectable("Open in Fish Guide"))
+                if (ImGui.Selectable(t("ItemContextMenu.OpenInFishGuide")))
                 {
                     unsafe
                     {
@@ -558,7 +558,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             }
 
-            if (ImGui.Selectable("Open on GarlandTools"))
+            if (ImGui.Selectable(t("ItemContextMenu.OpenOnGarlandTools")))
             {
                 Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.RowId}"));
             }

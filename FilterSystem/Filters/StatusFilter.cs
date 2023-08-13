@@ -46,24 +46,29 @@ public class StatusFilter : Filter
         using var id = ImRaii.PushId("StatusFilter");
 
         ImGui.TableNextColumn();
-        ImGui.Text("Status:");
+        ImGui.TextUnformatted(t("StatusFilter.Label"));
 
         ImGui.TableNextColumn();
         var values = Enum.GetValues<CompletedStatus>();
+
+        ImGui.SetNextItemWidth(InputWidth);
+        using var combo = ImRaii.Combo("##Combo", t("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), Config.SelectedStatus)));
+        if (!combo.Success)
+            return;
 
         for (var i = 0; i < values.Length; i++)
         {
             var value = values[i];
             var radio = Config.SelectedStatus == value;
-            if (ImGui.RadioButton(Enum.GetName(typeof(CompletedStatus), value) + $"##Entry_{i}", radio))
+            if (ImGui.Selectable(t("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), value)) + $"##Entry_{i}", radio))
             {
                 Set(value);
                 manager.Update();
             }
 
-            if (i < values.Length)
+            if (Config.SelectedStatus == value)
             {
-                ImGui.SameLine();
+                ImGui.SetItemDefaultFocus();
             }
         }
     }

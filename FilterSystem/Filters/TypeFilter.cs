@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Raii;
+using Dalamud.Utility;
 using ImGuiNET;
 using LeveHelper.Utils;
 using Lumina.Excel.GeneratedSheets;
@@ -44,14 +45,15 @@ public class TypeFilter : Filter
         using var id = ImRaii.PushId("TypeFilter");
 
         ImGui.TableNextColumn();
-        ImGui.Text("Type:");
+        ImGui.TextUnformatted(t("TypeFilter.Label"));
 
         ImGui.TableNextColumn();
-        using (var combo = ImRaii.Combo("##Combo", Config.SelectedType == 0 ? "All" : GetSheetText<LeveAssignmentType>(Config.SelectedType, "Name")))
+        ImGui.SetNextItemWidth(InputWidth);
+        using (var combo = ImRaii.Combo("##Combo", Config.SelectedType == 0 ? t("TypeFilter.Selectable.All") : GetSheetText<LeveAssignmentType>(Config.SelectedType, "Name")))
         {
             if (combo.Success)
             {
-                if (ImGui.Selectable("All##All", Config.SelectedType == 0))
+                if (ImGui.Selectable(t("TypeFilter.Selectable.All") + "##All", Config.SelectedType == 0))
                 {
                     Set(0);
                     manager.Update();
@@ -135,7 +137,7 @@ public class TypeFilter : Filter
             var suggestedName = suggestedType == 1
                 ? GetSheetText<LeveAssignmentType>(1, "Name")
                 : Service.ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
-            if (suggestedName != null && ImGui.Button($"Set {suggestedName}"))
+            if (suggestedName != null && ImGui.Button(t("TypeFilter.SetSuggestion", suggestedName)))
             {
                 Config.SelectedType = (uint)suggestedType;
                 manager.Update();
@@ -145,8 +147,9 @@ public class TypeFilter : Filter
 
     private static LeveAssignmentType[] CreateGroup(params uint[] ids)
         => ids
-            .Select((rowId) => GetRow<LeveAssignmentType>(rowId)!)
-            .OrderBy(entry => entry.Name)
+            .Select((rowId) => GetRow<LeveAssignmentType>(rowId))
+            .OfType<LeveAssignmentType>()
+            .OrderBy(entry => entry.Name.ToDalamudString().TextValue)
             .ToArray();
 
     public override bool Run()

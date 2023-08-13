@@ -22,11 +22,11 @@ public class QueueTab
         if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
         {
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
-            ImGuiHelpers.CenteredText("No active Levequests");
+            ImGuiHelpers.CenteredText(t("QueueTab.NoActiveLevequests"));
             return;
         }
 
-        if (ImGuiUtils.IconButton("##Refresh", FontAwesomeIcon.RedoAlt, "Refresh"))
+        if (ImGuiUtils.IconButton("##Refresh", FontAwesomeIcon.RedoAlt, t("QueueTab.Refresh")))
         {
             Window.UpdateList();
         }
@@ -37,7 +37,7 @@ public class QueueTab
         {
             if (Window.Crystals.Any())
             {
-                ImGui.Text("Crystals:");
+                ImGui.TextUnformatted(t("QueueTab.Category.Crystals"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.Crystals)
                 {
@@ -47,11 +47,11 @@ public class QueueTab
 
             if (Window.Gatherable.Any())
             {
-                ImGui.Text("Gather:");
+                ImGui.TextUnformatted(t("QueueTab.Category.Gather"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in Window.Gatherable)
                 {
-                    ImGui.Text(kv.TerritoryType.PlaceName);
+                    ImGui.TextUnformatted(kv.TerritoryType.PlaceName);
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
@@ -63,7 +63,7 @@ public class QueueTab
 
             if (Window.OtherSources.Any())
             {
-                ImGui.Text("Other:");
+                ImGui.TextUnformatted(t("QueueTab.Category.Other"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.OtherSources)
                 {
@@ -73,7 +73,7 @@ public class QueueTab
 
             if (Window.Craftable.Any())
             {
-                ImGui.Text("Craft:");
+                ImGui.TextUnformatted(t("QueueTab.Category.Craft"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in Window.Craftable)
                 {
@@ -87,7 +87,7 @@ public class QueueTab
         }
         else
         {
-            ImGui.Text("Ready for turn in!");
+            ImGui.TextUnformatted(t("QueueTab.ReadyForTurnIn"));
         }
     }
 }

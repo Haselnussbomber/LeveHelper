@@ -15,6 +15,7 @@ public class Service
     public static GameFunctions GameFunctions { get; internal set; } = null!;
     public static StringManager StringManager { get; internal set; } = null!;
     public static TextureManager TextureManager { get; internal set; } = null!;
+    public static TranslationManager TranslationManager { get; internal set; } = null!;
     public static WantedTargetScanner WantedTargetScanner { get; internal set; } = null!;
 
     [PluginService] public static ChatGui ChatGui { get; private set; } = null!;
@@ -34,6 +35,7 @@ public class Service
         GameFunctions = new();
         StringManager = new();
         TextureManager = new();
+        TranslationManager = new();
         WantedTargetScanner = new();
     }
 
@@ -43,6 +45,7 @@ public class Service
         GameFunctions.Dispose();
         StringManager.Dispose();
         TextureManager.Dispose();
+        TranslationManager.Dispose();
         WantedTargetScanner.Dispose();
     }
 }

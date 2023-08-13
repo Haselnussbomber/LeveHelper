@@ -21,7 +21,7 @@ public class ConfigurationTab
         // Notify when Wanted Target is found
         {
             var notifyWantedTarget = config.NotifyWantedTarget;
-            if (ImGui.Checkbox("Notify when Wanted Target is found", ref notifyWantedTarget))
+            if (ImGui.Checkbox(t("Config.NotifyWantedTarget"), ref notifyWantedTarget))
             {
                 config.NotifyWantedTarget = notifyWantedTarget;
                 config.Save();
@@ -31,7 +31,7 @@ public class ConfigurationTab
         // Notify when Treasure is found
         {
             var notifyTreasure = config.NotifyTreasure;
-            if (ImGui.Checkbox("Notify when Treasure is found", ref notifyTreasure))
+            if (ImGui.Checkbox(t("Config.NotifyTreasure"), ref notifyTreasure))
             {
                 config.NotifyTreasure = notifyTreasure;
                 config.Save();

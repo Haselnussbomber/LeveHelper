@@ -46,14 +46,15 @@ public class LevemeteFilter : Filter
         using var id = ImRaii.PushId("LevemeteFilter");
 
         ImGui.TableNextColumn();
-        ImGui.Text("Levemete:");
+        ImGui.TextUnformatted(t("LevemeteFilter.Label"));
 
         ImGui.TableNextColumn();
+        ImGui.SetNextItemWidth(InputWidth);
         using var combo = ImRaii.Combo("##Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All");
         if (!combo.Success)
             return;
 
-        if (ImGui.Selectable("All##All", Config.SelectedLevemete == 0))
+        if (ImGui.Selectable(t("LevemeteFilter.Selectable.All") + "##All", Config.SelectedLevemete == 0))
         {
             Set(0);
             manager.Update();

@@ -84,37 +84,6 @@ dotnet_naming_symbols.private_static_fields.applicable_kinds = field
 dotnet_naming_symbols.private_static_fields.applicable_accessibilities = private
 dotnet_naming_symbols.private_static_fields.required_modifiers = static
 
-# Define the 'underscored' naming style
-dotnet_naming_style.underscored.capitalization = camel_case
-dotnet_naming_style.underscored.required_prefix = _
-
-# Define the 'pascal_no_underscore' naming style
-dotnet_naming_style.pascal_no_underscore.capitalization = pascal_case
-dotnet_naming_style.pascal_no_underscore.required_prefix =
-
-# Define the 'private_fields_underscored' naming rule
-dotnet_naming_rule.private_fields_underscored.symbols = private_fields
-dotnet_naming_rule.private_fields_underscored.style = underscored
-dotnet_naming_rule.private_fields_underscored.severity = error
-
-# Define the 'private_static_fields_none' naming rule
-dotnet_naming_rule.private_static_fields_none.symbols = private_static_fields
-dotnet_naming_rule.private_static_fields_none.capitalization = pascal_case
-dotnet_naming_rule.private_static_fields_none.style = pascal_no_underscore
-dotnet_naming_rule.private_static_fields_none.severity = error
-
-# Defining the 'method_symbols' symbol group.
-dotnet_naming_symbols.method_symbols.applicable_kinds = method
-dotnet_naming_symbols.method_symbols.applicable_accessibilities = *
-
-# Defining the `method_name_pascal_case` naming style.
-dotnet_naming_style.method_name_pascal_case.capitalization = pascal_case
-
-# Defining the `convention_method_name_rule` naming rule.
-dotnet_naming_rule.convention_method_name_rule.symbols = method_symbols
-dotnet_naming_rule.convention_method_name_rule.style = method_name_pascal_case
-dotnet_naming_rule.convention_method_name_rule.severity = error
-
 ###############################
 # C# Coding Conventions       #
 ###############################
@@ -126,6 +95,7 @@ csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_var_for_built_in_types = true:warning
 csharp_style_var_when_type_is_apparent = true:warning
 csharp_style_var_elsewhere = true:warning
+csharp_style_unused_value_assignment_preference = discard_variable:warnin
 
 # Expression-bodied members
 csharp_style_expression_bodied_methods = false:silent

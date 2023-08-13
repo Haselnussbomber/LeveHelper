@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using Dalamud.Game.Text.SeStringHandling;
+using System.Reflection;
 using Dalamud.Memory;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using Lumina.Excel;
 
@@ -38,9 +39,11 @@ public unsafe class StringManager : IDisposable
 
         if (!_sheetCache.TryGetValue(key, out var value))
         {
+            var prop = sheetType.GetProperty(columnName, BindingFlags.Instance | BindingFlags.Public);
+            if (prop == null)
+                return string.Empty;
 
-            var prop = sheetType.GetProperty(columnName);
-            if (prop == null || prop.PropertyType != typeof(Lumina.Text.SeString))
+            if (prop.PropertyType != typeof(Lumina.Text.SeString))
                 return string.Empty;
 
             var sheetRow = GetRow<T>(rowId);
@@ -51,7 +54,7 @@ public unsafe class StringManager : IDisposable
             if (seStr == null)
                 return string.Empty;
 
-            value = SeString.Parse(seStr.RawData).ToString();
+            value = seStr.ToDalamudString().TextValue;
 
             _sheetCache.Add(key, value);
         }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Dalamud;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
@@ -89,10 +88,12 @@ public unsafe class WantedTargetScanner : IDisposable
             return;
 
         var territoryTypeId = Service.ClientState.TerritoryType;
-        if (territoryTypeId == 0) return;
+        if (territoryTypeId == 0)
+            return;
 
         var territoryType = GetRow<TerritoryType>(territoryTypeId);
-        if (territoryType == null) return;
+        if (territoryType == null)
+            return;
 
         foreach (var obj in Service.ObjectTable)
         {
@@ -101,7 +102,8 @@ public unsafe class WantedTargetScanner : IDisposable
                 && !_foundTreasures.Contains(obj.ObjectId))
             {
                 var mapLink = obj.GetMapLink();
-                if (mapLink == null) continue;
+                if (mapLink == null)
+                    continue;
 
                 var sb = new SeStringBuilder();
 
@@ -109,20 +111,11 @@ public unsafe class WantedTargetScanner : IDisposable
                 sb.AddText("[LeveHelper] ");
                 sb.AddUiForegroundOff();
 
-                sb.Append(mapLink);
-
-                sb.AddText(Service.ClientState.ClientLanguage switch
-                {
-                    ClientLanguage.Japanese => "発見されました。",
-                    ClientLanguage.German => " entdeckt.",
-                    ClientLanguage.French => " découvert.",
-                    _ => " discovered."
-                });
+                sb.Append(tSe("WantedTargetScanner.Treasure.Notification", mapLink));
 
                 Service.ChatGui.Print(sb.Build());
 
                 _foundTreasures.Add(obj.ObjectId);
-                continue;
             }
 
             if (config.NotifyWantedTarget
@@ -133,30 +126,16 @@ public unsafe class WantedTargetScanner : IDisposable
                 && _wantedTargetIds.Contains(battleNpc.NameId))
             {
                 var mapLink = obj.GetMapLink();
-                if (mapLink == null) continue;
+                if (mapLink == null)
+                    continue;
 
                 var sb = new SeStringBuilder();
 
                 sb.AddUiForeground(69);
                 sb.AddText("[LeveHelper] ");
                 sb.AddUiForegroundOff();
-                sb.AddText(Service.ClientState.ClientLanguage switch
-                {
-                    ClientLanguage.Japanese => "捜査対象 ",
-                    ClientLanguage.German => "Gesuchtes Ziel ",
-                    ClientLanguage.French => "Cible recherchée ",
-                    _ => "Wanted target "
-                });
 
-                sb.Append(mapLink);
-
-                sb.AddText(Service.ClientState.ClientLanguage switch
-                {
-                    ClientLanguage.Japanese => "発見されました。",
-                    ClientLanguage.German => " entdeckt.",
-                    ClientLanguage.French => " découvert.",
-                    _ => " discovered."
-                });
+                sb.Append(tSe("WantedTargetScanner.WantedTarget.Notification", mapLink));
 
                 Service.ChatGui.Print(sb.Build());
 

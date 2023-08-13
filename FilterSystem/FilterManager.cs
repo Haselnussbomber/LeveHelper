@@ -98,14 +98,17 @@ public class FilterManager
         var someFilterSet = Filters.Any(filter => filter.HasValue());
 
         using var treeNodeColor = someFilterSet ? ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Green) : null;
-        using var treeNode = ImRaii.TreeNode("Filters", ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
+        using var treeNode = ImRaii.TreeNode(t("FilterManager.Title"), ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
         if (!treeNode.Success)
             return;
         treeNodeColor?.Dispose();
 
-        using var table = ImRaii.Table("Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(450, 100));
+        using var table = ImRaii.Table("Filters", 2, ImGuiTableFlags.NoBordersInBody | ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.NoSavedSettings, new(-1, 100));
         if (!table.Success)
             return;
+
+        ImGui.TableSetupColumn("Label", ImGuiTableColumnFlags.WidthFixed, 100);
+        ImGui.TableSetupColumn("Inputs", ImGuiTableColumnFlags.WidthStretch);
 
         foreach (var filter in Filters)
         {
@@ -117,7 +120,7 @@ public class FilterManager
         ImGui.TableNextColumn();
         ImGui.TableNextColumn();
 
-        if (ImGui.Button("Clear Filters"))
+        if (ImGui.Button(t("FilterManager.ClearFilters")))
         {
             Reset();
         }

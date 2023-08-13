@@ -6,6 +6,6 @@ public class LeveAssignmentType : Lumina.Excel.GeneratedSheets.LeveAssignmentTyp
 {
     private string? _name { get; set; } = null;
 
-    public new string Name
+    public string StringName
         => _name ??= base.Name.ToDalamudString().ToString() ?? "";
 }

@@ -1,0 +1,243 @@
+{
+  "Config.NotifyWantedTarget": {
+    "en": "Notify when Wanted Target is found",
+    "de": "Benachrichtigen wenn Gesuchtes Ziel gefunden wurde"
+  },
+  "Config.NotifyTreasure": {
+    "en": "Notify when Treasure is found",
+    "de": "Benachrichtigen wenn Schatztruhe gefunden wurde"
+  },
+
+  "Tabs.Levequest": {
+    "en": "Levequests",
+    "de": "Freibriefe"
+  },
+  "Tabs.Queue": {
+    "en": "Queue",
+    "de": "Aufgaben"
+  },
+  "Tabs.RecipeTree": {
+    "en": "Recipe Tree",
+    "de": "Rezeptbaum"
+  },
+  "Tabs.Configuration": {
+    "en": "Configuration",
+    "de": "Konfiguration"
+  },
+
+  "ItemContextMenu.OpenOnGarlandTools": {
+    "en": "Open on GarlandTools",
+    "de": "Auf GarlandTools öffnen"
+  },
+  "ItemContextMenu.OpenInFishGuide": {
+    "en": "Open in Fish Guide",
+    "de": "In Fischverzeichnis öffnen"
+  },
+
+  "ListTab.AcceptedLeves": {
+    "en": "Accepted Leves: {0}/16",
+    "de": "Akzeptierte Freibriefe: {0}/16"
+  },
+  "ListTab.MissingText": {
+    "en": ", {0} missing, {1} days total",
+    "de": ", {0} fehlen, {1} Tage insgesamt"
+  },
+  "ListTab.Allowances": {
+    "en": "Allowances: {0}/100 (need {1}{2}, next 3 in {3})",
+    "de": "Vollmachten: {0}/100 ({1} benötigt{2}, 3 neue in {3})"
+  },
+  "ListTab.Completion": {
+    "en": "Completion: {0}/{1} ({2}%%)",
+    "de": "Abgeschlossen: {0}/{1} ({2}%%)"
+  },
+  "ListTab.Column.Id": {
+    "en": "Id"
+  },
+  "ListTab.Column.Level": {
+    "en": "Level",
+    "de": "Stufe"
+  },
+  "ListTab.Column.Type": {
+    "en": "Type",
+    "de": "Typ"
+  },
+  "ListTab.Column.Name": {
+    "en": "Name",
+    "de": "Titel"
+  },
+  "ListTab.Column.Levemete": {
+    "en": "Levemete",
+    "de": "Auftraggeber"
+  },
+  "ListTab.LeveType.Tooltip": {
+    "en": "{0}\nRight Click: Filter by Type",
+    "de": "{0}\nRechtsklick: Nach Typ filtern"
+  },
+  "ListTab.Leve.Tooltip.Status.ReadyForTurnIn": {
+    "en": "Ready for turn in",
+    "de": "Bereit zur Abgabe"
+  },
+  "ListTab.Leve.Tooltip.Status.Started": {
+    "en": "Started",
+    "de": "Gestartet"
+  },
+  "ListTab.Leve.Tooltip.Status.Failed": {
+    "en": "Failed",
+    "de": "Fehlgeschlagen"
+  },
+  "ListTab.Leve.Tooltip.Status.Accepted": {
+    "en": "Accepted",
+    "de": "Angenommen"
+  },
+  "ListTab.Leve.Tooltip.Status.Completed": {
+    "en": "Completed",
+    "de": "Abgeschlossen"
+  },
+  "ListTab.Leve.Tooltip.Status.Incomplete": {
+    "en": "Incomplete",
+    "de": "Nicht abgeschlossen"
+  },
+  "ListTab.Leve.Tooltip.TownLocked": {
+    "en": "Only available to characters that started in {0}.",
+    "de": "Nur für Charaktere verfügbar, die in {0} gestartet sind."
+  },
+  "ListTab.Leve.ContextMenu.OpenInJournal": {
+    "en": "Open in Journal",
+    "de": "Im Archiv öffnen"
+  },
+  "ListTab.Leve.ContextMenu.OpenOnGarlandTools": {
+    "en": "Open on GarlandTools",
+    "de": "Auf GarlandTools öffnen"
+  },
+  "ListTab.LeveMete.ContextMenu.Tooltip": {
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+    "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+  },
+
+  "QueueTab.NoActiveLevequests": {
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+    "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+  },
+  "QueueTab.Refresh": {
+    "en": "Refresh",
+    "de": "Aktualisieren"
+  },
+  "QueueTab.Category.Crystals": {
+    "en": "Crystals:",
+    "de": "Kristalle:"
+  },
+  "QueueTab.Category.Gather": {
+    "en": "Gather:",
+    "de": "Sammeln:"
+  },
+  "QueueTab.Category.Craft": {
+    "en": "Craft:",
+    "de": "Herstellen:"
+  },
+  "QueueTab.Category.Other": {
+    "en": "Other:",
+    "de": "Andere:"
+  },
+  "QueueTab.ReadyForTurnIn": {
+    "en": "Ready for turn in!",
+    "de": "Bereit zur Abgabe!"
+  },
+
+  "RecipeTreeTab.NoActiveLevequests": {
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+    "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+  },
+  "RecipeTreeTab.Refresh": {
+    "en": "Refresh",
+    "de": "Aktualisieren"
+  },
+
+  "FilterManager.Title": {
+    "en": "Filters",
+    "de": "Filter"
+  },
+  "FilterManager.ClearFilters": {
+    "en": "Clear Filters",
+    "de": "Filter aufheben"
+  },
+
+  "LevemeteFilter.Label": {
+    "en": "Levemete:",
+    "de": "Auftraggeber:"
+  },
+  "LevemeteFilter.Selectable.All": {
+    "en": "All",
+    "de": "Alle"
+  },
+
+  "LocationFilter.Label": {
+    "en": "Location:",
+    "de": "Bestimmungsort:"
+  },
+  "LocationFilter.Selectable.All": {
+    "en": "All",
+    "de": "Alle"
+  },
+  "LocationFilter.SetCurrentZone": {
+    "en": "Set Current Zone",
+    "de": "Aktuelle Zone auswählen"
+  },
+
+  "NameFilter.Label": {
+    "en": "Name:",
+    "de": "Titel:"
+  },
+
+  "StatusFilter.Label": {
+    "en": "Status:"
+  },
+  "StatusFilter.Status.Any": {
+    "en": "Any",
+    "de": "Beliebig"
+  },
+  "StatusFilter.Status.Complete": {
+    "en": "Complete",
+    "de": "Abgeschlossen"
+  },
+  "StatusFilter.Status.Incomplete": {
+    "en": "Incomplete",
+    "de": "Nicht abgeschlossen"
+  },
+  "StatusFilter.Status.Accepted": {
+    "en": "Accepted",
+    "de": "Angenommen"
+  },
+
+  "TypeFilter.Label": {
+    "en": "Type:",
+    "de": "Typ:"
+  },
+  "TypeFilter.Selectable.All": {
+    "en": "All",
+    "de": "Alle"
+  },
+  "TypeFilter.SetSuggestion": {
+    "en": "Set {0}",
+    "de": "{0} auswählen"
+  },
+
+  "WantedTargetScanner.Treasure.Notification": {
+    "en": "{0} discovered.",
+    "de": "{0} entdeckt.",
+    "fr": "{0} découvert.",
+    "ja": "{0} 発見されました。"
+  },
+  "WantedTargetScanner.WantedTarget.Notification": {
+    "en": "Wanted target {0} discovered.",
+    "de": "Gesuchtes Ziel {0} entdeckt.",
+    "fr": "Cible recherchée {0} découvert.",
+    "ja": "捜査対象 {0} 発見されました。"
+  },
+
+  "template": {
+    "en": "",
+    "de": "",
+    "fr": "",
+    "ja": ""
+  }
+}

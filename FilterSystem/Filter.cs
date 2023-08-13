@@ -2,6 +2,8 @@ namespace LeveHelper;
 
 public abstract class Filter
 {
+    protected static readonly int InputWidth = 250;
+
     protected FilterManager manager;
 
     public Filter(FilterManager manager)
