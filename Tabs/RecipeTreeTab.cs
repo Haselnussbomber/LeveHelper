@@ -20,7 +20,8 @@ public class RecipeTreeTab
 
         if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
         {
-            ImGui.TextDisabled("No active Levequests"); // center?
+            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
+            ImGuiHelpers.CenteredText("No active Levequests");
             return;
         }
 
