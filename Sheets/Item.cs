@@ -16,10 +16,9 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
     private bool? _isCraftable { get; set; } = null;
     private uint? _resultAmount { get; set; } = null;
     private uint? _classJobIcon { get; set; } = null;
-    private bool? _isGatherable { get; set; } = null;
     private bool? _isFish { get; set; } = null;
     private bool? _isSpearfishing { get; set; } = null;
-    private GatheringPoint[]? _gatheringPoints { get; set; } = null;
+    private GatheringItem[]? _gatheringItems { get; set; } = null;
     private FishingSpot[]? _fishingSpots { get; set; } = null;
     private RequiredItem[]? _ingredients { get; set; } = null;
     private uint? _quantityOwned { get; set; } = null;
@@ -81,11 +80,16 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
         }
     }
 
+    public GatheringItem[] GatheringItems
+        => _gatheringItems ??= GetSheet<GatheringItem>().Where((row) => row.Item == RowId).ToArray();
+
     public GatheringPoint[] GatheringPoints
-        => _gatheringPoints ??= GetSheet<GatheringItem>().Where((row) => row.Item == RowId).SelectMany(row => row.GatheringPoints).ToArray();
+        => GatheringItems
+            .SelectMany(row => row.GatheringPoints)
+            .ToArray();
 
     public bool IsGatherable
-        => _isGatherable ??= GatheringPoints.Any();
+        => GatheringPoints.Any();
 
     public FishingSpot[] FishingSpots
         => _fishingSpots ??= FishingSpotCache.FindByItemId(RowId) ?? Array.Empty<FishingSpot>();
