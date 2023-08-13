@@ -82,7 +82,7 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
     }
 
     public GatheringPoint[] GatheringPoints
-        => _gatheringPoints ??= GatheringPointCache.FindByItemId(RowId) ?? Array.Empty<GatheringPoint>();
+        => _gatheringPoints ??= GetSheet<GatheringItem>().Where((row) => row.Item == RowId).SelectMany(row => row.GatheringPoints).ToArray();
 
     public bool IsGatherable
         => _isGatherable ??= GatheringPoints.Any();

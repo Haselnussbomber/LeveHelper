@@ -25,6 +25,9 @@ public unsafe class PluginWindow : Window, IDisposable
     private readonly ConfigurationTab _configurationTab;
     private readonly RecipeTreeTab _recipeTreeTab;
     private readonly ListTab _listTab;
+#if DEBUG
+    private readonly DebugTab _debugTab;
+#endif
 
     private ushort[] _lastActiveLevequestIds = Array.Empty<ushort>();
 
@@ -46,6 +49,9 @@ public unsafe class PluginWindow : Window, IDisposable
         _queueTab = new(this);
         _recipeTreeTab = new(this);
         _configurationTab = new(this);
+#if DEBUG
+        _debugTab = new(this);
+#endif
 
         IsOpen = true;
 
@@ -141,6 +147,16 @@ public unsafe class PluginWindow : Window, IDisposable
                 _configurationTab.Draw();
                 ImGui.EndTabItem();
             }
+
+#if DEBUG
+            if (ImGui.BeginTabItem("Debug"))
+            {
+                RespectCloseHotkey = true;
+
+                _debugTab.Draw();
+                ImGui.EndTabItem();
+            }
+#endif
 
             ImGui.EndTabBar();
         }
@@ -323,8 +339,14 @@ public unsafe class PluginWindow : Window, IDisposable
             ImGui.Unindent();
     }
 
-    public void DrawItem(Item item, uint neededCount, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
+    public void DrawItem(Item? item, uint neededCount = 0, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
     {
+        if (item == null)
+            return;
+
+        if (key == "Item")
+            key += "_" + item.RowId.ToString();
+
         // draw icons to the right: Gather, Vendor..
         var isLeveRequiredItem = LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
@@ -339,7 +361,7 @@ public unsafe class PluginWindow : Window, IDisposable
             color = Colors.Grey;
 
         ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
-        ImGui.Selectable($"{item.QuantityOwned}/{neededCount} {item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+        ImGui.Selectable($"{(neededCount > 0 ? $"{item.QuantityOwned}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
         ImGui.PopStyleColor();
 
         if (ImGui.IsItemHovered())

@@ -40,8 +40,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         Service.CommandManager.AddHandler("/levehelper", commandInfo);
         Service.CommandManager.AddHandler("/lh", commandInfo);
-
-        GatheringPointCache.Load();
     }
 
     private void OnDraw()
