@@ -1,12 +1,20 @@
 # Changelog
 
+## [2.0.8] (2023-08-13)
+
+Last update made things worse, but I hope this time we got the gatherable items all categorized correctly. 😉
+
+- **Added:** Hidden gatherables are now marked as hidden in the queue.
+- **Added:** The plugin has been translated into German. I don't understand other languages, so if you want to translate it into French or Japanese (or any other language), pull requests are welcome.
+- **Changed:** Queue steps now have indentation for better readability.
+
 ## [2.0.7] (2023-08-06)
 
-- **Fixed**: Hidden gatherables weren't categorized as gatherable.
+- **Fixed:** Hidden gatherables weren't categorized as gatherable.
 
 ## [2.0.6] (2023-07-30)
 
-- **Changed**: Result items are now displayed as HQ items. You don't need to craft them in HQ, but why miss out on bonus rewards? Now it's easier to see when it's an item you have to turn in. :)
+- **Changed:** Result items are now displayed as HQ items. You don't need to craft them in HQ, but why miss out on bonus rewards? Now it's easier to see when it's an item you have to turn in. :)
 - **Fixed:** Not all items that can be gathered were categorized as such due to prematurely aborting a loop.
 
 ## [2.0.5] (2023-07-13)
@@ -152,6 +160,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.0.8]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.4...v2.0.5

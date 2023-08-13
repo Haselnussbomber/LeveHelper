@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>2.0.7</Version>
+    <Version>2.0.8</Version>
     <TargetFramework>net7.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
@@ -37,6 +37,11 @@
     <Compile Remove="deps\**" />
     <EmbeddedResource Remove=".git*" />
     <EmbeddedResource Remove="deps\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Translations.json" />
+    <EmbeddedResource Include="Translations.json" />
   </ItemGroup>
 
   <ItemGroup>
