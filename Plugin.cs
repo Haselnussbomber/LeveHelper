@@ -46,6 +46,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     {
         Service.StringManager.Clear();
         FilterManager.Reload();
+        _pluginWindow?.Refresh();
     }
 
     private void OnDraw()

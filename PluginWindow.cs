@@ -12,6 +12,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
+using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
 namespace LeveHelper;
 
@@ -89,7 +90,7 @@ public unsafe class PluginWindow : Window, IDisposable
             Refresh();
     }
 
-    private void Refresh()
+    public void Refresh()
     {
         UpdateList();
         Plugin.FilterManager.Update();

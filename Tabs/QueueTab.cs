@@ -1,8 +1,10 @@
 using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Raii;
+using Dalamud.Utility;
 using ImGuiNET;
 using LeveHelper.Utils;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
@@ -51,7 +53,7 @@ public class QueueTab
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in Window.Gatherable)
                 {
-                    ImGui.TextUnformatted(kv.TerritoryType.PlaceName);
+                    ImGui.TextUnformatted(GetRow<PlaceName>(kv.TerritoryType.PlaceName.Row)?.Name.ToDalamudString().ToString());
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)

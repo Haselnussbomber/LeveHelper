@@ -12,6 +12,7 @@ using ExportedGatheringPoint = Lumina.Excel.GeneratedSheets.ExportedGatheringPoi
 using FishParameter = Lumina.Excel.GeneratedSheets.FishParameter;
 using Level = Lumina.Excel.GeneratedSheets.Level;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
+using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
 namespace LeveHelper.Services;
 
