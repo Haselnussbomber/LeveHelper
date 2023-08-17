@@ -7,7 +7,7 @@ namespace LeveHelper;
 
 public class FiltersState
 {
-    public Leve[] AllLeves { get; init; }
+    public Leve[] AllLeves { get; private set; } = null!;
 
     public IEnumerable<Leve> Leves { get; set; } = null!;
     public Leve[] LevesArray { get; set; } = null!;
@@ -29,6 +29,11 @@ public class FiltersState
     };
 
     public FiltersState()
+    {
+        Reload();
+    }
+
+    public void Reload()
     {
         AllLeves = GetSheet<Leve>()
             .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))

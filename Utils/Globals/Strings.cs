@@ -1,6 +1,7 @@
 using System.Linq;
 using Dalamud.Game.Text.SeStringHandling;
 using Lumina.Excel;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Utils.Globals;
 
@@ -16,7 +17,7 @@ public static unsafe class Strings
         => Service.TranslationManager.TranslateSeString(key, args.Select(s => s.Payloads).ToArray());
 
     public static string GetAddonText(uint id)
-        => Service.StringManager.GetAddonText(id);
+        => Service.StringManager.GetSheetText<Addon>(id, "Text");
 
     public static string GetSheetText<T>(uint rowId, string columnName) where T : ExcelRow
         => Service.StringManager.GetSheetText<T>(rowId, columnName);

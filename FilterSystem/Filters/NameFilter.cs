@@ -17,6 +17,10 @@ public class NameFilter : Filter
 
     public static NameFilterConfiguration Config => Plugin.Config.Filters.NameFilter;
 
+    public override void Reload()
+    {
+    }
+
     public override void Reset()
     {
         Config.CurrentName = "";

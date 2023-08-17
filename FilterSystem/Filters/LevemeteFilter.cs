@@ -22,6 +22,12 @@ public class LevemeteFilter : Filter
 
     private Dictionary<uint, string>? _levemetes { get; set; }
 
+    public override void Reload()
+    {
+        _levemetes?.Clear();
+        Run();
+    }
+
     public override void Reset()
     {
         Config.SelectedLevemete = 0;

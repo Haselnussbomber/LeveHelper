@@ -1,35 +1,13 @@
 using System.Collections.Generic;
 using System.Reflection;
-using Dalamud.Memory;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using Lumina.Excel;
 
 namespace LeveHelper.Services;
 
-public unsafe class StringManager : IDisposable
+public unsafe class StringManager
 {
-    private readonly Dictionary<uint, string> _addonCache = new();
     private readonly Dictionary<(string sheetName, uint rowId, string columnName), string> _sheetCache = new();
-
-    public string GetAddonText(uint id)
-    {
-        if (!_addonCache.TryGetValue(id, out var value))
-        {
-            var ptr = (nint)RaptureTextModule.Instance()->GetAddonText(id);
-            if (ptr != 0)
-            {
-                value = MemoryHelper.ReadSeStringNullTerminated(ptr).ToString();
-
-                if (string.IsNullOrWhiteSpace(value))
-                    return null ?? $"[Addon#{id}]";
-
-                _addonCache.Add(id, value);
-            }
-        }
-
-        return value ?? $"[Addon#{id}]";
-    }
 
     public string GetSheetText<T>(uint rowId, string columnName) where T : ExcelRow
     {
@@ -62,9 +40,8 @@ public unsafe class StringManager : IDisposable
         return value;
     }
 
-    public void Dispose()
+    public void Clear()
     {
-        _addonCache.Clear();
         _sheetCache.Clear();
     }
 }

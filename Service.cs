@@ -9,14 +9,14 @@ namespace LeveHelper;
 
 public class Service
 {
-    public static DalamudPluginInterface PluginInterface { get; internal set; } = null!;
+    public static AddonObserver AddonObserver { get; private set; } = null!;
+    public static GameFunctions GameFunctions { get; private set; } = null!;
+    public static StringManager StringManager { get; private set; } = null!;
+    public static TextureManager TextureManager { get; private set; } = null!;
+    public static TranslationManager TranslationManager { get; private set; } = null!;
+    public static WantedTargetScanner WantedTargetScanner { get; private set; } = null!;
 
-    public static AddonObserver AddonObserver { get; internal set; } = null!;
-    public static GameFunctions GameFunctions { get; internal set; } = null!;
-    public static StringManager StringManager { get; internal set; } = null!;
-    public static TextureManager TextureManager { get; internal set; } = null!;
-    public static TranslationManager TranslationManager { get; internal set; } = null!;
-    public static WantedTargetScanner WantedTargetScanner { get; internal set; } = null!;
+    public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     [PluginService] public static ChatGui ChatGui { get; private set; } = null!;
     [PluginService] public static Framework Framework { get; private set; } = null!;
@@ -28,14 +28,15 @@ public class Service
     [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
     [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
 
-    public static void Initialize()
+    public static void Initialize(DalamudPluginInterface pluginInterface)
     {
+        PluginInterface = pluginInterface;
         PluginInterface.Create<Service>();
         AddonObserver = new();
         GameFunctions = new();
         StringManager = new();
         TextureManager = new();
-        TranslationManager = new();
+        TranslationManager = new(PluginInterface, ClientState);
         WantedTargetScanner = new();
     }
 
@@ -43,7 +44,6 @@ public class Service
     {
         AddonObserver.Dispose();
         GameFunctions.Dispose();
-        StringManager.Dispose();
         TextureManager.Dispose();
         TranslationManager.Dispose();
         WantedTargetScanner.Dispose();

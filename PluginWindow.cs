@@ -148,7 +148,7 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
 
-#if DEBUG
+#if false
             if (ImGui.BeginTabItem("Debug"))
             {
                 RespectCloseHotkey = true;

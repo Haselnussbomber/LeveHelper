@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using Recipe = Lumina.Excel.GeneratedSheets.Recipe;
 using SpearfishingItem = Lumina.Excel.GeneratedSheets.SpearfishingItem;
 
@@ -11,7 +9,7 @@ namespace LeveHelper.Sheets;
 
 public class Item : Lumina.Excel.GeneratedSheets.Item
 {
-    private string _name { get; set; } = "";
+    private string? _name { get; set; } = null;
     private Recipe? _recipe { get; set; } = null;
     private bool? _isCraftable { get; set; } = null;
     private uint? _resultAmount { get; set; } = null;
@@ -24,31 +22,13 @@ public class Item : Lumina.Excel.GeneratedSheets.Item
     private uint? _quantityOwned { get; set; } = null;
     private DateTime _quantityOwnedLastUpdate { get; set; }
 
-    public new string Name
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_name))
-            {
-                unsafe
-                {
-                    var ptr = (nint)Framework.Instance()->GetUiModule()->GetRaptureTextModule()->FormatAddonText2(2021, (int)RowId, 0);
-                    if (ptr != 0)
-                        _name = MemoryHelper.ReadSeStringNullTerminated(ptr).ToString();
-                }
-            }
-
-            return !string.IsNullOrEmpty(_name)
-                ? _name
-                : base.Name.ToDalamudString().ToString() ?? "";
-        }
-    }
+    public new string Name => _name ??= base.Name.ToDalamudString().ToString();
 
     public bool IsCrystal
         => ItemUICategory.Row == 59;
 
     public Recipe? Recipe
-        => _recipe ??= FindRow<Recipe>(recipe => recipe?.ItemResult.Value?.RowId == RowId);
+        => _recipe ??= FindRow<Recipe>(recipe => recipe?.ItemResult.Row == RowId);
 
     public bool IsCraftable
         => _isCraftable ??= Recipe != null;

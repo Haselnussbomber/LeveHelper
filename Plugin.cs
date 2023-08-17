@@ -18,15 +18,15 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
-        Service.PluginInterface = pluginInterface;
+        Service.Initialize(pluginInterface);
         Task.Run(Setup);
     }
 
     private void Setup()
     {
-        Service.Initialize();
-
         Config = Configuration.Load();
+        Service.TranslationManager.Initialize("LeveHelper.Translations.json", Config);
+        Service.TranslationManager.OnLanguageChange += OnLanguageChange;
 
         FilterManager = new();
 
@@ -40,6 +40,12 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         Service.CommandManager.AddHandler("/levehelper", commandInfo);
         Service.CommandManager.AddHandler("/lh", commandInfo);
+    }
+
+    private void OnLanguageChange()
+    {
+        Service.StringManager.Clear();
+        FilterManager.Reload();
     }
 
     private void OnDraw()
@@ -84,6 +90,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     void IDisposable.Dispose()
     {
+        Service.TranslationManager.OnLanguageChange -= OnLanguageChange;
         Service.PluginInterface.UiBuilder.Draw -= OnDraw;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= ToggleWindow;
 

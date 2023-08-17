@@ -35,4 +35,7 @@ public partial class ImGuiUtils
 
         return pressed;
     }
+
+    public static void PushCursorY(float y)
+        => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + y);
 }

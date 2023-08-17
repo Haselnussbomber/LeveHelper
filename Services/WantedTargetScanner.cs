@@ -68,6 +68,9 @@ public unsafe class WantedTargetScanner : IDisposable
     {
         var config = Plugin.Config;
 
+        if (config == null)
+            return;
+
         if (!config.NotifyTreasure && !config.NotifyWantedTarget)
             return;
 

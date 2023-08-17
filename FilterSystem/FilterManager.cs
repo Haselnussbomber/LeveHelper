@@ -69,6 +69,18 @@ public class FilterManager
             .Aggregate(0, (total, cost) => total + cost);
     }
 
+    public void Reload()
+    {
+        State.Reload();
+
+        foreach (var filter in Filters)
+        {
+            filter.Reload();
+        }
+
+        Update();
+    }
+
     public void Reset()
     {
         foreach (var filter in Filters)

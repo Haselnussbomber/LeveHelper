@@ -22,7 +22,13 @@ public class TypeFilter : Filter
 
     public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
 
-    private Dictionary<string, LeveAssignmentType[]>? _groups { get; set; }
+    private Dictionary<string, LeveAssignmentType[]> _groups { get; set; } = new();
+
+    public override void Reload()
+    {
+        _groups.Clear();
+        Run();
+    }
 
     public override void Reset()
     {
@@ -73,12 +79,6 @@ public class TypeFilter : Filter
                 if (Config.SelectedType == 1)
                 {
                     ImGui.SetItemDefaultFocus();
-                }
-
-                if (_groups == null)
-                {
-                    ImGui.EndCombo(); // Combo
-                    return;
                 }
 
                 foreach (var group in _groups)
@@ -154,20 +154,20 @@ public class TypeFilter : Filter
 
     public override bool Run()
     {
-        _groups ??= new()
+        if (!_groups.Any())
         {
             // HowTo#69 => Fieldcraft Leves
-            { GetSheetText<HowTo>(69, "Name"), CreateGroup(2, 3, 4) },
+            _groups.Add(GetSheetText<HowTo>(69, "Name"), CreateGroup(2, 3, 4));
 
             // HowTo#67 => Tradecraft Leves
-            { GetSheetText<HowTo>(67, "Name"), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12) },
+            _groups.Add(GetSheetText<HowTo>(67, "Name"), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
 
             // HowTo#112 => Grand Company Leves
-            { GetSheetText<HowTo>(112, "Name"), CreateGroup(16, 17, 18) },
+            _groups.Add(GetSheetText<HowTo>(112, "Name"), CreateGroup(16, 17, 18));
 
             // HowTo#218 => Temple Leves -- no leve is assigned to these
-            // { StringUtil.GetText("HowTo", 218), CreateGroup(13, 14, 15) }
-        };
+            //_groups.Add(GetSheetText<HowTo>(218, "Name"), CreateGroup(13, 14, 15));
+        }
 
         if (Config.SelectedType == 0)
             return false;

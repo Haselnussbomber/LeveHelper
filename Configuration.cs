@@ -1,14 +1,21 @@
 using System.IO;
 using Dalamud.Configuration;
+using Dalamud.Logging;
+using LeveHelper.Enums;
 using LeveHelper.Filters;
+using LeveHelper.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LeveHelper;
 
 [Serializable]
-internal partial class Configuration : IPluginConfiguration
+internal partial class Configuration : IPluginConfiguration, ITranslationConfig
 {
     public int Version { get; set; } = 1;
+
+    public string PluginLanguage { get; set; } = "en";
+    public PluginLanguageOverride PluginLanguageOverride { get; set; } = PluginLanguageOverride.Dalamud;
+
     public FilterConfigs Filters { get; init; } = new();
     public bool NotifyWantedTarget { get; set; } = true;
     public bool NotifyTreasure { get; set; } = true;
@@ -44,6 +51,7 @@ internal partial class Configuration
 
     internal void Save()
     {
+        PluginLog.Information("Configuration saved.");
         Service.PluginInterface.SavePluginConfig(this);
     }
 }

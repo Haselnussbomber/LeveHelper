@@ -25,6 +25,12 @@ public class LocationFilter : Filter
     private uint _lastTerritoryId { get; set; }
     private uint _currentPlaceNameId { get; set; }
 
+    public override void Reload()
+    {
+        _locations?.Clear();
+        Run();
+    }
+
     public override void Reset()
     {
         Config.SelectedLocation = 0;

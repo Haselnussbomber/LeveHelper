@@ -11,6 +11,7 @@ public abstract class Filter
         this.manager = manager;
     }
 
+    public abstract void Reload();
     public abstract void Reset();
     public abstract void Draw();
     public abstract bool Run();

@@ -25,6 +25,10 @@ public class StatusFilter : Filter
 
     public static StatusFilterConfiguration Config => Plugin.Config.Filters.StatusFilter;
 
+    public override void Reload()
+    {
+    }
+
     public override void Reset()
     {
         Config.SelectedStatus = CompletedStatus.Any;
