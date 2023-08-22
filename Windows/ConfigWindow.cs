@@ -1,27 +1,36 @@
+using System.Numerics;
 using Dalamud.Interface.Raii;
+using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Enums;
 using LeveHelper.Extensions;
 using LeveHelper.Services;
 using LeveHelper.Utils;
 
-namespace LeveHelper;
+namespace LeveHelper.Windows;
 
-public class ConfigurationTab
+public unsafe class ConfigWindow : Window
 {
-    public PluginWindow Window { get; }
-
-    public ConfigurationTab(PluginWindow window)
+    public ConfigWindow() : base(t("WindowTitle.Configuration"))
     {
-        Window = window;
+        Namespace = "LeveHelperConfig";
+
+        Size = new Vector2(400, 400);
+        SizeCondition = ImGuiCond.Appearing;
+        SizeConstraints = new()
+        {
+            MinimumSize = new Vector2(400, 400),
+            MaximumSize = new Vector2(4096, 2160)
+        };
     }
 
-    public void Draw()
+    public override void OnClose()
     {
-        using var windowId = ImRaii.PushId("##ConfigurationTab");
+        Service.WindowManager.CloseWindow<ConfigWindow>();
+    }
 
-        var config = Plugin.Config;
-
+    public override void Draw()
+    {
         // Language
         {
             ImGui.Spacing();
@@ -71,21 +80,21 @@ public class ConfigurationTab
 
         // Notify when Wanted Target is found
         {
-            var notifyWantedTarget = config.NotifyWantedTarget;
+            var notifyWantedTarget = Plugin.Config.NotifyWantedTarget;
             if (ImGui.Checkbox(t("Config.NotifyWantedTarget"), ref notifyWantedTarget))
             {
-                config.NotifyWantedTarget = notifyWantedTarget;
-                config.Save();
+                Plugin.Config.NotifyWantedTarget = notifyWantedTarget;
+                Plugin.Config.Save();
             }
         }
 
         // Notify when Treasure is found
         {
-            var notifyTreasure = config.NotifyTreasure;
+            var notifyTreasure = Plugin.Config.NotifyTreasure;
             if (ImGui.Checkbox(t("Config.NotifyTreasure"), ref notifyTreasure))
             {
-                config.NotifyTreasure = notifyTreasure;
-                config.Save();
+                Plugin.Config.NotifyTreasure = notifyTreasure;
+                Plugin.Config.Save();
             }
         }
     }

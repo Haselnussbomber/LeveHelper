@@ -1,4 +1,10 @@
 {
+  "WindowTitle.Main": {
+    "en": "LeveHelper"
+  },
+  "WindowTitle.Configuration": {
+    "en": "LeveHelper Configuration"
+  },
   "Config.NotifyWantedTarget": {
     "en": "Notify when Wanted Target is found",
     "de": "Benachrichtigen wenn Gesuchtes Ziel gefunden wurde"

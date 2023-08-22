@@ -15,6 +15,7 @@ public class Service
     public static TextureManager TextureManager { get; private set; } = null!;
     public static TranslationManager TranslationManager { get; private set; } = null!;
     public static WantedTargetScanner WantedTargetScanner { get; private set; } = null!;
+    public static WindowManager WindowManager { get; private set; } = null!;
 
     public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 
@@ -39,6 +40,7 @@ public class Service
         TextureManager = new();
         TranslationManager = new(PluginInterface, ClientState);
         WantedTargetScanner = new();
+        WindowManager = new(pluginInterface.InternalName);
     }
 
     public static void Dispose()
@@ -48,5 +50,6 @@ public class Service
         TextureManager.Dispose();
         TranslationManager.Dispose();
         WantedTargetScanner.Dispose();
+        WindowManager.Dispose();
     }
 }

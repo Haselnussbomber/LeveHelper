@@ -12,14 +12,15 @@ using LeveHelper.Extensions;
 using LeveHelper.Filters;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
+using LeveHelper.Windows;
 
 namespace LeveHelper;
 
 public class ListTab
 {
-    public PluginWindow Window { get; }
+    public MainWindow Window { get; }
 
-    public ListTab(PluginWindow window)
+    public ListTab(MainWindow window)
     {
         Window = window;
     }
@@ -39,7 +40,7 @@ public class ListTab
         var questManager = QuestManager.Instance();
 
         ImGui.TextUnformatted(t("ListTab.AcceptedLeves", questManager->NumAcceptedLeveQuests));
-        if (ImGui.GetWindowSize().X > PluginWindow.TextWrapBreakpoint)
+        if (ImGui.GetWindowSize().X > MainWindow.TextWrapBreakpoint)
         {
             ImGui.SameLine();
             ImGui.TextUnformatted("•");
@@ -60,7 +61,7 @@ public class ListTab
 
         if (state.NumTotalLeves > 0)
         {
-            if (ImGui.GetWindowSize().X > PluginWindow.TextWrapBreakpoint)
+            if (ImGui.GetWindowSize().X > MainWindow.TextWrapBreakpoint)
             {
                 ImGui.SameLine();
                 ImGui.TextUnformatted("•");

@@ -3,16 +3,16 @@ using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using Dalamud.Utility;
 using ImGuiNET;
-using LeveHelper.Utils;
+using LeveHelper.Windows;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
 public class QueueTab
 {
-    public PluginWindow Window { get; }
+    public MainWindow Window { get; }
 
-    public QueueTab(PluginWindow window)
+    public QueueTab(MainWindow window)
     {
         Window = window;
     }
@@ -26,11 +26,6 @@ public class QueueTab
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
             ImGuiHelpers.CenteredText(t("QueueTab.NoActiveLevequests"));
             return;
-        }
-
-        if (ImGuiUtils.IconButton("##Refresh", FontAwesomeIcon.RedoAlt, t("QueueTab.Refresh")))
-        {
-            Window.UpdateList();
         }
 
         var i = 0;

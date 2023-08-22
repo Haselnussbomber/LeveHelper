@@ -14,16 +14,13 @@ using LeveHelper.Utils;
 using static LeveHelper.Utils.ImGuiUtils;
 using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
-namespace LeveHelper;
+namespace LeveHelper.Windows;
 
-public unsafe class PluginWindow : Window, IDisposable
+public unsafe class MainWindow : Window, IDisposable
 {
     public const int TextWrapBreakpoint = 820;
 
-    private readonly Plugin _plugin;
-
     private readonly QueueTab _queueTab;
-    private readonly ConfigurationTab _configurationTab;
     private readonly RecipeTreeTab _recipeTreeTab;
     private readonly ListTab _listTab;
 #if DEBUG
@@ -32,10 +29,8 @@ public unsafe class PluginWindow : Window, IDisposable
 
     private ushort[] _lastActiveLevequestIds = Array.Empty<ushort>();
 
-    public PluginWindow(Plugin plugin) : base("LeveHelper")
+    public MainWindow() : base(t("WindowTitle.Main"))
     {
-        _plugin = plugin;
-
         Namespace = "LeveHelper";
 
         Size = new Vector2(830, 600);
@@ -49,7 +44,6 @@ public unsafe class PluginWindow : Window, IDisposable
         _listTab = new(this);
         _queueTab = new(this);
         _recipeTreeTab = new(this);
-        _configurationTab = new(this);
 #if DEBUG
         _debugTab = new(this);
 #endif
@@ -66,6 +60,11 @@ public unsafe class PluginWindow : Window, IDisposable
         Service.AddonObserver.AddonClose -= OnAddonClose;
     }
 
+    public void OnLanguageChange()
+    {
+        Refresh();
+    }
+
     public RequiredItem[] LeveRequiredItems { get; private set; } = Array.Empty<RequiredItem>();
     public QueuedItem[] RequiredItems { get; private set; } = Array.Empty<QueuedItem>();
     public QueuedItem[] Crystals { get; private set; } = Array.Empty<QueuedItem>();
@@ -75,7 +74,7 @@ public unsafe class PluginWindow : Window, IDisposable
 
     public override void OnClose()
     {
-        _plugin.CloseWindow();
+        Service.WindowManager.CloseWindow<MainWindow>();
     }
 
     private void OnAddonOpen(string addonName)
@@ -88,12 +87,6 @@ public unsafe class PluginWindow : Window, IDisposable
     {
         if (addonName is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
             Refresh();
-    }
-
-    public void Refresh()
-    {
-        UpdateList();
-        Plugin.FilterManager.Update();
     }
 
     public override void PreDraw()
@@ -141,14 +134,6 @@ public unsafe class PluginWindow : Window, IDisposable
                 ImGui.EndTabItem();
             }
 
-            if (ImGui.BeginTabItem(t("Tabs.Configuration")))
-            {
-                RespectCloseHotkey = true;
-
-                _configurationTab.Draw();
-                ImGui.EndTabItem();
-            }
-
 #if false
             if (ImGui.BeginTabItem("Debug"))
             {
@@ -161,6 +146,12 @@ public unsafe class PluginWindow : Window, IDisposable
 
             ImGui.EndTabBar();
         }
+    }
+
+    private void Refresh()
+    {
+        UpdateList();
+        Plugin.FilterManager.Update();
     }
 
     public void UpdateList()
@@ -180,9 +171,7 @@ public unsafe class PluginWindow : Window, IDisposable
             foreach (var entry in leve.RequiredItems)
             {
                 if (entry.Item is Item item)
-                {
                     TraverseItems(item, entry.Amount, neededAmounts);
-                }
             }
         }
 
@@ -301,9 +290,7 @@ public unsafe class PluginWindow : Window, IDisposable
         }
 
         if (newNode)
-        {
             neededAmounts.Add(item.RowId, node);
-        }
     }
 
     public void DrawIngredients(string key, RequiredItem[] ingredients, uint parentAmount = 1, int depth = 0)

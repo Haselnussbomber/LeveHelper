@@ -1,14 +1,15 @@
 using Dalamud.Interface.Raii;
 using ImGuiNET;
 using LeveHelper.Sheets;
+using LeveHelper.Windows;
 
 namespace LeveHelper;
 
 public class DebugTab
 {
-    public PluginWindow Window { get; }
+    public MainWindow Window { get; }
 
-    public DebugTab(PluginWindow window)
+    public DebugTab(MainWindow window)
     {
         Window = window;
     }
