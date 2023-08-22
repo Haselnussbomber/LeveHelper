@@ -46,7 +46,7 @@ public unsafe class ConfigWindow : Window
                 ImGui.OpenPopup("##ChangeLanguagePopup");
             }
 
-            using var popup = ImRaii.ContextPopup("##ChangeLanguagePopup");
+            using var popup = ImRaii.ContextPopupItem("##ChangeLanguagePopup");
             if (popup.Success)
             {
                 static string GetLabel(string type, string code)

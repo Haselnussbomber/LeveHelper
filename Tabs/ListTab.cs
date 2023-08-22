@@ -10,19 +10,21 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using LeveHelper.Extensions;
 using LeveHelper.Filters;
+using LeveHelper.Records;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
-using LeveHelper.Windows;
 
 namespace LeveHelper;
 
 public class ListTab
 {
-    public MainWindow Window { get; }
+    private const int TextWrapBreakpoint = 820;
 
-    public ListTab(MainWindow window)
+    private readonly WindowState _state;
+
+    public ListTab(WindowState state)
     {
-        Window = window;
+        _state = state;
     }
 
     public void Draw()
@@ -40,7 +42,7 @@ public class ListTab
         var questManager = QuestManager.Instance();
 
         ImGui.TextUnformatted(t("ListTab.AcceptedLeves", questManager->NumAcceptedLeveQuests));
-        if (ImGui.GetWindowSize().X > MainWindow.TextWrapBreakpoint)
+        if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
         {
             ImGui.SameLine();
             ImGui.TextUnformatted("•");
@@ -61,7 +63,7 @@ public class ListTab
 
         if (state.NumTotalLeves > 0)
         {
-            if (ImGui.GetWindowSize().X > MainWindow.TextWrapBreakpoint)
+            if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
             {
                 ImGui.SameLine();
                 ImGui.TextUnformatted("•");
@@ -281,20 +283,7 @@ public class ListTab
                     ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
                     ImGui.EndTooltip();
                 }
-                /* crashes the game?!
-                if (ImGui.Selectable("Open on Final Fantasy XIV A Realm Reborn Wiki"))
-                {
-                    Task.Run(() => Util.OpenLink($"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}"));
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    ImGui.BeginTooltip();
-                    ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.ExternalLinkAlt, Colors.Grey);
-                    ImGui.TextColored(Colors.Grey, $"https://ffxiv.consolegameswiki.com/wiki/{Uri.EscapeDataString(item.NameEn)}");
-                    ImGui.EndTooltip();
-                }
-                */
+
                 ImGui.EndPopup();
             }
 
@@ -304,7 +293,7 @@ public class ListTab
                 {
                     if (entry.Item is Item reqItem)
                     {
-                        Window.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
+                        _state.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
                     }
                 }
             }

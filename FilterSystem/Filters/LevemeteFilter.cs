@@ -56,7 +56,7 @@ public class LevemeteFilter : Filter
 
         ImGui.TableNextColumn();
         ImGui.SetNextItemWidth(InputWidth);
-        using var combo = ImRaii.Combo("##Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : "All");
+        using var combo = ImRaii.Combo("##Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : t("LevemeteFilter.Selectable.All"));
         if (!combo.Success)
             return;
 

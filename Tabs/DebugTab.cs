@@ -1,17 +1,17 @@
 using Dalamud.Interface.Raii;
 using ImGuiNET;
+using LeveHelper.Records;
 using LeveHelper.Sheets;
-using LeveHelper.Windows;
 
 namespace LeveHelper;
 
 public class DebugTab
 {
-    public MainWindow Window { get; }
+    private readonly WindowState _state;
 
-    public DebugTab(MainWindow window)
+    public DebugTab(WindowState state)
     {
-        Window = window;
+        _state = state;
     }
 
     public void Draw()
@@ -43,7 +43,7 @@ public class DebugTab
                     ImGui.TableNextColumn();
                     ImGui.TextUnformatted(item.Item.ToString());
                     ImGui.SameLine();
-                    Window.DrawItem(item.ItemRow.Value);
+                    _state.DrawItem(item.ItemRow.Value);
 
                     ImGui.TableNextColumn();
                     foreach (var point in item.GatheringPoints)

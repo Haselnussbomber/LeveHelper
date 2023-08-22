@@ -1,17 +1,17 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Raii;
 using ImGuiNET;
-using LeveHelper.Windows;
+using LeveHelper.Records;
 
 namespace LeveHelper;
 
 public class RecipeTreeTab
 {
-    public MainWindow Window { get; }
+    private readonly WindowState _state;
 
-    public RecipeTreeTab(MainWindow window)
+    public RecipeTreeTab(WindowState state)
     {
-        Window = window;
+        _state = state;
     }
 
     public void Draw()
@@ -25,6 +25,7 @@ public class RecipeTreeTab
             return;
         }
 
-        Window.DrawIngredients("RecipeTree", Window.LeveRequiredItems, 1);
+        ImGui.Spacing();
+        _state.DrawIngredients("RecipeTree", _state.LeveRequiredItems, 1);
     }
 }
