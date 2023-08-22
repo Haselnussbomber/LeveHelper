@@ -3,6 +3,7 @@ using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using LeveHelper.Structs;
 
 namespace LeveHelper;
 
@@ -24,6 +25,10 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void Setup()
     {
+        HaselAtkComponentTextInput.Addresses.TriggerRedraw.Value = (nuint)Service.SigScanner.ScanText(HaselAtkComponentTextInput.Addresses.TriggerRedraw.String);
+        AddonItemSearch.Addresses.SetModeFilter.Value = (nuint)Service.SigScanner.ScanText(AddonItemSearch.Addresses.SetModeFilter.String);
+        AddonItemSearch.Addresses.RunSearch.Value = (nuint)Service.SigScanner.ScanText(AddonItemSearch.Addresses.RunSearch.String);
+
         Config = Configuration.Load();
         Service.TranslationManager.Initialize("LeveHelper.Translations.json", Config);
         Service.TranslationManager.OnLanguageChange += OnLanguageChange;

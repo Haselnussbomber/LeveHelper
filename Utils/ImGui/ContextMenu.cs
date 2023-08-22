@@ -220,7 +220,7 @@ public partial class ImGuiUtils
             => new()
             {
                 Visible = ItemSearchUtils.CanSearchForItem(ItemId),
-                Label = t("ItemSearch.SearchTheMarkets"),
+                Label = t("ItemContextMenu.SearchTheMarkets"),
                 LoseFocusOnClick = true,
                 ClickCallback = () =>
                 {

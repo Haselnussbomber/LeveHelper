@@ -25,7 +25,7 @@ public static unsafe class ItemSearchUtils
         if (TryGetAddon<AtkUnitBase>("ItemSearchResult", out var itemSearchResult))
             itemSearchResult->Hide2();
 
-        var itemName = GetRow<Item>(itemId % 1000000)?.Singular.RawString ?? string.Empty;
+        var itemName = GetRow<Item>(itemId % 1000000)?.Name.RawString ?? string.Empty;
         if (itemName.Length > 40)
             itemName = itemName[..40];
 
