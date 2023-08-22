@@ -22,4 +22,10 @@ public static partial class ImGuiUtils
         var distanceY = ImGui.GetCursorPosY() - ImGui.GetScrollY();
         return distanceY >= -size.Y && distanceY <= ImGui.GetWindowHeight();
     }
+
+    public static void TextUnformattedColored(uint col, string text)
+    {
+        using (ImRaii.PushColor(ImGuiCol.Text, col))
+            ImGui.TextUnformatted(text);
+    }
 }

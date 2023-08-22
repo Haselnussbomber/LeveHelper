@@ -8,10 +8,10 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using ImGuiNET;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
+using static LeveHelper.Utils.ImGuiUtils;
 using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
 namespace LeveHelper;
@@ -448,142 +448,20 @@ public unsafe class PluginWindow : Window, IDisposable
             }
         }
 
-        if (ImGui.BeginPopupContextItem($"##ItemContextMenu_{key}_Tooltip"))
+        new ImGuiUtils.ContextMenu($"##ItemContextMenu_{key}_Tooltip")
         {
-            var showSeparator = false;
-
-            if (item.IsCraftable == true)
-            {
-                if (ImGui.Selectable(GetAddonText(1414))) // "Search for Item by Crafting Method"
-                {
-                    unsafe
-                    {
-                        AgentRecipeNote.Instance()->OpenRecipeByItemId(item.RowId);
-                        ImGui.SetWindowFocus(null);
-                    }
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                }
-
-                showSeparator = true;
-            }
-
-            if (item.IsGatherable == true)
-            {
-                if (territoryType != null)
-                {
-                    if (ImGui.Selectable(GetAddonText(8506))) // "Open Map"
-                    {
-                        var point = item.GatheringPoints.First(point => point.TerritoryType.Row == territoryType.RowId);
-                        Service.GameFunctions.OpenMapWithGatheringPoint(point, item);
-                        ImGui.SetWindowFocus(null);
-                    }
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    }
-                }
-
-                if (ImGui.Selectable(GetAddonText(1472))) // "Search for Item by Gathering Method"
-                {
-                    unsafe
-                    {
-                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.RowId);
-                        ImGui.SetWindowFocus(null);
-                    }
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                }
-
-                showSeparator = true;
-            }
-
-            if (item.IsFish == true)
-            {
-                if (territoryType != null)
-                {
-                    if (ImGui.Selectable(GetAddonText(8506))) // "Open Map"
-                    {
-                        Service.GameFunctions.OpenMapWithFishingSpot(item.FishingSpots.First(), item);
-                        ImGui.SetWindowFocus(null);
-                    }
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    }
-                }
-
-                if (ImGui.Selectable(t("ItemContextMenu.OpenInFishGuide")))
-                {
-                    unsafe
-                    {
-                        var agent = (AgentFishGuide*)AgentModule.Instance()->GetAgentByInternalId(AgentId.FishGuide);
-                        agent->OpenForItemId(item.RowId, item.IsSpearfishing);
-                        ImGui.SetWindowFocus(null);
-                    }
-                }
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                }
-
-                showSeparator = true;
-            }
-
-            if (showSeparator)
-                ImGui.Separator();
-
-            if (ImGui.Selectable(GetAddonText(4379))) // "Search for Item"
-            {
-                unsafe
-                {
-                    ItemFinderModule.Instance()->SearchForItem(item.RowId);
-                }
-                ImGui.SetWindowFocus(null);
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            }
-
-            if (ImGui.Selectable(GetAddonText(159))) // "Copy Item Name"
-            {
-                ImGui.SetClipboardText(item.Name);
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            }
-
-            if (ImGui.Selectable(t("ItemContextMenu.OpenOnGarlandTools")))
-            {
-                Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#item/{item.RowId}"));
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.BeginTooltip();
-
-                var pos = ImGui.GetCursorPos();
-                ImGui.GetWindowDrawList().AddText(
-                    UiBuilder.IconFont, 12,
-                    ImGui.GetWindowPos() + pos + new Vector2(2),
-                    Colors.Grey,
-                    FontAwesomeIcon.ExternalLinkAlt.ToIconString()
-                );
-                ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
-                ImGui.EndTooltip();
-            }
-
-            // TODO: search on market
-
-            ImGui.EndPopup();
+            ContextMenuEntry.CreateSearchCraftingMethod(item),
+            ContextMenuEntry.CreateSearchGatheringMethod(item),
+            ContextMenuEntry.CreateOpenMapForGatheringPoint(item, territoryType),
+            ContextMenuEntry.CreateOpenMapForFishingSpot(item, territoryType),
+            ContextMenuEntry.CreateOpenInFishGuide(item),
+            ContextMenuEntry.CreateSeparator(),
+            ContextMenuEntry.CreateItemFinder(item.RowId),
+            ContextMenuEntry.CreateCopyItemName(item.RowId),
+            ContextMenuEntry.CreateItemSearch(item.RowId),
+            ContextMenuEntry.CreateOpenOnGarlandTools(item.RowId),
         }
+        .Draw();
 
         if (showIndicators && item.ClassJobIcon != null)
         {
