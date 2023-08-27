@@ -31,21 +31,6 @@
     "de": "Konfiguration"
   },
 
-  "ItemContextMenu.OpenOnGarlandTools": {
-    "en": "Open on Garland Tools",
-    "de": "Auf Garland Tools öffnen"
-  },
-  "ItemContextMenu.OpenInFishGuide": {
-    "en": "Open in Fish Guide",
-    "de": "In Fischverzeichnis öffnen"
-  },
-  "ItemContextMenu.SearchTheMarkets": {
-    "en": "Search the markets",
-    "de": "Auf den Märkten suchen",
-    "fr": "Rechercher sur les marchés",
-    "ja": "市場で検索する"
-  },
-
   "ListTab.AcceptedLeves": {
     "en": "Accepted Leves: {0}/16",
     "de": "Akzeptierte Freibriefe: {0}/16"
