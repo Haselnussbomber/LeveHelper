@@ -40,7 +40,7 @@ public class Service
         TextureManager = new();
         TranslationManager = new(PluginInterface, ClientState);
         WantedTargetScanner = new();
-        WindowManager = new(pluginInterface.InternalName);
+        WindowManager = new(pluginInterface);
     }
 
     public static void Dispose()

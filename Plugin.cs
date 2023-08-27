@@ -36,7 +36,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         Service.ClientState.Login += ClientState_Login;
         Service.ClientState.Logout += ClientState_Logout;
-        Service.PluginInterface.UiBuilder.Draw += Service.WindowManager.Draw;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
 
         var commandInfo = new CommandInfo(OnCommand)
@@ -100,7 +99,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.ClientState.Logout -= ClientState_Logout;
 
         Service.TranslationManager.OnLanguageChange -= OnLanguageChange;
-        Service.PluginInterface.UiBuilder.Draw -= Service.WindowManager.Draw;
 
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigWindow;
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainWindow;

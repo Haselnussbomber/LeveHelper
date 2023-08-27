@@ -29,7 +29,7 @@ public partial class ImGuiUtils
             using var popup = ImRaii.ContextPopupItem(key);
             if (!popup.Success)
                 return;
-            
+
             var visibleEntries = this.Where(entry => entry.Visible);
             var count = visibleEntries.Count();
             var i = 0;
