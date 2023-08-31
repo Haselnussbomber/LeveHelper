@@ -2,7 +2,7 @@ using Dalamud.Interface.Raii;
 using ImGuiNET;
 using LeveHelper.Records;
 using LeveHelper.Sheets;
-using GatheringItem = HaselCommon.Sheets.GatheringItem;
+using GatheringItem = HaselCommon.Sheets.ExtendedGatheringItem;
 
 namespace LeveHelper;
 

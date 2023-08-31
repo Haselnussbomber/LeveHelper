@@ -4,7 +4,7 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Sheets;
 
-public class Leve : HaselCommon.Sheets.Leve
+public class Leve : HaselCommon.Sheets.ExtendedLeve
 {
     private RequiredItem[]? _requiredItems = null;
 

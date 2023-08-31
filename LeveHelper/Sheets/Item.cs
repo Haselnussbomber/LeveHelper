@@ -4,40 +4,11 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace LeveHelper.Sheets;
 
-public class Item : HaselCommon.Sheets.Item
+public class Item : HaselCommon.Sheets.ExtendedItem
 {
-    private uint? _classJobIcon { get; set; } = null;
-    private uint? _resultAmount { get; set; } = null;
     private RequiredItem[]? _ingredients { get; set; } = null;
     private uint? _quantityOwned { get; set; } = null;
     private DateTime _quantityOwnedLastUpdate { get; set; }
-
-    public uint ResultAmount
-        => _resultAmount ??= Recipe?.AmountResult ?? 1;
-
-    public uint? ClassJobIcon
-    {
-        get
-        {
-            if (_classJobIcon != null)
-                return _classJobIcon;
-
-            if (IsCraftable)
-            {
-                _classJobIcon ??= 62008 + Recipe?.CraftType.Row;
-            }
-            else if (IsGatherable)
-            {
-                _classJobIcon ??= GatheringPoints.First().Icon;
-            }
-            else if (IsFish)
-            {
-                _classJobIcon ??= FishingSpots.First().Icon;
-            }
-
-            return _classJobIcon;
-        }
-    }
 
     public RequiredItem[] Ingredients
     {

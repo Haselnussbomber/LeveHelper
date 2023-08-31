@@ -152,7 +152,7 @@ public record WindowState
             {
                 if (dependency.Item is Item dependencyItem)
                 {
-                    var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependencyItem.ResultAmount);
+                    var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependencyItem.Recipe?.AmountResult ?? 1);
                     TraverseItems(dependencyItem, totalAmount, neededAmounts);
                 }
             }
@@ -319,7 +319,22 @@ public record WindowState
         }
         .Draw();
 
-        if (showIndicators && item.ClassJobIcon != null)
+        var classJobIcon = 0u;
+
+        if (item.IsCraftable && item.Recipe != null)
+        {
+            classJobIcon = 62008 + item.Recipe.CraftType.Row;
+        }
+        else if (item.IsGatherable)
+        {
+            classJobIcon = item.GatheringPoints.First().Icon;
+        }
+        else if (item.IsFish)
+        {
+            classJobIcon = item.FishingSpots.First().Icon;
+        }
+
+        if (showIndicators && classJobIcon != 0)
         {
             var availSize = ImGui.GetContentRegionMax();
 
@@ -332,7 +347,7 @@ public record WindowState
             }
 
             ImGui.SameLine(availSize.X - 20, 0);
-            Service.TextureManager.GetIcon((int)item.ClassJobIcon).Draw(20);
+            Service.TextureManager.GetIcon(classJobIcon).Draw(20);
         }
     }
 }
