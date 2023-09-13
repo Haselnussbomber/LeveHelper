@@ -5,18 +5,11 @@ using LeveHelper.Sheets;
 
 namespace LeveHelper.Services;
 
-public unsafe class GameFunctions : IDisposable
+public unsafe class GameFunctions
 {
-    private readonly Dictionary<uint, string> _eNpcResidentNameCache = new();
-
     public GameFunctions()
     {
         SignatureHelper.Initialise(this);
-    }
-
-    public void Dispose()
-    {
-        _eNpcResidentNameCache.Clear();
     }
 
     public ushort[] ActiveLevequestsIds

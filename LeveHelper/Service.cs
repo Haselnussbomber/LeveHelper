@@ -42,7 +42,6 @@ public class Service
 
     public static void Dispose()
     {
-        GameFunctions.Dispose();
         WantedTargetScanner.Dispose();
     }
 }
