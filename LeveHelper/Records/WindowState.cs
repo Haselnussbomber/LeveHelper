@@ -306,15 +306,15 @@ public record WindowState
 
         new ImGuiContextMenu($"##ItemContextMenu_{key}_Tooltip")
         {
-            ImGuiContextMenu.CreateSearchCraftingMethod(item.RowId),
-            ImGuiContextMenu.CreateSearchGatheringMethod(item.RowId),
-            ImGuiContextMenu.CreateOpenMapForGatheringPoint(item.RowId, territoryType, "LeveHelper"),
-            ImGuiContextMenu.CreateOpenMapForFishingSpot(item.RowId, "LeveHelper"),
-            ImGuiContextMenu.CreateOpenInFishGuide(item.RowId),
+            ImGuiContextMenu.CreateSearchCraftingMethod(item),
+            ImGuiContextMenu.CreateSearchGatheringMethod(item),
+            ImGuiContextMenu.CreateOpenMapForGatheringPoint(item, territoryType, "LeveHelper"),
+            ImGuiContextMenu.CreateOpenMapForFishingSpot(item, "LeveHelper"),
+            ImGuiContextMenu.CreateOpenInFishGuide(item),
             ImGuiContextMenu.CreateSeparator(),
             ImGuiContextMenu.CreateItemFinder(item.RowId),
             ImGuiContextMenu.CreateCopyItemName(item.RowId),
-            ImGuiContextMenu.CreateItemSearch(item.RowId),
+            ImGuiContextMenu.CreateItemSearch(item),
             ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
         }
         .Draw();
