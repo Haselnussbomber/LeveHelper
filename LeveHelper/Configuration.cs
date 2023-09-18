@@ -51,7 +51,7 @@ internal partial class Configuration
 
     internal void Save()
     {
-        PluginLog.Information("Configuration saved.");
+        Service.PluginLog.Information("Configuration saved.");
         Service.PluginInterface.SavePluginConfig(this);
     }
 }

@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Raii;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Records;

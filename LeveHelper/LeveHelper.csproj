@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>2.0.9</Version>
     <TargetFramework>net7.0-windows</TargetFramework>
@@ -46,7 +46,6 @@
 
   <ItemGroup>
     <Reference Include="Dalamud" Private="false" />
-    <Reference Include="Dalamud.Interface" Private="false" />
     <Reference Include="Lumina" Private="false" />
     <Reference Include="Lumina.Excel" Private="false" />
     <Reference Include="FFXIVClientStructs" Private="false" />

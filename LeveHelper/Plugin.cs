@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
-using HaselCommon;
 using LeveHelper.Interfaces;
 using LeveHelper.Windows;
 
@@ -12,8 +11,6 @@ namespace LeveHelper;
 
 public unsafe class Plugin : IDalamudPlugin, IDisposable
 {
-    public string Name => "LeveHelper";
-
     internal static Configuration Config { get; private set; } = null!;
     internal static FilterManager FilterManager { get; private set; } = null!;
 
@@ -22,7 +19,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        HaselCommonBase.Initialize(pluginInterface);
         Task.Run(Setup);
     }
 
@@ -40,8 +36,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
         FilterManager = new();
 
-        Service.ClientState.Login += ClientState_Login;
-        Service.ClientState.Logout += ClientState_Logout;
+        Service.ClientState.Login += SubscribeOpenMainUi;
+        Service.ClientState.Logout += UnsubscribeOpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
 
         var commandInfo = new CommandInfo(OnCommand)
@@ -55,9 +51,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         if (Service.ClientState.IsLoggedIn)
             SubscribeOpenMainUi();
     }
-
-    private void ClientState_Login(object? sender, EventArgs e) => SubscribeOpenMainUi();
-    private void ClientState_Logout(object? sender, EventArgs e) => UnsubscribeOpenMainUi();
 
     private void OnLanguageChange()
     {
@@ -100,8 +93,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     void IDisposable.Dispose()
     {
-        Service.ClientState.Login -= ClientState_Login;
-        Service.ClientState.Logout -= ClientState_Logout;
+        Service.ClientState.Login -= SubscribeOpenMainUi;
+        Service.ClientState.Logout -= UnsubscribeOpenMainUi;
 
         Service.TranslationManager.OnLanguageChange -= OnLanguageChange;
 
@@ -112,8 +105,9 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.CommandManager.RemoveHandler("/lh");
 
         Config.Save();
+        Config = null!;
+        FilterManager = null!;
 
         Service.Dispose();
-        HaselCommonBase.Dispose();
     }
 }

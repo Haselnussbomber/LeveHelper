@@ -1,5 +1,5 @@
 using System.Linq;
-using Dalamud.Interface.Raii;
+using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 
 namespace LeveHelper.Filters;

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using LeveHelper.Extensions;
@@ -64,7 +65,7 @@ public unsafe class WantedTargetScanner : IDisposable
            director->EventHandlerInfo != null &&
            director->EventHandlerInfo->EventId.Type == EventHandlerType.BattleLeveDirector;
 
-    private void Framework_Update(Dalamud.Game.Framework framework)
+    private void Framework_Update(IFramework framework)
     {
         var config = Plugin.Config;
 

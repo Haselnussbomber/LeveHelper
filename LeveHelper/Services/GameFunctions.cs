@@ -9,7 +9,7 @@ public unsafe class GameFunctions
 {
     public GameFunctions()
     {
-        SignatureHelper.Initialise(this);
+        Service.GameInteropProvider.InitializeFromAttributes(this);
     }
 
     public ushort[] ActiveLevequestsIds

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
-using Dalamud.Interface.Raii;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
