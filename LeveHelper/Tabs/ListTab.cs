@@ -208,12 +208,14 @@ public class ListTab
                     else if (item.IsComplete)
                     {
                         ImGuiUtils.Icon(FontAwesomeIcon.Check, Colors.Green);
+                        ImGui.SameLine();
                         ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Completed"));
                     }
 
                     else
                     {
                         ImGuiUtils.Icon(FontAwesomeIcon.Times, Colors.Red);
+                        ImGui.SameLine();
                         ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Incomplete"));
                     }
                 }
