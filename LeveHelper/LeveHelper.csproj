@@ -16,8 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Translations.json" />
     <EmbeddedResource Include="Translations.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
