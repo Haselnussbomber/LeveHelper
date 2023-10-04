@@ -1,21 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>2.0.9</Version>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <Platforms>x64</Platforms>
-    <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>..\bin\</OutputPath>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
+  <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
 
   <PropertyGroup>
-    <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+    <Version>2.0.9</Version>
+    <OutputPath>..\bin\</OutputPath>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -23,39 +13,11 @@
     <Deterministic>true</Deterministic>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedAllSources>true</EmbedAllSources>
-    <DalamudLibPath>$(HOME)/dalamud/</DalamudLibPath>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <AssemblySearchPaths>$(AssemblySearchPaths);$(DalamudLibPath);</AssemblySearchPaths>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove=".git*" />
-    <None Remove="deps\**" />
-    <Compile Remove=".git*" />
-    <Compile Remove="deps\**" />
-    <EmbeddedResource Remove=".git*" />
-    <EmbeddedResource Remove="deps\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Translations.json" />
     <EmbeddedResource Include="Translations.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Dalamud" Private="false" />
-    <Reference Include="Lumina" Private="false" />
-    <Reference Include="Lumina.Excel" Private="false" />
-    <Reference Include="FFXIVClientStructs" Private="false" />
-    <Reference Include="ImGui.NET" Private="false" />
-    <Reference Include="ImGuiScene" Private="false" />
-    <Reference Include="Newtonsoft.Json" Private="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DalamudPackager" Version="2.1.12" />
   </ItemGroup>
 
   <ItemGroup>
