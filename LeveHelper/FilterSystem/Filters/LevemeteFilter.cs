@@ -89,13 +89,11 @@ public class LevemeteFilter : Filter
     public override bool Run()
     {
         _levemetes = state.Leves
-            .Select(row => row.LevelLevemete.Value?.Object)
-            .Where(item => item != null)
-            .Cast<uint>()
-            .GroupBy(item => item)
-            .Select(group => GetRow<ENpcResident>(group.First()))
-            .Where(item => item != null)
-            .Cast<ENpcResident>()
+            .Select(row => row.Issuers)
+            .Where(issuers => issuers.Any())
+            .Cast<ENpcResident[]>()
+            .SelectMany(resident => resident)
+            .Distinct()
             .Select(item => (item.RowId, Name: item.Singular.ToDalamudString().ToString()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
@@ -103,7 +101,7 @@ public class LevemeteFilter : Filter
         if (Config.SelectedLevemete == 0)
             return false;
 
-        var selection = state.Leves.Where(item => item.LevelLevemete.Value?.Object == Config.SelectedLevemete);
+        var selection = state.Leves.Where(item => item.Issuers.Select(issuer => issuer.RowId).Contains(Config.SelectedLevemete));
         if (!selection.Any())
         {
             Config.SelectedLevemete = 0;

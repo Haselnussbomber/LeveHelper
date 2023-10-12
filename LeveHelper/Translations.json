@@ -106,13 +106,13 @@
     "en": "Open on GarlandTools",
     "de": "Auf GarlandTools öffnen"
   },
-  "ListTab.LeveMete.ContextMenu.Tooltip": {
-    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+  "ListTab.Levemete.ContextMenu.Tooltip": {
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
     "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
   },
 
   "QueueTab.NoActiveLevequests": {
-    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
     "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
   },
   "QueueTab.Refresh": {
@@ -141,7 +141,7 @@
   },
 
   "RecipeTreeTab.NoActiveLevequests": {
-    "en": "Left Click: Open Map\nRight Click: Filter by Levemate",
+    "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
     "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
   },
   "RecipeTreeTab.Refresh": {

@@ -301,24 +301,37 @@ public class ListTab
                 }
             }
 
-            // Levemete
+            // Issuer
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(item.LevemeteName);
-
-            if (ImGui.IsItemHovered())
+            for (var i = 0; i < item.Issuers.Length; i++)
             {
-                ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.SetTooltip(t("ListTab.LeveMete.ContextMenu.Tooltip"));
-            }
+                var issuer = item.Issuers[i];
 
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-            {
-                item.LevelLevemete.Value?.OpenMapLocation();
-            }
+                ImGui.TextUnformatted(issuer.Singular);
 
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-            {
-                Plugin.FilterManager.SetValue<LevemeteFilter>(item.LevelLevemete.Value?.Object ?? 0);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                    ImGui.SetTooltip(t("ListTab.Levemete.ContextMenu.Tooltip"));
+                }
+
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                {
+                    var level = FindRow<Lumina.Excel.GeneratedSheets.Level>(row => row.Object == issuer.RowId);
+                    level?.OpenMapLocation();
+                }
+
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+                {
+                    Plugin.FilterManager.SetValue<LevemeteFilter>(issuer.RowId);
+                }
+
+                if (i < item.Issuers.Length - 1)
+                {
+                    ImGui.SameLine(0, 0);
+                    ImGui.TextUnformatted(",");
+                    ImGuiUtils.SameLineSpace();
+                }
             }
         }
     }

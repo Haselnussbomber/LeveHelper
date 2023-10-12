@@ -4,9 +4,10 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Sheets;
 
-public class Leve : HaselCommon.Sheets.ExtendedLeve
+public partial class Leve : HaselCommon.Sheets.ExtendedLeve
 {
     private RequiredItem[]? _requiredItems = null;
+    private ENpcResident[]? _issuers = null;
 
     public RequiredItem[] RequiredItems
     {
@@ -44,4 +45,11 @@ public class Leve : HaselCommon.Sheets.ExtendedLeve
             return _requiredItems ??= Array.Empty<RequiredItem>();
         }
     }
+
+    public ENpcResident[] Issuers =>
+        _issuers ??= Data.Issuers
+            .Where((kv) => kv.Value.Contains(RowId))
+            .Distinct()
+            .Select((kv) => GetRow<ENpcResident>(kv.Key)!)
+            .ToArray();
 }
