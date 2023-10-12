@@ -21,8 +21,9 @@ public class Item : HaselCommon.Sheets.ExtendedItem
                 return _ingredients ??= Array.Empty<RequiredItem>();
 
             var list = new List<RequiredItem>();
+            var recipe = Recipes.First();
 
-            foreach (var ingredient in Recipe!.UnkData5)
+            foreach (var ingredient in recipe.UnkData5)
             {
                 if (ingredient.ItemIngredient == 0 || ingredient.AmountIngredient == 0)
                     continue;

@@ -49,7 +49,7 @@ public class Service
     public static void Dispose()
     {
         GameFunctions = null!;
-        
+
         WantedTargetScanner.Dispose();
         WantedTargetScanner = null!;
 

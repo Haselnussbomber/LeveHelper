@@ -26,12 +26,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     {
         Config = Configuration.Load();
 
-        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("LeveHelper.Translations.json")
-            ?? throw new Exception($"Could not find translations resource \"LeveHelper.Translations.json\".");
-
-        var translations = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(stream) ?? new();
-
-        Service.TranslationManager.Initialize(translations, Config);
+        Service.TranslationManager.Initialize(Config);
         Service.TranslationManager.OnLanguageChange += OnLanguageChange;
 
         FilterManager = new();

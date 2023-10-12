@@ -7,6 +7,7 @@ using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using HaselCommon.Extensions;
 using HaselCommon.Utils;
 using ImGuiNET;
 using LeveHelper.Sheets;
@@ -152,7 +153,8 @@ public record WindowState
             {
                 if (dependency.Item is Item dependencyItem)
                 {
-                    var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / dependencyItem.Recipe?.AmountResult ?? 1);
+                    float resultAmount = dependencyItem.IsCraftable ? dependencyItem.Recipes.First().AmountResult : 1;
+                    var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / resultAmount);
                     TraverseItems(dependencyItem, totalAmount, neededAmounts);
                 }
             }
@@ -186,7 +188,8 @@ public record WindowState
 
                 if (ingredientItem.Ingredients.Any())
                 {
-                    var ingredientCount = (uint)(ingredientAmount / (double)(ingredientItem.Recipe?.AmountResult ?? 1));
+                    float resultAmount = ingredientItem.IsCraftable ? ingredientItem.Recipes.First().AmountResult : 1;
+                    var ingredientCount = (uint)(ingredientAmount / resultAmount);
                     DrawIngredients($"{key}_{ingredient.RowId}", ingredientItem.Ingredients, ingredientCount, depth + 1);
                 }
             }
@@ -321,9 +324,9 @@ public record WindowState
 
         var classJobIcon = 0u;
 
-        if (item.IsCraftable && item.Recipe != null)
+        if (item.IsCraftable)
         {
-            classJobIcon = 62008 + item.Recipe.CraftType.Row;
+            classJobIcon = 62008 + item.Recipes.First().CraftType.Row;
         }
         else if (item.IsGatherable)
         {
