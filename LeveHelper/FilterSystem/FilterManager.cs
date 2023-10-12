@@ -54,8 +54,8 @@ public class FilterManager
             (3, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Name),
             (3, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Name),
 
-            (4, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Issuers.FirstOrNull()?.Singular ?? string.Empty),
-            (4, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Issuers.FirstOrNull()?.Singular ?? string.Empty),
+            (4, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Issuers.FirstOrNull()?.Name ?? string.Empty),
+            (4, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Issuers.FirstOrNull()?.Name ?? string.Empty),
 
             _ => State.Leves
         };

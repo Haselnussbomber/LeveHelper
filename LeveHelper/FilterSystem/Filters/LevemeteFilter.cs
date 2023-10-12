@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Utility;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using LeveHelper.Sheets;
 
 namespace LeveHelper.Filters;
 
@@ -94,7 +93,7 @@ public class LevemeteFilter : Filter
             .Cast<ENpcResident[]>()
             .SelectMany(resident => resident)
             .Distinct()
-            .Select(item => (item.RowId, Name: item.Singular.ToDalamudString().ToString()))
+            .Select(item => (item.RowId, item.Name))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 

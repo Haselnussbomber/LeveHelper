@@ -307,7 +307,7 @@ public class ListTab
             {
                 var issuer = item.Issuers[i];
 
-                ImGui.TextUnformatted(issuer.Singular);
+                ImGui.TextUnformatted(issuer.Name);
 
                 if (ImGui.IsItemHovered())
                 {
