@@ -1,9 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.0] (2023-10-12)
 
 - **Changed:** The Levemete column is now the issuer instead of the client, as it should be. This makes it easier to figure out where to accept the leves.
-  - *Note:* The game sheets don't contain any information about the issuer of a leve. This is server-side only. I added the issuer information based on data from the Gamer Escape wiki and will have to update the list with each expansion.
+  - *Note:* The game sheets don't contain any information about the issuer of a leve. This is server-side only and the reason why I used the leve client instead. Now I added issuer information based on data from the Gamer Escape wiki and will have to update the list with each expansion. ☹️  
+  If you encounter any problems, please report them. I don't use the plugin much myself at the moment. 😅
 
 ## [2.0.10] (2023-10-04)
 
@@ -176,6 +177,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.10...v2.1.0
 [2.0.10]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.7...v2.0.8
