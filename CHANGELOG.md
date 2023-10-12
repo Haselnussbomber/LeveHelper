@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- **Changed:** The Levemete column is now the issuer instead of the client, as it should be. This makes it easier to figure out where to accept the leves.
+  - *Note:* The game sheets don't contain any information about the issuer of a leve. This is server-side only. I added the issuer information based on data from the Gamer Escape wiki and will have to update the list with each expansion.
+
 ## [2.0.10] (2023-10-04)
 
 Update for Patch 6.5.
