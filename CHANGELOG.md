@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.1] (2023-10-25)
+
+- **Fixed:** "Queue" and "Recipe Tree" tabs didn't show crafting ingredients. Sorry about that!
+
 ## [2.1.0] (2023-10-12)
 
 - **Changed:** The Levemete column is now the issuer instead of the client, as it should be. This makes it easier to figure out where to accept the leves.
@@ -177,6 +181,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.10...v2.1.0
 [2.0.10]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.8...v2.0.9
