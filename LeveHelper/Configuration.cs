@@ -1,6 +1,5 @@
 using System.IO;
 using Dalamud.Configuration;
-using Dalamud.Logging;
 using HaselCommon.Enums;
 using HaselCommon.Interfaces;
 using LeveHelper.Filters;

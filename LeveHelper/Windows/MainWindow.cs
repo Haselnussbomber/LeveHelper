@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using LeveHelper.Records;
+using LeveHelper.Utils;
 
 namespace LeveHelper.Windows;
 
@@ -18,7 +20,7 @@ public unsafe class MainWindow : Window, IDisposable
     private readonly DebugTab _debugTab;
 #endif
 
-    private ushort[] _lastActiveLevequestIds = Array.Empty<ushort>();
+    private IEnumerable<ushort> _lastActiveLevequestIds = Array.Empty<ushort>();
 
     public MainWindow() : base(t("WindowTitle.Main"))
     {
@@ -80,7 +82,7 @@ public unsafe class MainWindow : Window, IDisposable
 
     public override void Update()
     {
-        var activeLevequestIds = Service.GameFunctions.ActiveLevequestsIds;
+        var activeLevequestIds = QuestUtils.GetActiveLeveIds();
         if (!_lastActiveLevequestIds.SequenceEqual(activeLevequestIds))
         {
             _lastActiveLevequestIds = activeLevequestIds;

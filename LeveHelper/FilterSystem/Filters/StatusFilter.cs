@@ -1,6 +1,7 @@
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
+using LeveHelper.Utils;
 
 namespace LeveHelper.Filters;
 
@@ -91,7 +92,7 @@ public class StatusFilter : Filter
         }
         else if (Config.SelectedStatus == CompletedStatus.Accepted)
         {
-            state.Leves = Service.GameFunctions.ActiveLevequests;
+            state.Leves = QuestUtils.GetActiveLeves();
             return true;
         }
 

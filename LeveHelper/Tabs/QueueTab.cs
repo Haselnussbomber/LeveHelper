@@ -4,6 +4,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 using ImGuiNET;
 using LeveHelper.Records;
+using LeveHelper.Utils;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
@@ -21,7 +22,7 @@ public class QueueTab
     {
         using var windowId = ImRaii.PushId("##QueueTab");
 
-        if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
+        if (!QuestUtils.GetActiveLeveIds().Any())
         {
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
             ImGuiHelpers.CenteredText(t("QueueTab.NoActiveLevequests"));

@@ -1,7 +1,9 @@
+using System.Linq;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using LeveHelper.Records;
+using LeveHelper.Utils;
 
 namespace LeveHelper;
 
@@ -18,7 +20,7 @@ public class RecipeTreeTab
     {
         using var windowId = ImRaii.PushId("##RecipeTreeTab");
 
-        if (Service.GameFunctions.ActiveLevequestsIds.Length == 0)
+        if (!QuestUtils.GetActiveLeveIds().Any())
         {
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
             ImGuiHelpers.CenteredText(t("RecipeTreeTab.NoActiveLevequests"));

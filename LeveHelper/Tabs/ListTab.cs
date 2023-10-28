@@ -6,7 +6,6 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using HaselCommon.Utils;
 using ImGuiNET;
 using LeveHelper.Extensions;
@@ -240,12 +239,8 @@ public class ListTab
 
             if (item.IsAccepted && ImGui.IsItemClicked())
             {
-                unsafe
-                {
-                    var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                    Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.RowId, 2);
-                    ImGui.SetWindowFocus(null);
-                }
+                QuestUtils.OpenJournal(item.RowId);
+                ImGui.SetWindowFocus(null);
             }
 
             if (ImGui.BeginPopupContextItem($"##LeveContextMenu_{item.RowId}_Tooltip"))
@@ -256,12 +251,8 @@ public class ListTab
                 {
                     if (ImGui.Selectable(t("ListTab.Leve.ContextMenu.OpenInJournal")))
                     {
-                        unsafe
-                        {
-                            var agentJournal = AgentModule.Instance()->GetAgentByInternalId(AgentId.Journal);
-                            Service.GameFunctions.AgentJournal_OpenForQuest((nint)agentJournal, (int)item.RowId, 2);
-                            ImGui.SetWindowFocus(null);
-                        }
+                        QuestUtils.OpenJournal(item.RowId);
+                        ImGui.SetWindowFocus(null);
                     }
                     if (ImGui.IsItemHovered())
                     {

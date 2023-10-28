@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
 using LeveHelper.Interfaces;
+using LeveHelper.Services;
 using LeveHelper.Windows;
 
 namespace LeveHelper;
@@ -15,6 +13,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     internal static FilterManager FilterManager { get; private set; } = null!;
 
     private bool _openMainUiSubscribed = false;
+    private WantedTargetScanner _wantedTargetScanner = null!;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
@@ -24,6 +23,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void Setup()
     {
+        _wantedTargetScanner = new();
+
         Config = Configuration.Load();
 
         Service.TranslationManager.Initialize(Config);
@@ -88,6 +89,9 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     void IDisposable.Dispose()
     {
+        _wantedTargetScanner.Dispose();
+        _wantedTargetScanner = null!;
+
         Service.ClientState.Login -= SubscribeOpenMainUi;
         Service.ClientState.Logout -= UnsubscribeOpenMainUi;
 

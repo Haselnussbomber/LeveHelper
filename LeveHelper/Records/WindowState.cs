@@ -7,10 +7,10 @@ using Dalamud.Interface;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using HaselCommon.Extensions;
 using HaselCommon.Utils;
 using ImGuiNET;
 using LeveHelper.Sheets;
+using LeveHelper.Utils;
 using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
 namespace LeveHelper.Records;
@@ -26,7 +26,7 @@ public record WindowState
 
     public void UpdateList()
     {
-        var acceptedCraftAndGatherLeves = Service.GameFunctions.ActiveLevequests
+        var acceptedCraftAndGatherLeves = QuestUtils.GetActiveLeves()
             .Where(leve => leve.RequiredItems.Length > 0);
 
         // list all items required for CraftLeves and GatherLeves
