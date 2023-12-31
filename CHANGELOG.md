@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.2] (2023-12-31)
+
+### Wanted Targets
+
+- **Fixed:** Detection of Sabotender Corrido didn't work because the wrong name id was used.
+
 ## [2.1.1] (2023-10-25)
 
 - **Fixed:** "Queue" and "Recipe Tree" tabs didn't show crafting ingredients. Sorry about that!
@@ -181,6 +187,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.10...v2.1.0
 [2.0.10]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.9...v2.0.10
