@@ -23,6 +23,7 @@ public unsafe class WantedTargetScanner : IDisposable
         476, // Wanted Goblin
         477, // Lush Morbol
         1008, // Fernehalwes
+        1009, // Sabotender Corrido
         1010, // Masterless Thrall
         1011, // Scale Eater
         1012, // Pinktoe
@@ -42,7 +43,6 @@ public unsafe class WantedTargetScanner : IDisposable
         3718, // The Scarlet Lector
         3719, // Xexeu
         3720, // Tcaridyi
-        7169, // Sabotender Corrido
     };
 
     private readonly List<uint> _foundWantedTargets = new();
