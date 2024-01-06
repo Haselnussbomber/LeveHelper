@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeveHelper", "LeveHelper\Le
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon", "HaselCommon\HaselCommon\HaselCommon.csproj", "{FE3AAA26-306B-4FAE-841D-33CAA23382AA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon.InteropSourceGenerators", "HaselCommon\HaselCommon.InteropSourceGenerators\HaselCommon.InteropSourceGenerators.csproj", "{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|Any CPU.Build.0 = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.ActiveCfg = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.Build.0 = Release|x64
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|x64.Build.0 = Debug|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|x64.ActiveCfg = Release|Any CPU
+		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
