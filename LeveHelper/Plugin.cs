@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
@@ -52,11 +53,9 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     private void OnLanguageChange()
     {
         FilterManager.Reload();
-
-        foreach (var window in Service.WindowManager.Windows)
-        {
-            (window as IPluginWindow)?.OnLanguageChange();
-        }
+        Service.WindowManager.Windows
+            .OfType<IPluginWindow>()
+            .ForEach(window => window.OnLanguageChange());
     }
 
     private void OnCommand(string command, string args)
