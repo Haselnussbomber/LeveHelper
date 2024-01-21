@@ -25,18 +25,17 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void Setup()
     {
+        Service.TranslationManager.Initialize();
         Service.GetService<WantedTargetScanner>();
 
         Config = Configuration.Load();
-
-        Service.TranslationManager.Initialize(Config);
-        Service.TranslationManager.OnLanguageChange += OnLanguageChange;
 
         FilterManager = new();
 
         Service.ClientState.Login += SubscribeOpenMainUi;
         Service.ClientState.Logout += UnsubscribeOpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
+        Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
 
         var commandInfo = new CommandInfo(OnCommand)
         {
@@ -50,7 +49,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
             SubscribeOpenMainUi();
     }
 
-    private void OnLanguageChange()
+    private void PluginInterface_LanguageChanged(string langCode)
     {
         FilterManager.Reload();
         Service.WindowManager.Windows
@@ -91,11 +90,9 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     {
         Service.ClientState.Login -= SubscribeOpenMainUi;
         Service.ClientState.Logout -= UnsubscribeOpenMainUi;
-
-        Service.TranslationManager.OnLanguageChange -= OnLanguageChange;
-
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigWindow;
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainWindow;
+        Service.PluginInterface.LanguageChanged -= PluginInterface_LanguageChanged;
 
         Service.CommandManager.RemoveHandler("/levehelper");
         Service.CommandManager.RemoveHandler("/lh");

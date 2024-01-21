@@ -1,19 +1,14 @@
 using System.IO;
 using Dalamud.Configuration;
-using HaselCommon.Enums;
-using HaselCommon.Interfaces;
 using LeveHelper.Filters;
 using Newtonsoft.Json.Linq;
 
 namespace LeveHelper;
 
 [Serializable]
-internal partial class Configuration : IPluginConfiguration, ITranslationConfig
+internal partial class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 1;
-
-    public string PluginLanguage { get; set; } = "en";
-    public PluginLanguageOverride PluginLanguageOverride { get; set; } = PluginLanguageOverride.Dalamud;
 
     public FilterConfigs Filters { get; init; } = new();
     public bool NotifyWantedTarget { get; set; } = true;
