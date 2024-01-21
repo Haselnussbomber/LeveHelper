@@ -221,7 +221,7 @@ public record WindowState
             color = Colors.Grey;
 
         ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
-        ImGui.Selectable($"{(neededCount > 0 ? $"{item.QuantityOwned}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+        ImGui.Selectable($"{(neededCount > 0 ? $"{item.QuantityOwned}/{neededCount} " : "")}{GetItemName(item.RowId)}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
         ImGui.PopStyleColor();
 
         if (ImGui.IsItemHovered())

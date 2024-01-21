@@ -28,8 +28,24 @@
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
       },
+      "NoAlloq": {
+        "type": "Transitive",
+        "resolved": "0.2.0",
+        "contentHash": "CDGlcqAIXu/+P5pBAPLcCMnCV1iy4WF2RZEdfkj71heWPuetrL28lqnNx9cspzBY8RdKDvv7PTg8cooFI5dOgA==",
+        "dependencies": {
+          "System.Memory": "4.5.3"
+        }
+      },
+      "System.Memory": {
+        "type": "Transitive",
+        "resolved": "4.5.3",
+        "contentHash": "3oDzvc/zzetpTKWMShs1AADwZjQ/36HnsufHRPcOjyRAAMLDlu2iD33MBI2opxnezcVUtXyqDXXjoFMOU9c7SA=="
+      },
       "haselcommon": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "NoAlloq": "[0.2.0, )"
+        }
       }
     }
   }
