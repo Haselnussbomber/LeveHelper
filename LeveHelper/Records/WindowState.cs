@@ -311,9 +311,9 @@ public record WindowState
         {
             ImGuiContextMenu.CreateSearchCraftingMethod(item),
             ImGuiContextMenu.CreateSearchGatheringMethod(item),
+            ImGuiContextMenu.CreateOpenInFishGuide(item),
             ImGuiContextMenu.CreateOpenMapForGatheringPoint(item, territoryType, "LeveHelper"),
             ImGuiContextMenu.CreateOpenMapForFishingSpot(item, "LeveHelper"),
-            ImGuiContextMenu.CreateOpenInFishGuide(item),
             ImGuiContextMenu.CreateSeparator(),
             ImGuiContextMenu.CreateItemFinder(item.RowId),
             ImGuiContextMenu.CreateCopyItemName(item.RowId),
