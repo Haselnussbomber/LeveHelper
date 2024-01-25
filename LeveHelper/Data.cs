@@ -7,7 +7,7 @@ public static class Data
     public static readonly Dictionary<uint, uint[]> Issuers = new()
     {
         // T'mokkri
-        [1000970] = new uint[] {
+        [1000970] = [
             511, // On the Lamb
             626, // Birds of a Feather
             202, // Skillet Labor
@@ -104,9 +104,9 @@ public static class Data
             700, // Bleeding Them Dry
             699, // Nature Calls
             698, // The Palm in Your Hand
-        },
+        ],
         // Gontrant
-        [1000101] = new uint[] {
+        [1000101] = [
             23, // A Clogful of Camaraderie
             22, // Touch and Heal
             21, // In with the New
@@ -191,9 +191,9 @@ public static class Data
             697, // Mushroom Gobblin'
             694, // Over the Underbrush
             695, // Moon in Rouge
-        },
+        ],
         // Eustace
-        [1001794] = new uint[] {
+        [1001794] = [
             323, // Root Rush
             322, // One for the Books
             321, // Mercury Rising
@@ -284,9 +284,9 @@ public static class Data
             435, // Full Moon Fever
             437, // Seeing It Through to the End
             436, // Glad As a Hatter
-        },
+        ],
         // Wyrkholsk
-        [1004342] = new uint[] {
+        [1004342] = [
             510, // A Long and Winding Road
             509, // Ain't Nobody Got Time for Rats
             512, // Bug Bites
@@ -323,9 +323,9 @@ public static class Data
             761, // Splendor in the Glass
             759, // They Taste Just as Pretty
             760, // Yummy in the Tummy
-        },
+        ],
         // Muriaule
-        [1001866] = new uint[] {
+        [1001866] = [
             502, // No Bane, No Gain
             505, // Nutbreaker Suite
             506, // Picking Up the Piercers
@@ -358,9 +358,9 @@ public static class Data
             679, // If a Tree Falls
             678, // Let the Sun Shine In
             681, // No Bark, All Bite
-        },
+        ],
         // Graceful Song
-        [1003888] = new uint[] {
+        [1003888] = [
             518, // Berries Got Bucked
             517, // Either Love Them or Kill Them
             515, // Nothing Compares to Shrews
@@ -397,9 +397,9 @@ public static class Data
             721, // I Don't Zinc It's a Coincidence
             720, // Pipikkuli's Ship Comes In
             718, // Vanishing Point
-        },
+        ],
         // Swygskyf
-        [1001788] = new uint[] {
+        [1001788] = [
             547, // A Tall Odor
             551, // At the Gates
             553, // Fresh Meat
@@ -421,9 +421,9 @@ public static class Data
             762, // Fish by Many Other Names
             763, // Just Add Water
             765, // The Fertile Incandescent
-        },
+        ],
         // Tierney
-        [1000105] = new uint[] {
+        [1000105] = [
             545, // A Shroom with a View
             540, // Bump in the Night
             537, // Going Green
@@ -444,9 +444,9 @@ public static class Data
             684, // Digging Deep
             685, // The Heart of the Hedge
             683, // West Bank Story
-        },
+        ],
         // Totonowa
-        [1001796] = new uint[] {
+        [1001796] = [
             559, // Beak to Beak
             561, // Field of Beans
             565, // From Ruins to Riches
@@ -468,9 +468,9 @@ public static class Data
             724, // It Peiste to Listen
             723, // That's Why They Call It Fool's Gold
             725, // We Do This the Hard Way
-        },
+        ],
         // Orwen
-        [1001791] = new uint[] {
+        [1001791] = [
             575, // A Glamourous Life
             579, // Barley Legal
             577, // Beasts of Bourbon
@@ -491,9 +491,9 @@ public static class Data
             766, // My Own Private Shell
             767, // The Deepest Cut
             768, // The Moral of the Coral
-        },
+        ],
         // Qina Lyehga
-        [1000821] = new uint[] {
+        [1000821] = [
             572, // A Guest for Supper
             569, // Can't Say No to Gnat
             567, // Monkey Business
@@ -511,9 +511,9 @@ public static class Data
             687, // Maple Stories
             688, // Never Strikes Twice
             686, // The Quick and the Dead
-        },
+        ],
         // Poponagu
-        [1001799] = new uint[] {
+        [1001799] = [
             583, // A Simple Solution
             584, // Death with Indignity
             586, // Earthbound
@@ -534,18 +534,18 @@ public static class Data
             727, // Earth Sprites Are Easy
             728, // Eiderdown for Eidolons
             729, // The Doom that Came to Belah'dia
-        },
+        ],
         // Ourawann
-        [1004347] = new uint[] {
+        [1004347] = [
             600, // Another Egg Gone
             598, // Claw-struck
             602, // Man the Ore
             601, // Strand by Me
             603, // The Deathliest Catch
             599, // The Light Stripes
-        },
+        ],
         // Eugene
-        [1004735] = new uint[] {
+        [1004735] = [
             794, // Don't Touch Our Stuff
             796, // The Creeps from Work
             797, // Throw the Book at Him
@@ -554,9 +554,9 @@ public static class Data
             806, // Of Mice and Demons
             807, // Wrong and Rite
             809, // You're a Liar, Mansel Black
-        },
+        ],
         // Nyell
-        [1000823] = new uint[] {
+        [1000823] = [
             589, // Belly Up
             595, // It's Hard Being Moogle
             594, // It's a Trap
@@ -644,9 +644,9 @@ public static class Data
             735, // Can't Start a Fire
             734, // Fool Me Twice
             736, // Tag, You're It
-        },
+        ],
         // Cedrepierre
-        [1004737] = new uint[] {
+        [1004737] = [
             799, // A Little Constructive Exorcism
             798, // Burn It Down
             800, // Mortal Munchies
@@ -655,18 +655,18 @@ public static class Data
             812, // Blinded by the Wight
             810, // Go with the Flow
             811, // Sylph Strands
-        },
+        ],
         // Esmond
-        [1002365] = new uint[] {
+        [1002365] = [
             611, // Dead Men Lie
             612, // Drakes' Misfortune
             614, // Flower Power
             613, // Necrologos: Fluid Corruption
             616, // Necrologos: The Noctambulist
             615, // Run, Run Away
-        },
+        ],
         // Kikiri
-        [1004739] = new uint[] {
+        [1004739] = [
             802, // A Cold-blooded Business
             804, // Blood in the Water (20)
             805, // The Burning Reason
@@ -675,10 +675,9 @@ public static class Data
             814, // Don't Tear Down This Wall
             815, // Food for Thought
             816, // The Third Prize Is that You're Slain
-            1400, // Blood in the Water (68)
-        },
+        ],
         // Nahctahr
-        [1004344] = new uint[] {
+        [1004344] = [
             626, // Birds of a Feather
             624, // Call Me Mating
             628, // Clearing Steer
@@ -722,27 +721,27 @@ public static class Data
             741, // Shell Game
             739, // That's What the Money Is For
             740, // The Midden Fair
-        },
+        ],
         // Merthelin
-        [1002397] = new uint[] {
+        [1002397] = [
             617, // A Feast in the Forest
             620, // Adamantoise Tears
             618, // Black Market Down
             619, // Necrologos: Brand of the Impure
             622, // Where the Fur's At
             621, // Woodcross Busydeal
-        },
+        ],
         // Aileen
-        [1002367] = new uint[] {
+        [1002367] = [
             635, // Appetite for Abduction
             633, // Bud Bait
             630, // Coeurl Scratch Fever
             632, // Necrologos: Igneous Moil
             631, // Walk Like a Mandragora
             634, // Wonder Wine
-        },
+        ],
         // Cimeaurant
-        [1002384] = new uint[] {
+        [1002384] = [
             641, // Cower to the People
             637, // Have a Nice Trip
             640, // Little Lost Lamb
@@ -786,9 +785,9 @@ public static class Data
             745, // Mythril Madness
             742, // Rocks for Brains
             743, // There Are No Good Answers
-        },
+        ],
         // Haisie
-        [1007068] = new uint[] {
+        [1007068] = [
             844, // Dress for Aggress
             833, // Fanning the Flames
             838, // Feathered Foes
@@ -798,39 +797,39 @@ public static class Data
             845, // Pick Your Poison
             840, // Roast Lamb with Mint and Hellfire
             843, // The Baddest Brigade in Town
-        },
+        ],
         // C'lafumyn
-        [1004736] = new uint[] {
+        [1004736] = [
             819, // It's Better (for You) Under the Sea
             818, // Road Worriers
             821, // Twenty-nine Was the Cutoff
             820, // You Are NOT a Pirate
-        },
+        ],
         // H'amneko
-        [1004738] = new uint[] {
+        [1004738] = [
             824, // Creature Feature
             826, // Dead Man Walking
             825, // It Goes with the Territory
             823, // This Is Going to Sting, A Lot
-        },
+        ],
         // Blue Herring
-        [1004740] = new uint[] {
+        [1004740] = [
             829, // And Then There Were None
             828, // Bridges of Qiqirn Country
             831, // Grapevine of Wrath
             830, // The Cost of Living
-        },
+        ],
         // Rurubana
-        [1002398] = new uint[] {
+        [1002398] = [
             648, // Blow-up Incubator
             646, // Circling the Ceruleum
             645, // Don't Forget to Cry
             644, // Necrologos: Pale Oblation
             647, // Someone's in the Doghouse
             643, // Subduing the Subprime
-        },
+        ],
         // Voilinaut
-        [1002401] = new uint[] {
+        [1002401] = [
             650, // Got a Gut Feeling about This
             649, // Necrologos: Whispers of the Gem
             654, // Pets Are Family Too
@@ -874,9 +873,9 @@ public static class Data
             747, // Brother in Arms
             746, // Nature Is a Monster
             749, // Not Losing Our Heads This Time
-        },
+        ],
         // Lodille
-        [1007069] = new uint[] {
+        [1007069] = [
             849, // An Imp Mobile
             860, // If You Put It That Way
             859, // No Big Whoop
@@ -886,9 +885,9 @@ public static class Data
             855, // The Bloodhounds of Coerthas
             853, // Yellow Is the New Black
             858, // You Dropped Something
-        },
+        ],
         // K'leytai
-        [1004348] = new uint[] {
+        [1004348] = [
             661, // A Toad Less Taken
             658, // Big, Bad Idea
             657, // Necrologos: The Liminal Ones
@@ -931,9 +930,9 @@ public static class Data
             753, // Hybrid Hypotheses
             750, // Metal Has No Master
             752, // Sucker Seer
-        },
+        ],
         // Eidhart
-        [1007070] = new uint[] {
+        [1007070] = [
             869, // Amateur Hour
             870, // Get off Our Lake
             865, // Go Home to Mama
@@ -943,9 +942,9 @@ public static class Data
             868, // The Awry Salvages
             875, // The Museum Is Closed
             873, // Who Writes History
-        },
+        ],
         // Eloin
-        [1011208] = new uint[] {
+        [1011208] = [
             883, // Necrologos: Of Sallow Vizards (L)
             881, // We're So Above This (L)
             879, // Don't Come Back
@@ -1306,9 +1305,9 @@ public static class Data
             1204, // Dragonproofing
             1203, // Crystal Chronicles
             1206, // Not So Crystal Clear (L)
-        },
+        ],
         // Keltraeng
-        [1018997] = new uint[] {
+        [1018997] = [
             1315, // Magic Beans
             1314, // Spellbound
             1313, // Whinier than the Sword
@@ -1473,9 +1472,10 @@ public static class Data
             1386, // Adios, Ala Mhigo
             1385, // Mine All Mine
             1387, // The Ores Have It
-        },
+            1400, // Blood in the Water
+        ],
         // Eirikur
-        [1027847] = new uint[] {
+        [1027847] = [
             1478, // Another Man's Ink
             1480, // A Time for Peace
             1479, // Keeping Magic Alive
@@ -1641,9 +1641,9 @@ public static class Data
             1551, // Back Stronger
             1552, // Crystal Meds
             1550, // Lakeland's Legacy
-        },
+        ],
         // Grigge
-        [1037263] = new uint[] {
+        [1037263] = [
             1629, // Nearly Bare
             1628, // Wishful Inking
             1631, // Body over Mind
@@ -1764,6 +1764,6 @@ public static class Data
             1677, // Reactionary Reactors
             1675, // Rocks of a Feather
             1676, // The Final Touch
-        },
+        ],
     };
 }

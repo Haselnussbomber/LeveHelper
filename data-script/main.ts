@@ -1,8 +1,8 @@
-import * as path from "https://deno.land/std@0.203.0/path/mod.ts";
-import * as fs from "https://deno.land/std@0.203.0/fs/mod.ts";
-import * as cheerio from "https://esm.sh/cheerio@0.22.0";
+import * as path from "https://deno.land/std@0.213.0/path/mod.ts";
+import * as fs from "https://deno.land/std@0.213.0/fs/mod.ts";
+import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12";
 
-const root = "F:\\cs\\ffxiv\\Tools\\ExdExport\\bin\\Debug\\net7.0-windows\\out\\en\\";
+const root = "F:\\cs\\ffxiv\\Tools\\ExdExport\\bin\\x64\\Debug\\out\\en\\";
 
 const issuers = [
   1000970, // T'mokkri, Limsa Lominsa Upper Decks (11, 11)
@@ -130,18 +130,32 @@ const fetchLevesFromIssuer = async (name: string) => {
   return Array.from(leveNames).map((name) => [Leve.findByName(name), name]) as [LeveRow, string][];
 }
 
-const parts = [];
+const parts: string[] = [];
 for (const issuer of issuers.map(id => ENpcResident.getRow(id))) {
-  const leves = await fetchLevesFromIssuer(issuer!.Singular);
-  const lines = [];
+  if (!issuer)
+  continue;
+  console.group(`Issuer #${issuer["@rowId"]}: ${issuer.Singular}`);
+
+  const leves = await fetchLevesFromIssuer(issuer.Singular);
+  const lines: string[] = [];
   for (const [leve, name] of leves) {
-    lines.push(`            ${leve?.["@rowId"]}, // ${name}`);
+    console.log(`  Leve #${leve["@rowId"]}: ${name}`)
+    if (issuer["@rowId"] == 1004739 && leve["@rowId"] == 1400) // Kikiri does not issue "Blood in the Water" for level 68
+      continue;
+
+    lines.push(`            ${leve["@rowId"]}, // ${name}`);
+  }
+  if (issuer["@rowId"] == 1018997) {
+    console.log("  Injecting Leve #1400: Blood in the Water")
+    lines.push(`            1400, // ${Leve.getRow(1400)?.Name}`); // Keltraeng issues "Blood in the Water" for level 68
   }
 
-  parts.push(`        // ${issuer?.Singular}
-        [${issuer?.["@rowId"]}] = new uint[] {
+  parts.push(`        // ${issuer.Singular}
+        [${issuer["@rowId"]}] = [
 ${lines.join("\n")}
-        },`)
+        ],`)
+
+  console.groupEnd();
 }
 
 const cs = `using System.Collections.Generic;

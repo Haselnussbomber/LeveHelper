@@ -315,7 +315,7 @@ public class ListTab
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
-                    var level = FindRow<Lumina.Excel.GeneratedSheets.Level>(row => row.Object == issuer.RowId);
+                    var level = FindRow<Lumina.Excel.GeneratedSheets.Level>(row => row?.Object == issuer.RowId);
                     level?.OpenMapLocation();
                 }
 
