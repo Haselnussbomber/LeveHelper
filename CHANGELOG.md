@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- **Changed:** The plugin now uses Dalamud's language setting and will fall back to English if there's no translation available. If you haven't changed the language in LeveHelper itself, nothing will change for you.
+- **Fixed:** Issuer for Blood in the Water at level 68 was incorrect.  
+  If someone could update it on the Gamer Escape's wiki, that would be awesome. I can't because my ISPs IP address is listed on DNSBL. 🤷‍♂️
+
 ## [2.1.2] (2023-12-31)
 
 ### Wanted Targets
