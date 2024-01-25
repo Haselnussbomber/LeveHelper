@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.3] (2024-01-25)
 
 - **Changed:** The plugin now uses Dalamud's language setting and will fall back to English if there's no translation available. If you haven't changed the language in LeveHelper itself, nothing will change for you.
 - **Fixed:** Issuer for Blood in the Water at level 68 was incorrect.  
@@ -193,6 +193,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.0.10...v2.1.0
