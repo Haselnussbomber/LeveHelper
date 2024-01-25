@@ -1,9 +1,7 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
 using HaselCommon.Extensions;
-using LeveHelper.Interfaces;
 using LeveHelper.Services;
 using LeveHelper.Windows;
 
@@ -52,9 +50,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     private void PluginInterface_LanguageChanged(string langCode)
     {
         FilterManager.Reload();
-        Service.WindowManager.Windows
-            .OfType<IPluginWindow>()
-            .ForEach(window => window.OnLanguageChange());
+        Service.WindowManager.GetWindow<MainWindow>()?.OnLanguageChange();
     }
 
     private void OnCommand(string command, string args)

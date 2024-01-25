@@ -4,13 +4,12 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using LeveHelper.Interfaces;
 using LeveHelper.Records;
 using LeveHelper.Utils;
 
 namespace LeveHelper.Windows;
 
-public unsafe class MainWindow : Window, IPluginWindow, IDisposable
+public unsafe class MainWindow : Window, IDisposable
 {
     private readonly WindowState _state;
 
