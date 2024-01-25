@@ -226,8 +226,6 @@ public record WindowState
 
         if (ImGui.IsItemHovered())
         {
-            GetItemName(item.RowId); // cache item name
-
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
 
             // TODO: info about what leve/recipe needs this?
