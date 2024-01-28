@@ -1,7 +1,5 @@
-using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
-using HaselCommon.Extensions;
 using LeveHelper.Services;
 using LeveHelper.Windows;
 
@@ -17,16 +15,16 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Task.Run(HaselCommon.Interop.Resolver.GetInstance.Resolve)
-            .ContinueOnFrameworkThreadWith(Setup);
+        Service.TranslationManager.Initialize();
+        Config = Configuration.Load();
+        Service.Framework.RunOnFrameworkThread(Setup);
     }
 
     private void Setup()
     {
-        Service.TranslationManager.Initialize();
-        Service.GetService<WantedTargetScanner>();
+        HaselCommon.Interop.Resolver.GetInstance.Resolve();
 
-        Config = Configuration.Load();
+        Service.GetService<WantedTargetScanner>();
 
         FilterManager = new();
 
