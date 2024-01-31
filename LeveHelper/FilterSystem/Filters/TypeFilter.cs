@@ -139,7 +139,7 @@ public class TypeFilter : Filter
                 : Service.ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
             if (suggestedName != null && ImGui.Button(t("TypeFilter.SetSuggestion", suggestedName)))
             {
-                Config.SelectedType = (uint)suggestedType;
+                Set((uint)suggestedType);
                 manager.Update();
             }
         }

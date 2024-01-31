@@ -107,7 +107,7 @@ public class LocationFilter : Filter
             _locations.ContainsKey(_currentPlaceNameId) &&
             ImGui.Button(t("LocationFilter.SetCurrentZone")))
         {
-            Config.SelectedLocation = _currentPlaceNameId;
+            Set(_currentPlaceNameId);
             manager.Update();
         }
     }
