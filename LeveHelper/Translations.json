@@ -1,4 +1,8 @@
 {
+  "CommandHandlerHelpMessage": {
+    "en": "Open Window",
+    "de": "Öffne Fenster"
+  },
   "WindowTitle.Main": {
     "en": "LeveHelper"
   },

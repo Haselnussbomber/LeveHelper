@@ -10,12 +10,16 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     internal static Configuration Config { get; private set; } = null!;
     internal static FilterManager FilterManager { get; private set; } = null!;
 
-    private bool _openMainUiSubscribed = false;
+    private readonly CommandInfo CommandInfo;
+    private bool IsOpenMainUiSubscribed = false;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
         Config = Configuration.Load();
+
+        CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
+
         Service.Framework.RunOnFrameworkThread(Setup);
     }
 
@@ -32,13 +36,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
         Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
 
-        var commandInfo = new CommandInfo(OnCommand)
-        {
-            HelpMessage = "Show Window"
-        };
-
-        Service.CommandManager.AddHandler("/levehelper", commandInfo);
-        Service.CommandManager.AddHandler("/lh", commandInfo);
+        Service.CommandManager.AddHandler("/levehelper", CommandInfo);
+        Service.CommandManager.AddHandler("/lh", CommandInfo);
 
         if (Service.ClientState.IsLoggedIn)
             SubscribeOpenMainUi();
@@ -46,6 +45,8 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void PluginInterface_LanguageChanged(string langCode)
     {
+        CommandInfo.HelpMessage = t("CommandHandlerHelpMessage");
+
         FilterManager.Reload();
         Service.WindowManager.GetWindow<MainWindow>()?.OnLanguageChange();
     }
@@ -60,19 +61,19 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
 
     private void SubscribeOpenMainUi()
     {
-        if (!_openMainUiSubscribed)
+        if (!IsOpenMainUiSubscribed)
         {
             Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainWindow;
-            _openMainUiSubscribed = true;
+            IsOpenMainUiSubscribed = true;
         }
     }
 
     private void UnsubscribeOpenMainUi()
     {
-        if (_openMainUiSubscribed)
+        if (IsOpenMainUiSubscribed)
         {
             Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainWindow;
-            _openMainUiSubscribed = false;
+            IsOpenMainUiSubscribed = false;
         }
     }
 
