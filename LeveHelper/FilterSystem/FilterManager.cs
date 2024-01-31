@@ -89,7 +89,7 @@ public class FilterManager
             filter.Reset();
         }
 
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
         Update();
     }
 

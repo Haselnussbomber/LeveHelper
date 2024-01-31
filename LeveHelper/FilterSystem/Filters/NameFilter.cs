@@ -15,7 +15,7 @@ public class NameFilter : Filter
     {
     }
 
-    public static NameFilterConfiguration Config => Plugin.Config.Filters.NameFilter;
+    public static NameFilterConfiguration Config => Service.GetService<Configuration>().Filters.NameFilter;
 
     public override void Reload()
     {
@@ -34,7 +34,7 @@ public class NameFilter : Filter
     public override void Set(dynamic value)
     {
         Config.CurrentName = (string)value;
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
     }
 
     public override void Draw()

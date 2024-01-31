@@ -26,23 +26,25 @@ public unsafe class ConfigWindow : Window
 
     public override void Draw()
     {
+        var config = Service.GetService<Configuration>();
+
         // Notify when Wanted Target is found
         {
-            var notifyWantedTarget = Plugin.Config.NotifyWantedTarget;
+            var notifyWantedTarget = config.NotifyWantedTarget;
             if (ImGui.Checkbox(t("Config.NotifyWantedTarget"), ref notifyWantedTarget))
             {
-                Plugin.Config.NotifyWantedTarget = notifyWantedTarget;
-                Plugin.Config.Save();
+                config.NotifyWantedTarget = notifyWantedTarget;
+                config.Save();
             }
         }
 
         // Notify when Treasure is found
         {
-            var notifyTreasure = Plugin.Config.NotifyTreasure;
+            var notifyTreasure = config.NotifyTreasure;
             if (ImGui.Checkbox(t("Config.NotifyTreasure"), ref notifyTreasure))
             {
-                Plugin.Config.NotifyTreasure = notifyTreasure;
-                Plugin.Config.Save();
+                config.NotifyTreasure = notifyTreasure;
+                config.Save();
             }
         }
     }

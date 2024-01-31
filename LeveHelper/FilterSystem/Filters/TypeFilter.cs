@@ -20,7 +20,7 @@ public class TypeFilter : Filter
     {
     }
 
-    public static TypeFilterConfiguration Config => Plugin.Config.Filters.TypeFilter;
+    public static TypeFilterConfiguration Config => Service.GetService<Configuration>().Filters.TypeFilter;
 
     private Dictionary<string, LeveAssignmentType[]> _groups { get; set; } = new();
 
@@ -43,7 +43,7 @@ public class TypeFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedType = (uint)value;
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
     }
 
     public override void Draw()

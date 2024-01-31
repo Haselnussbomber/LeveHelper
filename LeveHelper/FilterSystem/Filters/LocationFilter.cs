@@ -19,7 +19,7 @@ public class LocationFilter : Filter
     {
     }
 
-    private static LocationFilterConfiguration Config => Plugin.Config.Filters.LocationFilter;
+    private static LocationFilterConfiguration Config => Service.GetService<Configuration>().Filters.LocationFilter;
 
     private Dictionary<uint, string>? _locations { get; set; }
     private uint _lastTerritoryId { get; set; }
@@ -44,7 +44,7 @@ public class LocationFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLocation = (uint)value;
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
     }
 
     public override void Draw()

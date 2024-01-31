@@ -1,12 +1,16 @@
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using Dalamud.Configuration;
+using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Utility;
+using HaselCommon.Extensions;
 using LeveHelper.Filters;
-using Newtonsoft.Json.Linq;
 
 namespace LeveHelper;
 
-[Serializable]
-internal partial class Configuration : IPluginConfiguration
+public partial class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 1;
 
@@ -15,7 +19,7 @@ internal partial class Configuration : IPluginConfiguration
     public bool NotifyTreasure { get; set; } = true;
 }
 
-internal class FilterConfigs
+public class FilterConfigs
 {
     public TypeFilterConfiguration TypeFilter { get; init; } = new();
     public LevemeteFilterConfiguration LevemeteFilter { get; init; } = new();
@@ -24,28 +28,93 @@ internal class FilterConfigs
     public StatusFilterConfiguration StatusFilter { get; init; } = new();
 }
 
-internal partial class Configuration
+// I really wish I could move this to HaselCommon, but I haven't found a way yet.
+public partial class Configuration : IDisposable
 {
-    internal static Configuration Load()
+    public static JsonSerializerOptions DefaultJsonSerializerOptions = new()
     {
-        var configPath = Service.PluginInterface.ConfigFile.FullName;
+        IncludeFields = true,
+        WriteIndented = true
+    };
 
-        var jsonData = File.Exists(configPath) ? File.ReadAllText(configPath) : null;
-        if (string.IsNullOrEmpty(jsonData))
+    [JsonIgnore]
+    public string LastSavedConfigHash = string.Empty;
+
+    public static Configuration Load()
+    {
+        try
+        {
+            var configPath = Service.PluginInterface.ConfigFile.FullName;
+            if (!File.Exists(configPath))
+                return new();
+
+            var jsonData = File.ReadAllText(configPath);
+            if (string.IsNullOrEmpty(jsonData))
+                return new();
+
+            var config = JsonNode.Parse(jsonData);
+            if (config is not JsonObject configObject)
+                return new();
+
+            var version = (int?)configObject[nameof(Version)] ?? 0;
+            if (version == 0)
+                return new();
+
+            Migrate(version, configObject);
+
+            var deserializedConfig = configObject.Deserialize<Configuration>(DefaultJsonSerializerOptions);
+            if (deserializedConfig == null)
+                return new();
+
+            deserializedConfig.Save();
+
+            return deserializedConfig;
+        }
+        catch (Exception ex)
+        {
+            Service.PluginLog.Error(ex, "Could not load the configuration file. Creating a new one.");
+
+            if (!Service.TranslationManager.TryGetTranslation("Plugin.DisplayName", out var pluginName))
+                pluginName = Service.PluginInterface.InternalName;
+
+            Service.PluginInterface.UiBuilder.AddNotification(
+                t("Notification.CouldNotLoadConfig"),
+                pluginName,
+                NotificationType.Error,
+                5000
+            );
+
             return new();
-
-        var parsed = JObject.Parse(jsonData);
-        if (parsed == null)
-            return new();
-
-        // migrations here
-
-        return parsed.ToObject<Configuration>() ?? new();
+        }
     }
 
-    internal void Save()
+    public static void Migrate(int version, JsonObject config)
     {
-        Service.PluginLog.Information("Configuration saved.");
-        Service.PluginInterface.SavePluginConfig(this);
+        // Service.PluginLog.Debug("Migrate called: {version} - {config}", version, config);
+    }
+
+    public void Save()
+    {
+        try
+        {
+            var serialized = JsonSerializer.Serialize(this, DefaultJsonSerializerOptions);
+            var hash = serialized.GetHash();
+
+            if (LastSavedConfigHash != hash)
+            {
+                Util.WriteAllTextSafe(Service.PluginInterface.ConfigFile.FullName, serialized);
+                LastSavedConfigHash = hash;
+                Service.PluginLog.Information("Configuration saved.");
+            }
+        }
+        catch (Exception e)
+        {
+            Service.PluginLog.Error(e, "Error saving config");
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        Save();
     }
 }

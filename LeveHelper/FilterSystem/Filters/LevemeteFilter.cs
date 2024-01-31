@@ -17,7 +17,7 @@ public class LevemeteFilter : Filter
     {
     }
 
-    public static LevemeteFilterConfiguration Config => Plugin.Config.Filters.LevemeteFilter;
+    public static LevemeteFilterConfiguration Config => Service.GetService<Configuration>().Filters.LevemeteFilter;
 
     private Dictionary<uint, string>? _levemetes { get; set; }
 
@@ -40,7 +40,7 @@ public class LevemeteFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedLevemete = (uint)value;
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
     }
 
     public override void Draw()

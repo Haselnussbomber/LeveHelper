@@ -7,32 +7,22 @@ namespace LeveHelper;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    internal static Configuration Config { get; private set; } = null!;
-
     private readonly CommandInfo CommandInfo;
     private bool IsOpenMainUiSubscribed = false;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Config = Configuration.Load();
-
-        CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
-
-        Service.Framework.RunOnFrameworkThread(Setup);
-    }
-
-    private void Setup()
-    {
-        HaselCommon.Interop.Resolver.GetInstance.Resolve();
-
-        Service.GetService<WantedTargetScanner>();
-        Service.GetService<FilterManager>();
+        Service.AddService(Configuration.Load());
+        Service.AddService<WantedTargetScanner>();
+        Service.AddService<FilterManager>();
 
         Service.ClientState.Login += SubscribeOpenMainUi;
         Service.ClientState.Logout += UnsubscribeOpenMainUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
         Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
+
+        CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
 
         Service.CommandManager.AddHandler("/levehelper", CommandInfo);
         Service.CommandManager.AddHandler("/lh", CommandInfo);
@@ -88,8 +78,6 @@ public sealed class Plugin : IDalamudPlugin
 
         Service.CommandManager.RemoveHandler("/levehelper");
         Service.CommandManager.RemoveHandler("/lh");
-
-        Config.Save();
 
         Service.Dispose();
     }

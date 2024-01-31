@@ -24,7 +24,7 @@ public class StatusFilter : Filter
     {
     }
 
-    public static StatusFilterConfiguration Config => Plugin.Config.Filters.StatusFilter;
+    public static StatusFilterConfiguration Config => Service.GetService<Configuration>().Filters.StatusFilter;
 
     public override void Reload()
     {
@@ -43,7 +43,7 @@ public class StatusFilter : Filter
     public override void Set(dynamic value)
     {
         Config.SelectedStatus = (CompletedStatus)value;
-        Plugin.Config.Save();
+        Service.GetService<Configuration>().Save();
     }
 
     public override void Draw()

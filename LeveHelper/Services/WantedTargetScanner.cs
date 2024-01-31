@@ -67,7 +67,7 @@ public unsafe class WantedTargetScanner : IDisposable
 
     private void Framework_Update(IFramework framework)
     {
-        var config = Plugin.Config;
+        var config = Service.GetService<Configuration>();
 
         if (config == null)
             return;
