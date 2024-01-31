@@ -12,6 +12,9 @@ namespace LeveHelper;
 
 public partial class Configuration : IPluginConfiguration
 {
+    [JsonIgnore]
+    public const int CURRENT_CONFIG_VERSION = 1;
+
     public int Version { get; set; } = 1;
 
     public FilterConfigs Filters { get; init; } = new();
@@ -60,7 +63,30 @@ public partial class Configuration : IDisposable
             if (version == 0)
                 return new();
 
-            Migrate(version, configObject);
+            if (version < CURRENT_CONFIG_VERSION)
+            {
+                try
+                {
+                    var configBackupPath = configPath + ".bak";
+                    var jsonBackupData = File.Exists(configBackupPath) ? File.ReadAllText(configBackupPath) : null;
+                    if (string.IsNullOrEmpty(jsonBackupData) || !string.Equals(jsonData, jsonBackupData))
+                    {
+                        File.Copy(configPath, configBackupPath, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not back up config before migration", ex);
+                }
+
+                Service.PluginLog.Information("Starting config migration: {currentVersion} -> {targetVersion}", version, CURRENT_CONFIG_VERSION);
+
+                Migrate(version, configObject);
+
+                config[nameof(Version)] = CURRENT_CONFIG_VERSION;
+
+                Service.PluginLog.Information("Config migration completed.");
+            }
 
             var deserializedConfig = configObject.Deserialize<Configuration>(DefaultJsonSerializerOptions);
             if (deserializedConfig == null)
@@ -90,7 +116,7 @@ public partial class Configuration : IDisposable
 
     public static void Migrate(int version, JsonObject config)
     {
-        // Service.PluginLog.Debug("Migrate called: {version} - {config}", version, config);
+
     }
 
     public void Save()
