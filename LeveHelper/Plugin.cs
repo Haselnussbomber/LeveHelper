@@ -5,10 +5,9 @@ using LeveHelper.Windows;
 
 namespace LeveHelper;
 
-public unsafe class Plugin : IDalamudPlugin, IDisposable
+public sealed class Plugin : IDalamudPlugin
 {
     internal static Configuration Config { get; private set; } = null!;
-    internal static FilterManager FilterManager { get; private set; } = null!;
 
     private readonly CommandInfo CommandInfo;
     private bool IsOpenMainUiSubscribed = false;
@@ -28,8 +27,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         HaselCommon.Interop.Resolver.GetInstance.Resolve();
 
         Service.GetService<WantedTargetScanner>();
-
-        FilterManager = new();
+        Service.GetService<FilterManager>();
 
         Service.ClientState.Login += SubscribeOpenMainUi;
         Service.ClientState.Logout += UnsubscribeOpenMainUi;
@@ -47,7 +45,7 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     {
         CommandInfo.HelpMessage = t("CommandHandlerHelpMessage");
 
-        FilterManager.Reload();
+        Service.GetService<FilterManager>().Reload();
         Service.WindowManager.GetWindow<MainWindow>()?.OnLanguageChange();
     }
 
@@ -92,8 +90,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
         Service.CommandManager.RemoveHandler("/lh");
 
         Config.Save();
-        Config = null!;
-        FilterManager = null!;
 
         Service.Dispose();
     }

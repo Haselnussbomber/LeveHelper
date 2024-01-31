@@ -58,7 +58,7 @@ public unsafe class MainWindow : Window, IDisposable
     private void Refresh()
     {
         _state.UpdateList();
-        Plugin.FilterManager.Update();
+        Service.GetService<FilterManager>().Update();
     }
 
     public void OnLanguageChange() => Refresh();

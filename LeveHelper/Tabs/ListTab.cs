@@ -31,7 +31,7 @@ public class ListTab
     public void Draw()
     {
         DrawInfoBar();
-        Plugin.FilterManager.Draw();
+        Service.GetService<FilterManager>().Draw();
         DrawTable();
     }
 
@@ -39,7 +39,7 @@ public class ListTab
     {
         using var windowId = ImRaii.PushId("##ListTab");
 
-        var state = Plugin.FilterManager.State;
+        var state = Service.GetService<FilterManager>().State;
         var questManager = QuestManager.Instance();
 
         ImGui.TextUnformatted(t("ListTab.AcceptedLeves", questManager->NumAcceptedLeveQuests));
@@ -90,7 +90,7 @@ public class ListTab
         if (!table.Success)
             return;
 
-        var state = Plugin.FilterManager.State;
+        var state = Service.GetService<FilterManager>().State;
         var startTown = 0;
         unsafe
         {
@@ -113,7 +113,7 @@ public class ListTab
                 state.SortColumnIndex = specs.Specs.ColumnIndex;
                 state.SortDirection = specs.Specs.SortDirection;
                 specs.SpecsDirty = false;
-                Plugin.FilterManager.Update();
+                Service.GetService<FilterManager>().Update();
             }
         }
 
@@ -143,7 +143,7 @@ public class ListTab
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    Plugin.FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType.Row);
+                    Service.GetService<FilterManager>().SetValue<TypeFilter>(item.LeveAssignmentType.Row);
                 }
             }
 
@@ -321,7 +321,7 @@ public class ListTab
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    Plugin.FilterManager.SetValue<LevemeteFilter>(issuer.RowId);
+                    Service.GetService<FilterManager>().SetValue<LevemeteFilter>(issuer.RowId);
                 }
 
                 if (i < item.Issuers.Length - 1)
