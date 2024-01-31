@@ -1,4 +1,3 @@
-using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -10,13 +9,9 @@ public unsafe class ConfigWindow : Window
     {
         Namespace = "LeveHelperConfig";
 
-        Size = new Vector2(400, 400);
-        SizeCondition = ImGuiCond.Appearing;
-        SizeConstraints = new()
-        {
-            MinimumSize = new Vector2(400, 400),
-            MaximumSize = new Vector2(4096, 2160)
-        };
+        AllowClickthrough = false;
+        AllowPinning = false;
+        Flags |= ImGuiWindowFlags.AlwaysAutoResize;
     }
 
     public override void OnClose()
