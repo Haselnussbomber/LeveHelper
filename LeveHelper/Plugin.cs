@@ -15,7 +15,6 @@ public unsafe class Plugin : IDalamudPlugin, IDisposable
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Service.TranslationManager.Initialize();
         Config = Configuration.Load();
         Service.Framework.RunOnFrameworkThread(Setup);
     }
