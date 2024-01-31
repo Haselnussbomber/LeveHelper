@@ -18,6 +18,15 @@
     "de": "Benachrichtigen wenn Schatztruhe gefunden wurde"
   },
 
+  "TitleBarButton.ToggleConfig.Tooltip.OpenConfig": {
+    "en": "Open Configuration",
+    "de": "Konfiguration öffnen"
+  },
+  "TitleBarButton.ToggleConfig.Tooltip.CloseConfig": {
+    "en": "Close Configuration",
+    "de": "Konfiguration schließen"
+  },
+
   "Tabs.Levequest": {
     "en": "Levequests",
     "de": "Freibriefe"

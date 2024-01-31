@@ -34,6 +34,14 @@ public unsafe class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(4096, 2160)
         };
 
+        TitleBarButtons.Add(new()
+        {
+            Icon = Dalamud.Interface.FontAwesomeIcon.Cog,
+            IconOffset = new(0, 1),
+            ShowTooltip = () => ImGui.SetTooltip(t($"TitleBarButton.ToggleConfig.Tooltip.{(Service.WindowManager.IsWindowOpen<ConfigWindow>() ? "Close" : "Open")}Config")),
+            Click = (button) => { Service.WindowManager.ToggleWindow<ConfigWindow>(); }
+        });
+
         _state = new();
 
         _listTab = new(_state);
