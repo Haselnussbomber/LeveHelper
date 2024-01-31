@@ -19,7 +19,7 @@ public sealed class Plugin : IDalamudPlugin
 
         Service.ClientState.Login += SubscribeOpenMainUi;
         Service.ClientState.Logout += UnsubscribeOpenMainUi;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
         Service.PluginInterface.LanguageChanged += PluginInterface_LanguageChanged;
 
         CommandInfo = new CommandInfo(OnCommand) { HelpMessage = t("CommandHandlerHelpMessage") };
@@ -39,19 +39,25 @@ public sealed class Plugin : IDalamudPlugin
         Service.WindowManager.GetWindow<MainWindow>()?.OnLanguageChange();
     }
 
-    private void OnCommand(string command, string args)
+    private void OnCommand(string command, string arguments)
     {
-        if (args == "config")
-            Service.WindowManager.ToggleWindow<ConfigWindow>();
-        else
-            Service.WindowManager.ToggleWindow<MainWindow>();
+        switch (arguments.ToLower())
+        {
+            case "config":
+                Service.WindowManager.ToggleWindow<ConfigWindow>();
+                break;
+
+            default:
+                Service.WindowManager.ToggleWindow<MainWindow>();
+                break;
+        }
     }
 
     private void SubscribeOpenMainUi()
     {
         if (!IsOpenMainUiSubscribed)
         {
-            Service.PluginInterface.UiBuilder.OpenMainUi += OpenMainWindow;
+            Service.PluginInterface.UiBuilder.OpenMainUi += ToggleMainWindow;
             IsOpenMainUiSubscribed = true;
         }
     }
@@ -60,20 +66,20 @@ public sealed class Plugin : IDalamudPlugin
     {
         if (IsOpenMainUiSubscribed)
         {
-            Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainWindow;
+            Service.PluginInterface.UiBuilder.OpenMainUi -= ToggleMainWindow;
             IsOpenMainUiSubscribed = false;
         }
     }
 
-    private void OpenMainWindow() => Service.WindowManager.OpenWindow<MainWindow>();
-    private void OpenConfigWindow() => Service.WindowManager.OpenWindow<ConfigWindow>();
+    private void ToggleMainWindow() => Service.WindowManager.ToggleWindow<MainWindow>();
+    private void ToggleConfigWindow() => Service.WindowManager.ToggleWindow<ConfigWindow>();
 
     void IDisposable.Dispose()
     {
         Service.ClientState.Login -= SubscribeOpenMainUi;
         Service.ClientState.Logout -= UnsubscribeOpenMainUi;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigWindow;
-        Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMainWindow;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= ToggleConfigWindow;
+        Service.PluginInterface.UiBuilder.OpenMainUi -= ToggleMainWindow;
         Service.PluginInterface.LanguageChanged -= PluginInterface_LanguageChanged;
 
         Service.CommandManager.RemoveHandler("/levehelper");
