@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LeveHelper.DataGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Program Files\\Square Enix\\FINAL FANTASY XIV - A Realm Reborn\\game\\sqpack\""
+    }
+  }
+}

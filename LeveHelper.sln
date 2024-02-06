@@ -9,38 +9,30 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon", "HaselCommon\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HaselCommon.InteropSourceGenerators", "HaselCommon\HaselCommon.InteropSourceGenerators\HaselCommon.InteropSourceGenerators.csproj", "{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeveHelper.DataGenerator", "LeveHelper.DataGenerator\LeveHelper.DataGenerator.csproj", "{10F6CD0F-3850-464A-BD0B-9B164A6DC688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Debug|Any CPU.Build.0 = Debug|x64
 		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Debug|x64.ActiveCfg = Debug|x64
 		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Debug|x64.Build.0 = Debug|x64
-		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Release|Any CPU.ActiveCfg = Release|x64
-		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Release|Any CPU.Build.0 = Release|x64
 		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Release|x64.ActiveCfg = Release|x64
 		{66F84C6F-1F37-4331-AD98-92C10C931CCF}.Release|x64.Build.0 = Release|x64
-		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Debug|Any CPU.Build.0 = Debug|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Debug|x64.ActiveCfg = Debug|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Debug|x64.Build.0 = Debug|x64
-		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|Any CPU.ActiveCfg = Release|x64
-		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|Any CPU.Build.0 = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.ActiveCfg = Release|x64
 		{FE3AAA26-306B-4FAE-841D-33CAA23382AA}.Release|x64.Build.0 = Release|x64
-		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Debug|x64.Build.0 = Debug|Any CPU
-		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|x64.ActiveCfg = Release|Any CPU
 		{D4AC3C79-2181-4844-9B94-FBDBBD1F9E33}.Release|x64.Build.0 = Release|Any CPU
+		{10F6CD0F-3850-464A-BD0B-9B164A6DC688}.Debug|x64.ActiveCfg = Debug|x64
+		{10F6CD0F-3850-464A-BD0B-9B164A6DC688}.Debug|x64.Build.0 = Debug|x64
+		{10F6CD0F-3850-464A-BD0B-9B164A6DC688}.Release|x64.ActiveCfg = Release|x64
+		{10F6CD0F-3850-464A-BD0B-9B164A6DC688}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
