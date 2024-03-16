@@ -56,7 +56,6 @@ public class Item : HaselCommon.Sheets.ExtendedItem
     {
         get
         {
-#pragma warning disable IDE0046
             if (IsCrystal)
                 return ItemQueueCategory.Crystals;
 
@@ -67,7 +66,6 @@ public class Item : HaselCommon.Sheets.ExtendedItem
                 return ItemQueueCategory.Craftable;
 
             return ItemQueueCategory.OtherSources;
-#pragma warning restore IDE0046
         }
     }
 }

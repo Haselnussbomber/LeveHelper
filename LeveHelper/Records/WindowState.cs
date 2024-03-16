@@ -318,7 +318,7 @@ public record WindowState
             ImGuiContextMenu.CreateItemFinder(item.RowId),
             ImGuiContextMenu.CreateCopyItemName(item.RowId),
             ImGuiContextMenu.CreateItemSearch(item),
-            ImGuiContextMenu.CreateOpenOnGarlandTools(item.RowId),
+            ImGuiContextMenu.CreateOpenOnGarlandTools("item", item.RowId),
         }
         .Draw();
 

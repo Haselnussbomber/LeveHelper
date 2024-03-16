@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net7.0-windows7.0": {
+    "net8.0-windows7.0": {
       "DalamudPackager": {
         "type": "Direct",
         "requested": "[2.1.12, )",
@@ -28,30 +28,8 @@
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
       },
-      "NoAlloq": {
-        "type": "Transitive",
-        "resolved": "0.2.0",
-        "contentHash": "CDGlcqAIXu/+P5pBAPLcCMnCV1iy4WF2RZEdfkj71heWPuetrL28lqnNx9cspzBY8RdKDvv7PTg8cooFI5dOgA==",
-        "dependencies": {
-          "System.Memory": "4.5.3"
-        }
-      },
-      "System.IO.Hashing": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA=="
-      },
-      "System.Memory": {
-        "type": "Transitive",
-        "resolved": "4.5.3",
-        "contentHash": "3oDzvc/zzetpTKWMShs1AADwZjQ/36HnsufHRPcOjyRAAMLDlu2iD33MBI2opxnezcVUtXyqDXXjoFMOU9c7SA=="
-      },
       "haselcommon": {
-        "type": "Project",
-        "dependencies": {
-          "NoAlloq": "[0.2.0, )",
-          "System.IO.Hashing": "[8.0.0, )"
-        }
+        "type": "Project"
       }
     }
   }
