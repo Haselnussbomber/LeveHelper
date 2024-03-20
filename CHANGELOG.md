@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4] (2024-03-20)
+
+- The target framework has been updated to .NET 8, some code has been adjusted to take advantage of the additions it brings, and the NoAlloq dependency was removed.
+- The plugin now loads early and asynchronously.
+- **Added:** A little cog icon to access the settings has been added to the LeveHelper window.
+- **Fixed:** The location and type filter buttons now save the configuration after setting the filter.
+
 ## [2.1.3] (2024-01-25)
 
 - **Changed:** The plugin now uses Dalamud's language setting and will fall back to English if there's no translation available. If you haven't changed the language in LeveHelper itself, nothing will change for you.
@@ -193,6 +200,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.0...v2.1.1
