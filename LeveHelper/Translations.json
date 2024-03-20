@@ -1,4 +1,7 @@
 {
+  "Plugin.DisplayName": {
+    "en": "LeveHelper"
+  },
   "CommandHandlerHelpMessage": {
     "en": "Open Window",
     "de": "Öffne Fenster"
