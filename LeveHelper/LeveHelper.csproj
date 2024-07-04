@@ -35,7 +35,7 @@
   </Target>
   
   <PropertyGroup>
-    <Version>2.1.4</Version>
+    <Version>2.1.5</Version>
     <OutputPath>..\bin\</OutputPath>
     <DebugType>embedded</DebugType>
   </PropertyGroup>

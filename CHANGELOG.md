@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.5] (2024-07-04)
+
+Preliminary update for Dawntrail (Dalamud staging).
+
+Issuer data for Br'uk Ts'on was manually composed based on the 10 involved in Levequests listed on Gamer Escape.
+
 ## [2.1.4] (2024-03-20)
 
 - The target framework has been updated to .NET 8, some code has been adjusted to take advantage of the additions it brings, and the NoAlloq dependency was removed.
@@ -200,6 +206,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.1...v2.1.2
