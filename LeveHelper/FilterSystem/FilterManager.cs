@@ -27,14 +27,14 @@ public class FilterManager
         PluginConfig pluginConfig,
         TextService textService,
         LeveIssuerCache leveIssuerCache,
-        LeveService LeveService,
+        LeveService leveService,
         IEnumerable<IFilter> filters)
     {
         State = filtersState;
         PluginConfig = pluginConfig;
         TextService = textService;
         LeveIssuerCache = leveIssuerCache;
-        LeveService = LeveService;
+        LeveService = leveService;
 
         foreach (var filter in filters)
         {
