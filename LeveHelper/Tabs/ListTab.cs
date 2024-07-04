@@ -3,46 +3,57 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using HaselCommon.Extensions;
+using HaselCommon.Services;
 using HaselCommon.Utils;
 using ImGuiNET;
-using LeveHelper.Extensions;
+using LeveHelper.Caches;
 using LeveHelper.Filters;
 using LeveHelper.Records;
 using LeveHelper.Sheets;
 using LeveHelper.Utils;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public class ListTab
+public class ListTab(
+    WindowState WindowState,
+    FilterManager FilterManager,
+    TextureService TextureService,
+    TextService TextService,
+    ExcelService ExcelService,
+    MapService MapService,
+    LeveService LeveService,
+    LeveIssuerCache LeveIssuerCache,
+    LeveRequiredItemsCache LeveRequiredItemsCache)
 {
     private const int TextWrapBreakpoint = 820;
 
-    private readonly WindowState _state;
-
-    public ListTab(WindowState state)
+    public void Draw(Window window)
     {
-        _state = state;
-    }
+        using var tab = ImRaii.TabItem(TextService.Translate("Tabs.Levequest"));
+        if (!tab) return;
 
-    public void Draw()
-    {
+        window.RespectCloseHotkey = true;
+
         DrawInfoBar();
-        Service.GetService<FilterManager>().Draw();
+        FilterManager.Draw();
         DrawTable();
     }
 
-    private unsafe void DrawInfoBar()
+    private void DrawInfoBar()
     {
         using var windowId = ImRaii.PushId("##ListTab");
 
-        var state = Service.GetService<FilterManager>().State;
-        var questManager = QuestManager.Instance();
+        var state = FilterManager.State;
+        var numLeveAllowances = LeveService.GetNumLeveAllowances();
 
-        ImGui.TextUnformatted(t("ListTab.AcceptedLeves", questManager->NumAcceptedLeveQuests));
+        TextService.Draw("ListTab.AcceptedLeves", LeveService.GetNumAcceptedLeveQuests());
         if (ImGui.GetWindowSize().X > TextWrapBreakpoint)
         {
             ImGui.SameLine();
@@ -50,14 +61,14 @@ public class ListTab
             ImGui.SameLine();
         }
 
-        var missing = state.NeededAllowances - questManager->NumLeveAllowances;
+        var missing = state.NeededAllowances - numLeveAllowances;
         var missingText = missing > 0
-            ? t("ListTab.MissingText", missing, Math.Floor(missing / 6f))
+            ? TextService.Translate("ListTab.MissingText", missing, Math.Floor(missing / 6f))
             : "";
 
-        ImGui.TextUnformatted(t(
+        ImGui.TextUnformatted(TextService.Translate(
             "ListTab.Allowances",
-            questManager->NumLeveAllowances,
+            numLeveAllowances,
             state.NeededAllowances,
             missingText,
             (QuestManager.GetNextLeveAllowancesDateTime() - DateTime.Now).ToString("hh':'mm':'ss")));
@@ -72,7 +83,7 @@ public class ListTab
             }
 
             var percent = (state.NumCompletedLeves / (float)state.NumTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
-            ImGui.TextUnformatted(t("ListTab.Completion", state.NumCompletedLeves, state.NumTotalLeves, percent));
+            ImGui.TextUnformatted(TextService.Translate("ListTab.Completion", state.NumCompletedLeves, state.NumTotalLeves, percent));
         }
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
@@ -90,18 +101,18 @@ public class ListTab
         if (!table.Success)
             return;
 
-        var state = Service.GetService<FilterManager>().State;
+        var state = FilterManager.State;
         var startTown = 0;
         unsafe
         {
             startTown = PlayerState.Instance()->StartTown;
         }
 
-        ImGui.TableSetupColumn(t("ListTab.Column.Id"), ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.DefaultHide, 50);
-        ImGui.TableSetupColumn(t("ListTab.Column.Level"), ImGuiTableColumnFlags.WidthFixed, 50);
-        ImGui.TableSetupColumn(t("ListTab.Column.Type"), ImGuiTableColumnFlags.WidthFixed, 50);
-        ImGui.TableSetupColumn(t("ListTab.Column.Name"), ImGuiTableColumnFlags.WidthStretch);
-        ImGui.TableSetupColumn(t("ListTab.Column.Levemete"), ImGuiTableColumnFlags.WidthStretch);
+        ImGui.TableSetupColumn(TextService.Translate("ListTab.Column.Id"), ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.DefaultHide, 50);
+        ImGui.TableSetupColumn(TextService.Translate("ListTab.Column.Level"), ImGuiTableColumnFlags.WidthFixed, 50);
+        ImGui.TableSetupColumn(TextService.Translate("ListTab.Column.Type"), ImGuiTableColumnFlags.WidthFixed, 50);
+        ImGui.TableSetupColumn(TextService.Translate("ListTab.Column.Name"), ImGuiTableColumnFlags.WidthStretch);
+        ImGui.TableSetupColumn(TextService.Translate("ListTab.Column.Levemete"), ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableSetupScrollFreeze(0, 1);
         ImGui.TableHeadersRow();
 
@@ -113,12 +124,19 @@ public class ListTab
                 state.SortColumnIndex = specs.Specs.ColumnIndex;
                 state.SortDirection = specs.Specs.SortDirection;
                 specs.SpecsDirty = false;
-                Service.GetService<FilterManager>().Update();
+                FilterManager.Update();
             }
         }
 
         foreach (var item in state.LevesArray)
         {
+            var isTownLocked = LeveService.IsTownLocked(item);
+            var isReadyForTurnIn = LeveService.IsReadyForTurnIn(item);
+            var isFailed = LeveService.IsFailed(item);
+            var isAccepted = LeveService.IsAccepted(item);
+            var isStarted = LeveService.IsStarted(item);
+            var isComplete = LeveService.IsComplete(item);
+
             ImGui.TableNextRow();
 
             // Id
@@ -131,19 +149,20 @@ public class ListTab
 
             // Type
             ImGui.TableNextColumn();
-            if (item.TypeIcon != 0)
+            var typeIcon = item.LeveAssignmentType.Value?.Icon ?? 0;
+            if (typeIcon != 0)
             {
-                Service.TextureManager.GetIcon(item.TypeIcon).Draw(20);
+                TextureService.DrawIcon(typeIcon, 20);
 
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    ImGui.SetTooltip(t("ListTab.LeveType.Tooltip", item.TypeName));
+                    ImGui.SetTooltip(TextService.Translate("ListTab.LeveType.Tooltip", item.LeveAssignmentType.Value?.Name ?? ""));
                 }
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    Service.GetService<FilterManager>().SetValue<TypeFilter>(item.LeveAssignmentType.Row);
+                    FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType.Row);
                 }
             }
 
@@ -152,15 +171,15 @@ public class ListTab
 
             var color = Colors.Red;
 
-            if (item.IsReadyForTurnIn)
+            if (isReadyForTurnIn)
                 color = LeveHelperColors.YellowGreen;
-            else if (item.IsFailed)
+            else if (isFailed)
                 color = LeveHelperColors.Freesia;
-            else if (item.IsAccepted)
+            else if (isAccepted)
                 color = Colors.Yellow;
-            else if (item.IsComplete)
+            else if (isComplete)
                 color = Colors.Green;
-            else if (item.TownLocked && item.Town.Row != startTown)
+            else if (isTownLocked && item.Town.Row != startTown)
                 color = Colors.Grey;
 
             ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
@@ -171,59 +190,59 @@ public class ListTab
             {
                 ImGui.BeginTooltip();
 
-                if (!item.TownLocked || (item.TownLocked && item.Town.Row == startTown))
+                if (!isTownLocked || (isTownLocked && item.Town.Row == startTown))
                 {
-                    if (item.IsReadyForTurnIn)
+                    if (isReadyForTurnIn)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureManager.GetIcon(71045).Draw(20);
+                        TextureService.DrawIcon(71045, 20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.ReadyForTurnIn"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.ReadyForTurnIn");
                     }
-                    else if (item.IsStarted)
+                    else if (isStarted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureManager.GetIcon(71041).Draw(20);
+                        TextureService.DrawIcon(71041, 20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Check, Colors.YellowGreen);
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Started"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.Started");
                     }
-                    else if (item.IsFailed)
+                    else if (isFailed)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureManager.GetIcon(60861).Draw(20);
+                        TextureService.DrawIcon(60861, 20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.TimesCircle, Colors.Freesia);
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Failed"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.Failed");
                     }
-                    else if (item.IsAccepted)
+                    else if (isAccepted)
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                        Service.TextureManager.GetIcon(71041).Draw(20);
+                        TextureService.DrawIcon(71041, 20);
                         ImGui.SameLine(0, 0);
                         //ImGuiUtils.DrawFontAwesomeIcon(FontAwesomeIcon.Exclamation, Colors.Yellow);
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Accepted"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.Accepted");
                     }
-                    else if (item.IsComplete)
+                    else if (isComplete)
                     {
                         ImGuiUtils.Icon(FontAwesomeIcon.Check, Colors.Green);
                         ImGui.SameLine();
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Completed"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.Completed");
                     }
 
                     else
                     {
                         ImGuiUtils.Icon(FontAwesomeIcon.Times, Colors.Red);
                         ImGui.SameLine();
-                        ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.Status.Incomplete"));
+                        TextService.Draw("ListTab.Leve.Tooltip.Status.Incomplete");
                     }
                 }
 
-                if (item.TownLocked)
+                if (isTownLocked)
                 {
                     ImGuiUtils.Icon(FontAwesomeIcon.Exclamation, Colors.Yellow);
-                    ImGui.TextUnformatted(t("ListTab.Leve.Tooltip.TownLocked", item.TownName));
+                    TextService.Draw("ListTab.Leve.Tooltip.TownLocked", item.Town.Value?.Name.ExtractText() ?? string.Empty);
                 }
 
                 /*
@@ -238,7 +257,7 @@ public class ListTab
                 ImGui.EndTooltip();
             }
 
-            if (item.IsAccepted && ImGui.IsItemClicked())
+            if (isAccepted && ImGui.IsItemClicked())
             {
                 unsafe
                 {
@@ -251,9 +270,9 @@ public class ListTab
             {
                 var showSeparator = false;
 
-                if (item.IsAccepted)
+                if (isAccepted)
                 {
-                    if (ImGui.Selectable(t("ListTab.Leve.ContextMenu.OpenInJournal")))
+                    if (ImGui.Selectable(TextService.Translate("ListTab.Leve.ContextMenu.OpenInJournal")))
                     {
                         unsafe
                         {
@@ -272,7 +291,7 @@ public class ListTab
                 if (showSeparator)
                     ImGui.Separator();
 
-                if (ImGui.Selectable(t("ListTab.Leve.ContextMenu.OpenOnGarlandTools")))
+                if (ImGui.Selectable(TextService.Translate("ListTab.Leve.ContextMenu.OpenOnGarlandTools")))
                 {
                     Task.Run(() => Util.OpenLink($"https://www.garlandtools.org/db/#leve/{item.RowId}"));
                 }
@@ -284,51 +303,52 @@ public class ListTab
                     ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
                     ImGui.EndTooltip();
                 }
-
                 ImGui.EndPopup();
             }
 
-            if (/*item.IsAccepted && */item.RequiredItems != null)
+            if (LeveRequiredItemsCache.TryGetValue(item.RowId, out var requiredItems))
             {
-                foreach (var entry in item.RequiredItems)
+                foreach (var entry in requiredItems)
                 {
-                    if (entry.Item is Item reqItem)
+                    if (entry.Item is LeveHelperItem reqItem)
                     {
-                        _state.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
+                        WindowState.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
                     }
                 }
             }
 
             // Issuer
             ImGui.TableNextColumn();
-            for (var i = 0; i < item.Issuers.Length; i++)
+            if (LeveIssuerCache.TryGetValue(item.RowId, out var issuers))
             {
-                var issuer = item.Issuers[i];
-
-                ImGui.TextUnformatted(issuer.Name);
-
-                if (ImGui.IsItemHovered())
+                for (var i = 0; i < issuers.Length; i++)
                 {
-                    ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                    ImGui.SetTooltip(t("ListTab.Levemete.ContextMenu.Tooltip"));
-                }
+                    var issuer = issuers[i];
 
-                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                {
-                    var level = FindRow<Lumina.Excel.GeneratedSheets.Level>(row => row?.Object == issuer.RowId);
-                    level?.OpenMapLocation();
-                }
+                    ImGui.TextUnformatted(TextService.GetENpcResidentName(issuer.RowId));
 
-                if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-                {
-                    Service.GetService<FilterManager>().SetValue<LevemeteFilter>(issuer.RowId);
-                }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        ImGui.SetTooltip(TextService.Translate("ListTab.Levemete.ContextMenu.Tooltip"));
+                    }
 
-                if (i < item.Issuers.Length - 1)
-                {
-                    ImGui.SameLine(0, 0);
-                    ImGui.TextUnformatted(",");
-                    ImGuiUtils.SameLineSpace();
+                    if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                    {
+                        MapService.OpenMap(ExcelService.FindRow<Level>(row => row?.Object == issuer.RowId));
+                    }
+
+                    if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+                    {
+                        FilterManager.SetValue<LevemeteFilter>(issuer.RowId);
+                    }
+
+                    if (i < issuers.Length - 1)
+                    {
+                        ImGui.SameLine(0, 0);
+                        ImGui.TextUnformatted(",");
+                        ImGuiUtils.SameLineSpace();
+                    }
                 }
             }
         }

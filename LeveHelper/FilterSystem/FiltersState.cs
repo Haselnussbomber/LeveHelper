@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Sheets;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
@@ -28,14 +29,17 @@ public class FiltersState
         827, 832, 871, 872, 877,
     };
 
-    public FiltersState()
+    private readonly ExcelService ExcelService;
+
+    public FiltersState(ExcelService excelService)
     {
+        ExcelService = excelService;
         Reload();
     }
 
     public void Reload()
     {
-        AllLeves = GetSheet<Leve>()
+        AllLeves = ExcelService.GetSheet<Leve>()
             .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))
             .ToArray();
     }

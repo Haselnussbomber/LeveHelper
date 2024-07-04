@@ -1,7 +1,9 @@
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
+using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Utils;
+using LeveHelper.Config;
+using LeveHelper.Interfaces;
 
 namespace LeveHelper.Filters;
 
@@ -18,46 +20,48 @@ public class StatusFilterConfiguration
     public CompletedStatus SelectedStatus = CompletedStatus.Any;
 }
 
-public class StatusFilter : Filter
+public class StatusFilter(
+    PluginConfig PluginConfig,
+    TextService TextService,
+    LeveService LeveService) : IFilter
 {
-    public StatusFilter(FilterManager manager) : base(manager)
+    public int Order => 1;
+    public StatusFilterConfiguration Config => PluginConfig.Filters.StatusFilter;
+
+    public FilterManager? FilterManager { get; set; }
+
+    public void Reload()
     {
     }
 
-    public static StatusFilterConfiguration Config => Service.GetService<Configuration>().Filters.StatusFilter;
-
-    public override void Reload()
-    {
-    }
-
-    public override void Reset()
+    public void Reset()
     {
         Config.SelectedStatus = CompletedStatus.Any;
     }
 
-    public override bool HasValue()
+    public bool HasValue()
     {
         return Config.SelectedStatus != CompletedStatus.Any;
     }
 
-    public override void Set(dynamic value)
+    public void Set(dynamic value)
     {
         Config.SelectedStatus = (CompletedStatus)value;
-        Service.GetService<Configuration>().Save();
+        PluginConfig.Save();
     }
 
-    public override void Draw()
+    public void Draw()
     {
         using var id = ImRaii.PushId("StatusFilter");
 
         ImGui.TableNextColumn();
-        ImGui.TextUnformatted(t("StatusFilter.Label"));
+        TextService.Draw("StatusFilter.Label");
 
         ImGui.TableNextColumn();
         var values = Enum.GetValues<CompletedStatus>();
 
-        ImGui.SetNextItemWidth(InputWidth);
-        using var combo = ImRaii.Combo("##Combo", t("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), Config.SelectedStatus)));
+        ImGui.SetNextItemWidth(250);
+        using var combo = ImRaii.Combo("##Combo", TextService.Translate("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), Config.SelectedStatus)));
         if (!combo.Success)
             return;
 
@@ -65,10 +69,10 @@ public class StatusFilter : Filter
         {
             var value = values[i];
             var radio = Config.SelectedStatus == value;
-            if (ImGui.Selectable(t("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), value)) + $"##Entry_{i}", radio))
+            if (ImGui.Selectable(TextService.Translate("StatusFilter.Status." + Enum.GetName(typeof(CompletedStatus), value)) + $"##Entry_{i}", radio))
             {
                 Set(value);
-                manager.Update();
+                FilterManager!.Update();
             }
 
             if (Config.SelectedStatus == value)
@@ -78,21 +82,21 @@ public class StatusFilter : Filter
         }
     }
 
-    public override bool Run()
+    public bool Run()
     {
         if (Config.SelectedStatus == CompletedStatus.Complete)
         {
-            state.Leves = state.Leves.Where(item => item.IsComplete);
+            FilterManager!.State.Leves = FilterManager.State.Leves.Where(LeveService.IsComplete);
             return true;
         }
         else if (Config.SelectedStatus == CompletedStatus.Incomplete)
         {
-            state.Leves = state.Leves.Where(item => !item.IsComplete);
+            FilterManager!.State.Leves = FilterManager.State.Leves.Where(leve => !LeveService.IsComplete(leve));
             return true;
         }
         else if (Config.SelectedStatus == CompletedStatus.Accepted)
         {
-            state.Leves = QuestUtils.GetActiveLeves();
+            FilterManager!.State.Leves = FilterManager.State.Leves.Where(LeveService.IsAccepted);
             return true;
         }
 

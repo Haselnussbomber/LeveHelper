@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using HaselCommon.Extensions;
+using HaselCommon.Services;
 using ImGuiNET;
+using LeveHelper.Config;
+using LeveHelper.Interfaces;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
@@ -13,60 +16,59 @@ public class LocationFilterConfiguration
     public uint SelectedLocation = 0;
 }
 
-public class LocationFilter : Filter
+public class LocationFilter(PluginConfig PluginConfig, TextService TextService, ExcelService ExcelService) : IFilter
 {
-    public LocationFilter(FilterManager manager) : base(manager)
+    public int Order => 3;
+    private LocationFilterConfiguration Config => PluginConfig.Filters.LocationFilter;
+
+    public FilterManager? FilterManager { get; set; }
+
+    private Dictionary<uint, string>? Locations { get; set; }
+    private uint LastTerritoryId { get; set; }
+    private uint CurrentPlaceNameId { get; set; }
+
+    public void Reload()
     {
-    }
-
-    private static LocationFilterConfiguration Config => Service.GetService<Configuration>().Filters.LocationFilter;
-
-    private Dictionary<uint, string>? _locations { get; set; }
-    private uint _lastTerritoryId { get; set; }
-    private uint _currentPlaceNameId { get; set; }
-
-    public override void Reload()
-    {
-        _locations?.Clear();
+        Locations?.Clear();
         Run();
     }
 
-    public override void Reset()
+    public void Reset()
     {
         Config.SelectedLocation = 0;
     }
 
-    public override bool HasValue()
+    public bool HasValue()
     {
         return Config.SelectedLocation != 0;
     }
 
-    public override void Set(dynamic value)
+    public void Set(dynamic value)
     {
         Config.SelectedLocation = (uint)value;
-        Service.GetService<Configuration>().Save();
+        PluginConfig.Save();
     }
 
-    public override void Draw()
+    public void Draw()
     {
-        if (_locations == null)
+        if (Locations == null)
             return;
 
         using var id = ImRaii.PushId("LocationFilter");
 
         ImGui.TableNextColumn();
-        ImGui.TextUnformatted(t("LocationFilter.Label"));
+        TextService.Draw("LocationFilter.Label");
 
         ImGui.TableNextColumn();
-        ImGui.SetNextItemWidth(InputWidth);
-        using (var combo = ImRaii.Combo("##Combo", _locations.TryGetValue(Config.SelectedLocation, out var value) ? value : t("LocationFilter.Selectable.All")))
+        ImGui.SetNextItemWidth(250);
+        using (var combo = ImRaii.Combo("##Combo", Locations.TryGetValue(Config.SelectedLocation, out var value) ? value : TextService.Translate("LocationFilter.Selectable.All")))
         {
             if (combo.Success)
             {
-                if (ImGui.Selectable(t("LocationFilter.Selectable.All") + "##All", Config.SelectedLocation == 0))
+                if (ImGui.Selectable(TextService.Translate("LocationFilter.Selectable.All") + "##All", Config.SelectedLocation == 0))
                 {
                     Set(0);
-                    manager.Update();
+                    FilterManager!.Update();
                 }
 
                 if (Config.SelectedLocation == 0)
@@ -74,12 +76,12 @@ public class LocationFilter : Filter
                     ImGui.SetItemDefaultFocus();
                 }
 
-                foreach (var kv in _locations)
+                foreach (var kv in Locations)
                 {
                     if (ImGui.Selectable($"{kv.Value}##Entry{kv.Key}", Config.SelectedLocation == kv.Key))
                     {
                         Set(kv.Key);
-                        manager.Update();
+                        FilterManager!.Update();
                     }
 
                     if (Config.SelectedLocation == kv.Key)
@@ -95,46 +97,46 @@ public class LocationFilter : Filter
         unsafe
         {
             var territoryId = GameMain.Instance()->CurrentTerritoryTypeId;
-            if (_lastTerritoryId != territoryId)
+            if (LastTerritoryId != territoryId)
             {
-                _lastTerritoryId = territoryId;
-                _currentPlaceNameId = GetRow<TerritoryType>(territoryId)?.PlaceName?.Row ?? 0;
+                LastTerritoryId = territoryId;
+                CurrentPlaceNameId = ExcelService.GetRow<TerritoryType>(territoryId)?.PlaceName?.Row ?? 0;
             }
         }
 
-        if (_currentPlaceNameId != 0 &&
-            Config.SelectedLocation != _currentPlaceNameId &&
-            _locations.ContainsKey(_currentPlaceNameId) &&
-            ImGui.Button(t("LocationFilter.SetCurrentZone")))
+        if (CurrentPlaceNameId != 0 &&
+            Config.SelectedLocation != CurrentPlaceNameId &&
+            Locations.ContainsKey(CurrentPlaceNameId) &&
+            ImGui.Button(TextService.Translate("LocationFilter.SetCurrentZone")))
         {
-            Set(_currentPlaceNameId);
-            manager.Update();
+            Set(CurrentPlaceNameId);
+            FilterManager!.Update();
         }
     }
 
-    public override bool Run()
+    public bool Run()
     {
-        _locations = state.Leves
+        Locations = FilterManager!.State.Leves
             .Select(row => row.PlaceNameStartZone.Value)
             .Where(item => item != null)
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
             .Select(group => group.First())
-            .Select(item => (item.RowId, Name: item.Name.ToDalamudString().ToString()))
+            .Select(item => (item.RowId, Name: item.Name.ExtractText()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLocation == 0)
             return false;
 
-        var selection = state.Leves.Where(item => item.PlaceNameStartZone.Row == Config.SelectedLocation);
+        var selection = FilterManager.State.Leves.Where(item => item.PlaceNameStartZone.Row == Config.SelectedLocation);
         if (!selection.Any())
         {
             Config.SelectedLocation = 0;
             return false;
         }
 
-        state.Leves = selection;
+        FilterManager.State.Leves = selection;
 
         return true;
     }

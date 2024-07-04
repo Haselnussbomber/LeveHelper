@@ -1,33 +1,31 @@
-using System.Linq;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
+using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Records;
-using LeveHelper.Utils;
 
 namespace LeveHelper;
 
-public class RecipeTreeTab
+public class RecipeTreeTab(WindowState WindowState, TextService TextService, LeveService LeveService)
 {
-    private readonly WindowState _state;
-
-    public RecipeTreeTab(WindowState state)
+    public void Draw(Window window)
     {
-        _state = state;
-    }
+        using var tab = ImRaii.TabItem(TextService.Translate("Tabs.RecipeTree"));
+        if (!tab) return;
 
-    public void Draw()
-    {
+        window.RespectCloseHotkey = true;
+
         using var windowId = ImRaii.PushId("##RecipeTreeTab");
 
-        if (!QuestUtils.GetActiveLeveIds().Any())
+        if (!LeveService.HasAcceptedLeveQuests())
         {
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
-            ImGuiHelpers.CenteredText(t("RecipeTreeTab.NoActiveLevequests"));
+            ImGuiHelpers.CenteredText(TextService.Translate("RecipeTreeTab.NoActiveLevequests"));
             return;
         }
 
         ImGui.Spacing();
-        _state.DrawIngredients("RecipeTree", _state.LeveRequiredItems, 1);
+        WindowState.DrawIngredients("RecipeTree", WindowState.LeveRequiredItems, 1);
     }
 }

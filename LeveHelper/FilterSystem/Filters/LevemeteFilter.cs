@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
+using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Sheets;
+using LeveHelper.Caches;
+using LeveHelper.Config;
+using LeveHelper.Interfaces;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
@@ -11,58 +15,61 @@ public class LevemeteFilterConfiguration
     public uint SelectedLevemete = 0;
 }
 
-public class LevemeteFilter : Filter
+public class LevemeteFilter(
+    PluginConfig PluginConfig,
+    TextService TextService,
+    LeveIssuerCache LeveIssuerCache)
+    : IFilter
 {
-    public LevemeteFilter(FilterManager manager) : base(manager)
+    public int Order => 4;
+    public LevemeteFilterConfiguration Config => PluginConfig.Filters.LevemeteFilter;
+
+    public FilterManager? FilterManager { get; set; }
+
+    private Dictionary<uint, string>? Levemetes { get; set; }
+
+    public void Reload()
     {
-    }
-
-    public static LevemeteFilterConfiguration Config => Service.GetService<Configuration>().Filters.LevemeteFilter;
-
-    private Dictionary<uint, string>? _levemetes { get; set; }
-
-    public override void Reload()
-    {
-        _levemetes?.Clear();
+        Levemetes?.Clear();
         Run();
     }
 
-    public override void Reset()
+    public void Reset()
     {
         Config.SelectedLevemete = 0;
     }
 
-    public override bool HasValue()
+    public bool HasValue()
     {
         return Config.SelectedLevemete != 0;
     }
 
-    public override void Set(dynamic value)
+    public void Set(dynamic value)
     {
         Config.SelectedLevemete = (uint)value;
-        Service.GetService<Configuration>().Save();
+        PluginConfig.Save();
     }
 
-    public override void Draw()
+    public void Draw()
     {
-        if (_levemetes == null)
+        if (Levemetes == null)
             return;
 
         using var id = ImRaii.PushId("LevemeteFilter");
 
         ImGui.TableNextColumn();
-        ImGui.TextUnformatted(t("LevemeteFilter.Label"));
+        TextService.Draw("LevemeteFilter.Label");
 
         ImGui.TableNextColumn();
-        ImGui.SetNextItemWidth(InputWidth);
-        using var combo = ImRaii.Combo("##Combo", _levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : t("LevemeteFilter.Selectable.All"));
+        ImGui.SetNextItemWidth(250);
+        using var combo = ImRaii.Combo("##Combo", Levemetes.TryGetValue(Config.SelectedLevemete, out var value) ? value : TextService.Translate("LevemeteFilter.Selectable.All"));
         if (!combo.Success)
             return;
 
-        if (ImGui.Selectable(t("LevemeteFilter.Selectable.All") + "##All", Config.SelectedLevemete == 0))
+        if (ImGui.Selectable(TextService.Translate("LevemeteFilter.Selectable.All") + "##All", Config.SelectedLevemete == 0))
         {
             Set(0);
-            manager.Update();
+            FilterManager!.Update();
         }
 
         if (Config.SelectedLevemete == 0)
@@ -70,12 +77,12 @@ public class LevemeteFilter : Filter
             ImGui.SetItemDefaultFocus();
         }
 
-        foreach (var kv in _levemetes)
+        foreach (var kv in Levemetes)
         {
             if (ImGui.Selectable($"{kv.Value}##Entry_{kv.Key}", Config.SelectedLevemete == kv.Key))
             {
                 Set(kv.Key);
-                manager.Update();
+                FilterManager!.Update();
             }
 
             if (Config.SelectedLevemete == kv.Key)
@@ -85,29 +92,29 @@ public class LevemeteFilter : Filter
         }
     }
 
-    public override bool Run()
+    public bool Run()
     {
-        _levemetes = state.Leves
-            .Select(row => row.Issuers)
-            .Where(issuers => issuers.Any())
+        Levemetes = FilterManager!.State.Leves
+            .Select(row => LeveIssuerCache.GetValue(row.RowId) ?? [])
+            .Where(issuers => issuers.Length != 0)
             .Cast<ENpcResident[]>()
             .SelectMany(resident => resident)
             .Distinct()
-            .Select(item => (item.RowId, item.Name))
+            .Select(item => (item.RowId, Name: TextService.GetENpcResidentName(item.RowId)))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLevemete == 0)
             return false;
 
-        var selection = state.Leves.Where(item => item.Issuers.Select(issuer => issuer.RowId).Contains(Config.SelectedLevemete));
+        var selection = FilterManager.State.Leves.Where(item => (LeveIssuerCache.GetValue(item.RowId) ?? []).Select(issuer => issuer.RowId).Contains(Config.SelectedLevemete));
         if (!selection.Any())
         {
             Config.SelectedLevemete = 0;
             return false;
         }
 
-        state.Leves = selection;
+        FilterManager.State.Leves = selection;
 
         return true;
     }

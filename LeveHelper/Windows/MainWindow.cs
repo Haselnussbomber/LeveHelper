@@ -1,30 +1,69 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Game.Command;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
+using HaselCommon.Services;
+using HaselCommon.Windowing;
+using HaselCommon.Windowing.Interfaces;
 using ImGuiNET;
 using LeveHelper.Records;
-using LeveHelper.Utils;
 
 namespace LeveHelper.Windows;
 
-public unsafe class MainWindow : Window, IDisposable
+public class MainWindow : SimpleWindow
 {
-    private readonly WindowState _state;
+    private readonly TextService TextService;
+    private readonly AddonObserver AddonObserver;
+    private readonly IDalamudPluginInterface PluginInterface;
+    private readonly IClientState ClientState;
+    private readonly ICommandManager CommandManager;
+    private readonly ConfigWindow ConfigWindow;
+    private readonly LeveService QuestService;
+    private readonly WindowState WindowState;
+    private readonly FilterManager FilterManager;
 
-    private readonly QueueTab _queueTab;
-    private readonly RecipeTreeTab _recipeTreeTab;
-    private readonly ListTab _listTab;
-#if DEBUG
-    private readonly DebugTab _debugTab;
-#endif
+    private readonly QueueTab QueueTab;
+    private readonly RecipeTreeTab RecipeTreeTab;
+    private readonly ListTab ListTab;
+    private readonly DebugTab DebugTab;
 
-    private IEnumerable<ushort> _lastActiveLevequestIds = Array.Empty<ushort>();
+    private readonly CommandInfo CommandInfo;
 
-    public MainWindow() : base(t("WindowTitle.Main"))
+    private IEnumerable<ushort> LastActiveLevequestIds = [];
+
+    public MainWindow(
+        IWindowManager windowManager,
+        TextService textService,
+        AddonObserver addonObserver,
+        IDalamudPluginInterface pluginInterface,
+        IClientState clientState,
+        ICommandManager commandManager,
+        ConfigWindow configWindow,
+        LeveService questService,
+        WindowState windowState,
+        FilterManager filterManager,
+        DebugTab debugTab,
+        QueueTab queueTab,
+        RecipeTreeTab recipeTreeTab,
+        ListTab listTab) : base(windowManager, textService.Translate("WindowTitle.Main"))
     {
-        Namespace = "LeveHelper";
+        TextService = textService;
+        AddonObserver = addonObserver;
+        PluginInterface = pluginInterface;
+        ClientState = clientState;
+        CommandManager = commandManager;
+        ConfigWindow = configWindow;
+        QuestService = questService;
+        WindowState = windowState;
+        FilterManager = filterManager;
+
+        DebugTab = debugTab;
+        QueueTab = queueTab;
+        RecipeTreeTab = recipeTreeTab;
+        ListTab = listTab;
 
         Size = new Vector2(830, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
@@ -38,43 +77,56 @@ public unsafe class MainWindow : Window, IDisposable
         {
             Icon = Dalamud.Interface.FontAwesomeIcon.Cog,
             IconOffset = new(0, 1),
-            ShowTooltip = () => ImGui.SetTooltip(t($"TitleBarButton.ToggleConfig.Tooltip.{(Service.WindowManager.IsWindowOpen<ConfigWindow>() ? "Close" : "Open")}Config")),
-            Click = (button) => { Service.WindowManager.ToggleWindow<ConfigWindow>(); }
+            ShowTooltip = () => ImGui.SetTooltip(textService.Translate($"TitleBarButton.ToggleConfig.Tooltip.{(ConfigWindow.IsOpen ? "Close" : "Open")}Config")),
+            Click = (button) => { ConfigWindow.Toggle(); }
         });
 
-        _state = new();
-
-        _listTab = new(_state);
-        _queueTab = new(_state);
-        _recipeTreeTab = new(_state);
+        ListTab = listTab;
+        QueueTab = queueTab;
+        RecipeTreeTab = recipeTreeTab;
 #if DEBUG
-        _debugTab = new(_state);
+        DebugTab = debugTab;
 #endif
 
-        IsOpen = true;
+        CommandInfo = new CommandInfo((_, _) => Toggle())
+        {
+            HelpMessage = textService.Translate("LeveHelper.CommandHandlerHelpMessage")
+        };
 
-        Service.AddonObserver.AddonOpen += OnAddonOpen;
-        Service.AddonObserver.AddonClose += OnAddonClose;
+        CommandManager.AddHandler("/levehelper", CommandInfo);
+        CommandManager.AddHandler("/lh", CommandInfo);
+
+        PluginInterface.UiBuilder.OpenMainUi += Toggle;
+        PluginInterface.UiBuilder.OpenConfigUi += ConfigWindow.Toggle;
+        TextService.LanguageChanged += OnLanguageChanged;
+        AddonObserver.AddonOpen += OnAddonOpen;
+        AddonObserver.AddonClose += OnAddonClose;
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
-        Service.AddonObserver.AddonOpen -= OnAddonOpen;
-        Service.AddonObserver.AddonClose -= OnAddonClose;
+        AddonObserver.AddonOpen -= OnAddonOpen;
+        AddonObserver.AddonClose -= OnAddonClose;
+        TextService.LanguageChanged -= OnLanguageChanged;
+        PluginInterface.UiBuilder.OpenConfigUi -= ConfigWindow.Toggle;
+        PluginInterface.UiBuilder.OpenMainUi -= Toggle;
+        CommandManager.RemoveHandler("/lh");
+        CommandManager.RemoveHandler("/levehelper");
+        base.Dispose();
+    }
+
+    private void OnLanguageChanged(string langCode)
+    {
+        CommandInfo.HelpMessage = TextService.Translate("LeveHelper.CommandHandlerHelpMessage");
     }
 
     private void Refresh()
     {
-        _state.UpdateList();
-        Service.GetService<FilterManager>().Update();
+        WindowState.UpdateList();
+        FilterManager.Update();
     }
 
     public void OnLanguageChange() => Refresh();
-
-    public override void OnClose()
-    {
-        Service.WindowManager.CloseWindow<MainWindow>();
-    }
 
     private void OnAddonOpen(string addonName)
     {
@@ -90,61 +142,24 @@ public unsafe class MainWindow : Window, IDisposable
 
     public override void Update()
     {
-        var activeLevequestIds = QuestUtils.GetActiveLeveIds();
-        if (!_lastActiveLevequestIds.SequenceEqual(activeLevequestIds))
+        var activeLevequestIds = QuestService.GetActiveLeveIds();
+        if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
         {
-            _lastActiveLevequestIds = activeLevequestIds;
+            LastActiveLevequestIds = activeLevequestIds;
             Refresh();
         }
     }
 
-    public override bool DrawConditions() => Service.ClientState.IsLoggedIn;
+    public override bool DrawConditions() => ClientState.IsLoggedIn;
 
     public override void Draw()
     {
-        using (ImRaii.TabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable))
-        {
-            using (var tab = ImRaii.TabItem(t("Tabs.Levequest")))
-            {
-                if (tab.Success)
-                {
-                    RespectCloseHotkey = true;
+        using var tabbar = ImRaii.TabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable);
+        if (!tabbar) return;
 
-                    _listTab.Draw();
-                }
-            }
-
-            using (var tab = ImRaii.TabItem(t("Tabs.Queue")))
-            {
-                if (tab.Success)
-                {
-                    RespectCloseHotkey = false;
-
-                    _queueTab.Draw();
-                }
-            }
-
-            using (var tab = ImRaii.TabItem(t("Tabs.RecipeTree")))
-            {
-                if (tab.Success)
-                {
-                    RespectCloseHotkey = true;
-
-                    _recipeTreeTab.Draw();
-                }
-            }
-
-#if false
-            using (var tab = ImRaii.TabItem("Debug"))
-            {
-                if (tab.Success)
-                {
-                    RespectCloseHotkey = true;
-
-                    _debugTab.Draw();
-                }
-            }
-#endif
-        }
+        ListTab.Draw(this);
+        QueueTab.Draw(this);
+        RecipeTreeTab.Draw(this);
+        DebugTab.Draw(this);
     }
 }

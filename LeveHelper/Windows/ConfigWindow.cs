@@ -1,45 +1,49 @@
-using Dalamud.Interface.Windowing;
+using HaselCommon.Services;
+using HaselCommon.Windowing;
+using HaselCommon.Windowing.Interfaces;
 using ImGuiNET;
+using LeveHelper.Config;
 
 namespace LeveHelper.Windows;
 
-public unsafe class ConfigWindow : Window
+public class ConfigWindow : SimpleWindow
 {
-    public ConfigWindow() : base(t("WindowTitle.Configuration"))
+    private readonly TextService TextService;
+    private readonly PluginConfig PluginConfig;
+
+    public ConfigWindow(
+        IWindowManager windowManager,
+        TextService textService,
+        PluginConfig pluginConfig)
+        : base(windowManager, textService.Translate("WindowTitle.Configuration"))
     {
-        Namespace = "LeveHelperConfig";
+        TextService = textService;
+        PluginConfig = pluginConfig;
 
         AllowClickthrough = false;
         AllowPinning = false;
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
     }
 
-    public override void OnClose()
-    {
-        Service.WindowManager.CloseWindow<ConfigWindow>();
-    }
-
     public override void Draw()
     {
-        var config = Service.GetService<Configuration>();
-
         // Notify when Wanted Target is found
         {
-            var notifyWantedTarget = config.NotifyWantedTarget;
-            if (ImGui.Checkbox(t("Config.NotifyWantedTarget"), ref notifyWantedTarget))
+            var notifyWantedTarget = PluginConfig.NotifyWantedTarget;
+            if (ImGui.Checkbox(TextService.Translate("Config.NotifyWantedTarget"), ref notifyWantedTarget))
             {
-                config.NotifyWantedTarget = notifyWantedTarget;
-                config.Save();
+                PluginConfig.NotifyWantedTarget = notifyWantedTarget;
+                PluginConfig.Save();
             }
         }
 
         // Notify when Treasure is found
         {
-            var notifyTreasure = config.NotifyTreasure;
-            if (ImGui.Checkbox(t("Config.NotifyTreasure"), ref notifyTreasure))
+            var notifyTreasure = PluginConfig.NotifyTreasure;
+            if (ImGui.Checkbox(TextService.Translate("Config.NotifyTreasure"), ref notifyTreasure))
             {
-                config.NotifyTreasure = notifyTreasure;
-                config.Save();
+                PluginConfig.NotifyTreasure = notifyTreasure;
+                PluginConfig.Save();
             }
         }
     }

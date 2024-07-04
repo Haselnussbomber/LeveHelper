@@ -1,4 +1,4 @@
-using HaselCommon.Structs;
+using HaselCommon.Utils;
 
 namespace LeveHelper.Utils;
 

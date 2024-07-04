@@ -5,16 +5,26 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using LeveHelper.Extensions;
+using HaselCommon.Services;
+using LeveHelper.Config;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Services;
 
 public unsafe class WantedTargetScanner : IDisposable
 {
+    private readonly IFramework Framework;
+    private readonly IClientState ClientState;
+    private readonly IObjectTable ObjectTable;
+    private readonly IChatGui ChatGui;
+    private readonly PluginConfig PluginConfig;
+    private readonly ExcelService ExcelService;
+    private readonly TextService TextService;
+    private readonly MapService MapService;
+
     // name ids (= rowid of BNpcName sheet)
-    private readonly List<uint> _wantedTargetIds = new()
-    {
+    private readonly List<uint> WantedTargetIds =
+    [
         471, // Angry Sow
         472, // Rotting Sentinel
         473, // Mischief-maker Imp
@@ -43,69 +53,82 @@ public unsafe class WantedTargetScanner : IDisposable
         3718, // The Scarlet Lector
         3719, // Xexeu
         3720, // Tcaridyi
-    };
+    ];
 
-    private readonly List<uint> _foundWantedTargets = new();
-    private readonly List<uint> _foundTreasures = new();
-    private DateTime _lastCheck = DateTime.Now;
-    private Director* _lastDirector;
+    private readonly List<uint> FoundWantedTargets = [];
+    private readonly List<uint> FoundTreasures = [];
+    private DateTime LastCheck = DateTime.Now;
+    private Director* LastDirector;
 
-    public WantedTargetScanner()
+    public WantedTargetScanner(
+        IFramework framework,
+        IClientState clientState,
+        IObjectTable objectTable,
+        IChatGui chatGui,
+        PluginConfig pluginConfig,
+        ExcelService excelService,
+        TextService textService,
+        MapService mapService)
     {
-        Service.Framework.Update += Framework_Update;
+        Framework = framework;
+        ClientState = clientState;
+        ObjectTable = objectTable;
+        ChatGui = chatGui;
+        PluginConfig = pluginConfig;
+        ExcelService = excelService;
+        TextService = textService;
+        MapService = mapService;
+
+        Framework.Update += Framework_Update;
     }
 
     public void Dispose()
     {
-        Service.Framework.Update -= Framework_Update;
+        Framework.Update -= Framework_Update;
+        GC.SuppressFinalize(this);
     }
 
     public bool IsBattleLeveDirector(Director* director)
         => director != null &&
            director->EventHandlerInfo != null &&
-           director->EventHandlerInfo->EventId.Type == EventHandlerType.BattleLeveDirector;
+           director->EventHandlerInfo->EventId.ContentId == EventHandlerType.BattleLeveDirector;
 
     private void Framework_Update(IFramework framework)
     {
-        var config = Service.GetService<Configuration>();
-
-        if (config == null)
+        if (!PluginConfig.NotifyTreasure && !PluginConfig.NotifyWantedTarget)
             return;
 
-        if (!config.NotifyTreasure && !config.NotifyWantedTarget)
+        if (DateTime.Now - LastCheck < TimeSpan.FromSeconds(1))
             return;
 
-        if (DateTime.Now - _lastCheck < TimeSpan.FromSeconds(1))
-            return;
+        LastCheck = DateTime.Now;
 
-        _lastCheck = DateTime.Now;
-
-        var activeDirector = UIState.Instance()->ActiveDirector;
-        if (_lastDirector != activeDirector)
+        var activeDirector = UIState.Instance()->DirectorTodo.Director;
+        if (LastDirector != activeDirector)
         {
-            _lastDirector = activeDirector;
-            _foundWantedTargets.Clear();
-            _foundTreasures.Clear();
+            LastDirector = activeDirector;
+            FoundWantedTargets.Clear();
+            FoundTreasures.Clear();
         }
 
         if (!IsBattleLeveDirector(activeDirector))
             return;
 
-        var territoryTypeId = Service.ClientState.TerritoryType;
+        var territoryTypeId = ClientState.TerritoryType;
         if (territoryTypeId == 0)
             return;
 
-        var territoryType = GetRow<TerritoryType>(territoryTypeId);
+        var territoryType = ExcelService.GetRow<TerritoryType>(territoryTypeId);
         if (territoryType == null)
             return;
 
-        foreach (var obj in Service.ObjectTable)
+        foreach (var obj in ObjectTable)
         {
-            if (config.NotifyTreasure
+            if (PluginConfig.NotifyTreasure
                 && obj.ObjectKind == ObjectKind.Treasure
-                && !_foundTreasures.Contains(obj.ObjectId))
+                && !FoundTreasures.Contains(obj.EntityId))
             {
-                var mapLink = obj.GetMapLink();
+                var mapLink = MapService.GetMapLink(obj);
                 if (mapLink == null)
                     continue;
 
@@ -115,21 +138,21 @@ public unsafe class WantedTargetScanner : IDisposable
                 sb.AddText("[LeveHelper] ");
                 sb.AddUiForegroundOff();
 
-                sb.Append(tSe("WantedTargetScanner.Treasure.Notification", mapLink));
+                sb.Append(TextService.TranslateSe("WantedTargetScanner.Treasure.Notification", SeString.Parse(mapLink.Value.Data.ToArray())));
 
-                Service.ChatGui.Print(sb.Build());
+                ChatGui.Print(sb.Build());
 
-                _foundTreasures.Add(obj.ObjectId);
+                FoundTreasures.Add(obj.EntityId);
             }
 
-            if (config.NotifyWantedTarget
+            if (PluginConfig.NotifyWantedTarget
                 && obj.ObjectKind == ObjectKind.BattleNpc
                 && obj.SubKind == (byte)BattleNpcSubKind.Enemy
-                && !_foundWantedTargets.Contains(obj.ObjectId)
-                && obj is BattleNpc battleNpc
-                && _wantedTargetIds.Contains(battleNpc.NameId))
+                && !FoundWantedTargets.Contains(obj.EntityId)
+                && obj is IBattleNpc battleNpc
+                && WantedTargetIds.Contains(battleNpc.NameId))
             {
-                var mapLink = obj.GetMapLink();
+                var mapLink = MapService.GetMapLink(obj);
                 if (mapLink == null)
                     continue;
 
@@ -139,11 +162,11 @@ public unsafe class WantedTargetScanner : IDisposable
                 sb.AddText("[LeveHelper] ");
                 sb.AddUiForegroundOff();
 
-                sb.Append(tSe("WantedTargetScanner.WantedTarget.Notification", mapLink));
+                sb.Append(TextService.TranslateSe("WantedTargetScanner.WantedTarget.Notification", SeString.Parse(mapLink.Value.Data.ToArray())));
 
-                Service.ChatGui.Print(sb.Build());
+                ChatGui.Print(sb.Build());
 
-                _foundWantedTargets.Add(obj.ObjectId);
+                FoundWantedTargets.Add(obj.EntityId);
             }
         }
     }

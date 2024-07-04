@@ -4,7 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace LeveHelper.Sheets;
 
-public class Item : HaselCommon.Sheets.ExtendedItem
+public class LeveHelperItem : HaselCommon.Sheets.ExtendedItem
 {
     private RequiredItem[]? _ingredients { get; set; } = null;
     private uint? _quantityOwned { get; set; } = null;
@@ -28,7 +28,7 @@ public class Item : HaselCommon.Sheets.ExtendedItem
                 if (ingredient.ItemIngredient == 0 || ingredient.AmountIngredient == 0)
                     continue;
 
-                list.Add(new(GetRow<Item>((uint)ingredient.ItemIngredient)!, ingredient.AmountIngredient));
+                list.Add(new(GetRow<LeveHelperItem>((uint)ingredient.ItemIngredient)!, ingredient.AmountIngredient));
             }
 
             return _ingredients = list.ToArray();

@@ -2,30 +2,69 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon.Extensions;
+using HaselCommon.Services;
 using HaselCommon.Utils;
 using ImGuiNET;
-using LeveHelper.Filters;
+using LeveHelper.Caches;
+using LeveHelper.Config;
+using LeveHelper.Interfaces;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
 public class FilterManager
 {
-    public FiltersState State { get; set; }
-    public List<Filter> Filters { get; private set; }
+    private readonly PluginConfig PluginConfig;
+    private readonly TextService TextService;
+    private readonly LeveIssuerCache LeveIssuerCache;
+    private readonly LeveService LeveService;
 
-    public FilterManager()
+    public FiltersState State { get; set; }
+    public List<IFilter> Filters { get; private set; } = [];
+
+    public FilterManager(
+        FiltersState filtersState,
+        PluginConfig pluginConfig,
+        TextService textService,
+        LeveIssuerCache leveIssuerCache,
+        LeveService LeveService,
+        IEnumerable<IFilter> filters)
     {
-        State = new();
-        Filters = new()
+        State = filtersState;
+        PluginConfig = pluginConfig;
+        TextService = textService;
+        LeveIssuerCache = leveIssuerCache;
+        LeveService = LeveService;
+
+        foreach (var filter in filters)
         {
-            new NameFilter(this),
-            new StatusFilter(this),
-            new TypeFilter(this),
-            new LocationFilter(this),
-            new LevemeteFilter(this),
-        };
+            filter.FilterManager = this;
+            Filters.Add(filter);
+        }
+
+        Filters.Sort((filter1, filter2) => filter2.Order - filter1.Order);
 
         Update();
+    }
+
+    private uint byId(Leve item)
+        => item.RowId;
+
+    private ushort byLevel(Leve item)
+        => item.ClassJobLevel;
+
+    private string byType(Leve item)
+        => item.LeveAssignmentType.Value?.Name ?? "";
+
+    private string byName(Leve item)
+        => item.Name.ExtractText();
+
+    private string byIssuer(Leve item)
+    {
+        if (!LeveIssuerCache.TryGetValue(item.RowId, out var issuers))
+            return string.Empty;
+
+        return TextService.GetENpcResidentName(issuers.First().RowId);
     }
 
     public void Update()
@@ -42,30 +81,30 @@ public class FilterManager
 
         State.Leves = (State.SortColumnIndex, State.SortDirection) switch
         {
-            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.RowId),
-            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.RowId),
+            (0, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(byId),
+            (0, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(byId),
 
-            (1, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.ClassJobLevel),
-            (1, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.ClassJobLevel),
+            (1, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(byLevel),
+            (1, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(byLevel),
 
-            (2, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.TypeName),
-            (2, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.TypeName),
+            (2, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(byType),
+            (2, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(byType),
 
-            (3, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Name),
-            (3, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Name),
+            (3, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(byName),
+            (3, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(byName),
 
-            (4, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(item => item.Issuers.FirstOrNull()?.Name ?? string.Empty),
-            (4, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(item => item.Issuers.FirstOrNull()?.Name ?? string.Empty),
+            (4, ImGuiSortDirection.Ascending) => State.Leves.OrderBy(byIssuer),
+            (4, ImGuiSortDirection.Descending) => State.Leves.OrderByDescending(byIssuer),
 
             _ => State.Leves
         };
 
         State.LevesArray = State.Leves.ToArray();
 
-        State.NumCompletedLeves = State.Leves.Where(row => row.IsComplete).Count();
+        State.NumCompletedLeves = State.Leves.Where(LeveService.IsComplete).Count();
         State.NumTotalLeves = State.Leves.Count();
         State.NeededAllowances = State.Leves
-            .Where(row => !row.IsComplete && !row.IsAccepted)
+            .Where(row => !LeveService.IsComplete(row) && !LeveService.IsAccepted(row))
             .Select(item => item.AllowanceCost)
             .Aggregate(0, (total, cost) => total + cost);
     }
@@ -89,11 +128,11 @@ public class FilterManager
             filter.Reset();
         }
 
-        Service.GetService<Configuration>().Save();
+        PluginConfig.Save();
         Update();
     }
 
-    public Filter? GetFilter<T>()
+    public IFilter? GetFilter<T>()
     {
         return Filters.Find(item => item.GetType() == typeof(T));
     }
@@ -111,7 +150,7 @@ public class FilterManager
         var someFilterSet = Filters.Any(filter => filter.HasValue());
 
         using var treeNodeColor = someFilterSet ? ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Green) : null;
-        using var treeNode = ImRaii.TreeNode(t("FilterManager.Title"), ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
+        using var treeNode = ImRaii.TreeNode(TextService.Translate("FilterManager.Title"), ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
         if (!treeNode.Success)
             return;
         treeNodeColor?.Dispose();
@@ -133,7 +172,7 @@ public class FilterManager
         ImGui.TableNextColumn();
         ImGui.TableNextColumn();
 
-        if (ImGui.Button(t("FilterManager.ClearFilters")))
+        if (ImGui.Button(TextService.Translate("FilterManager.ClearFilters")))
         {
             Reset();
         }

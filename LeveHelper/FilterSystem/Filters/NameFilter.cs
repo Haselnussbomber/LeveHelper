@@ -1,6 +1,10 @@
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
+using HaselCommon.Extensions;
+using HaselCommon.Services;
 using ImGuiNET;
+using LeveHelper.Config;
+using LeveHelper.Interfaces;
 
 namespace LeveHelper.Filters;
 
@@ -9,57 +13,56 @@ public class NameFilterConfiguration
     public string CurrentName = "";
 }
 
-public class NameFilter : Filter
+public class NameFilter(PluginConfig PluginConfig, TextService TextService) : IFilter
 {
-    public NameFilter(FilterManager manager) : base(manager)
+    public int Order => 0;
+    public NameFilterConfiguration Config => PluginConfig.Filters.NameFilter;
+
+    public FilterManager? FilterManager { get; set; }
+
+    public void Reload()
     {
     }
 
-    public static NameFilterConfiguration Config => Service.GetService<Configuration>().Filters.NameFilter;
-
-    public override void Reload()
-    {
-    }
-
-    public override void Reset()
+    public void Reset()
     {
         Config.CurrentName = "";
     }
 
-    public override bool HasValue()
+    public bool HasValue()
     {
         return Config.CurrentName != "";
     }
 
-    public override void Set(dynamic value)
+    public void Set(dynamic value)
     {
         Config.CurrentName = (string)value;
-        Service.GetService<Configuration>().Save();
+        PluginConfig.Save();
     }
 
-    public override void Draw()
+    public void Draw()
     {
         using var id = ImRaii.PushId("NameFilter");
 
         ImGui.TableNextColumn();
-        ImGui.TextUnformatted(t("NameFilter.Label"));
+        TextService.Draw("NameFilter.Label");
 
         ImGui.TableNextColumn();
-        ImGui.SetNextItemWidth(InputWidth);
+        ImGui.SetNextItemWidth(250);
         var currentName = Config.CurrentName;
         if (ImGui.InputText("##Input", ref currentName, 255))
         {
             Set(currentName);
-            manager.Update();
+            FilterManager!.Update();
         }
     }
 
-    public override bool Run()
+    public bool Run()
     {
         if (string.IsNullOrWhiteSpace(Config.CurrentName))
             return false;
 
-        state.Leves = state.Leves.Where(row => row.Name.Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
+        FilterManager!.State.Leves = FilterManager.State.Leves.Where(row => row.Name.ExtractText().Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
 
         return true;
     }

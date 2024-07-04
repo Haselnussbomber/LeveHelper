@@ -4,13 +4,13 @@ namespace LeveHelper;
 
 public record QueuedItem
 {
-    public QueuedItem(Item Item, uint AmountNeeded)
+    public QueuedItem(LeveHelperItem Item, uint AmountNeeded)
     {
         this.Item = Item;
         this.AmountNeeded = AmountNeeded;
     }
 
-    public Item Item { get; init; }
+    public LeveHelperItem Item { get; init; }
     public uint AmountHave => Item.QuantityOwned;
     public uint AmountNeeded { get; set; }
     public uint AmountLeft
