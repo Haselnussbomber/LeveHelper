@@ -1765,5 +1765,18 @@ public static class Data
             1675, // Rocks of a Feather
             1676, // The Final Touch
         ],
+        // Br'uk Ts'on
+        [1048392] = [
+            1798, // Axing for Fish
+            1799, // Full Moon Frogs
+            1800, // Travel by Turtle
+            1801, // Order for Odd Fish
+            1802, // Perilous Peaks Poga
+            1803, // Catch My Metaphor
+            1804, // Starry-finned
+            1805, // Eeling Cleanse
+            1806, // Fish Tacos
+            1807, // Hungry Hungry Whalaqee
+        ],
     };
 }
