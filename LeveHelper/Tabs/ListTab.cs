@@ -83,7 +83,7 @@ public class ListTab(
             }
 
             var percent = (state.NumCompletedLeves / (float)state.NumTotalLeves * 100f).ToString("0.00", CultureInfo.InvariantCulture);
-            ImGui.TextUnformatted(TextService.Translate("ListTab.Completion", state.NumCompletedLeves, state.NumTotalLeves, percent));
+            TextService.Draw("ListTab.Completion", state.NumCompletedLeves, state.NumTotalLeves, percent);
         }
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);

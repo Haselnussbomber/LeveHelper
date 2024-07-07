@@ -60,8 +60,8 @@
     "de": "Vollmachten: {0}/100 ({1} benötigt{2}, 3 neue in {3})"
   },
   "ListTab.Completion": {
-    "en": "Completion: {0}/{1} ({2}%%)",
-    "de": "Abgeschlossen: {0}/{1} ({2}%%)"
+    "en": "Completion: {0}/{1} ({2}%)",
+    "de": "Abgeschlossen: {0}/{1} ({2}%)"
   },
   "ListTab.Column.Id": {
     "en": "Id"
