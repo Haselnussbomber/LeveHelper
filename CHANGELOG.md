@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.6] (2024-07-08)
+
+- **Fixed:** Issuer for Dawntrail leves is Malihali, not Br'uk Ts'on.
+
+(I was looking at the wrong NPC last version. Sorry!)
+
 ## [2.1.5] (2024-07-04)
 
 Preliminary update for Dawntrail (Dalamud staging).
@@ -206,6 +212,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.2...v2.1.3
