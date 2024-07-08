@@ -1765,18 +1765,128 @@ public static class Data
             1675, // Rocks of a Feather
             1676, // The Final Touch
         ],
-        // Br'uk Ts'on
-        [1048392] = [
+        // Malihali
+        [1048390] = [
+            1749, // Big Brush, Big Dreams
+            1748, // Fast-forwarding Flora
+            1750, // Binding Spells
+            1751, // For Tired Minds
+            1753, // Cutting Edge of Culinary Quality
+            1752, // I Like Big Brush and I Cannot Lie
+            1754, // All-night Crafting
+            1755, // Something Salty and Ceremonial
+            1757, // Remedy for Reason
+            1756, // Tome for Tradition
+            1708, // Don't Bore Me, Ore Me
+            1709, // Shielding My Students
+            1710, // Brace for More Vambraces
+            1711, // Forgiveness for My Shins
+            1712, // Metal with Mettle
+            1713, // Odd Instruments
+            1715, // Backing up My Words
+            1714, // Don't Ask about the Rivets
+            1716, // A Hand for a Deckhand
+            1717, // Essays on Equipment
+            1699, // Paring Is Caring
+            1698, // Always Be Prepaired
+            1701, // Axes to the Maxes
+            1700, // Ruthenium Supremium
+            1703, // Dagger Swagger
+            1702, // Maintaining the Maintainers
+            1704, // Bladewinner
+            1705, // Maul Me
+            1707, // Awl Dreams Come True
+            1706, // Ceremonial Teeth
+            1688, // Hull Lotta Damage
+            1689, // Yimepi's Country Charms
+            1691, // The Wing's Wings
+            1690, // Wood You Be Quiet
+            1693, // Lament of the Lazylump
+            1692, // Turali Quality
+            1694, // Bow Out
+            1695, // Weaving a Path
+            1697, // No Greater Treasure
+            1696, // Spear Pressure
+            1759, // Friends Are Food
+            1758, // More Mezcal
+            1760, // Don't Knock It Till You've Tried It
+            1761, // Not-so-secret Ingredient
+            1763, // Creative Chocolate
+            1762, // Simple Is Hardest
+            1764, // Bring Me Your Tacos
+            1765, // Najoothie
+            1767, // Ocean Explosion
+            1766, // Sweet, Sweet Bean Juice
+            1718, // On Board for Lar
+            1719, // Pendulums of Our Own
+            1721, // Fan of the Foreign
+            1720, // Guaranteed Gem
+            1723, // Sew Excited
+            1722, // Shiny and Good
+            1724, // Orders Anonymous
+            1725, // Ringing Gratitude
+            1727, // Mask Maker
+            1726, // The Right Rod
+            1729, // The Perfect Accessory
+            1728, // Tenets of Tanning
+            1731, // Dreams of Ja
+            1730, // Freezing Fingers
+            1733, // Lending Artisans a Hand
+            1732, // Respect for Br'aax
+            1734, // Freezing Toes
+            1735, // Giving Gatherers Their Gear
+            1737, // Just Generally Freezing
+            1736, // Worqor Zormor or Bust
+            1739, // Begin with the Basics
+            1738, // Comfy Cabins
+            1740, // Cloth for Canvas
+            1741, // In Line with Linen
+            1743, // Traditional Trousers
+            1742, // Weaving the Envelope
+            1745, // Cruel Climates
+            1744, // Halfgloves, Full Effort
+            1746, // Glamorous Gloves
+            1747, // Silk for Sunperch
+            1770, // All Stars
+            1769, // Brushing Up on Flowers
+            1768, // Reading Reeds
+            1771, // Evaluating Energies
+            1773, // First Beasts, Now Bugs
+            1772, // Plants Aquatic
+            1775, // Good Ear for Corn
+            1774, // Herbs for Hurts
+            1776, // Trusty Trees
+            1779, // New Start for the Cinderfield
+            1778, // Sacred Sap
+            1777, // Sip of Scalebud
+            1782, // Girth of the Earth
+            1781, // Need for Nopales
+            1780, // Stopping Soapweed
             1798, // Axing for Fish
             1799, // Full Moon Frogs
-            1800, // Travel by Turtle
             1801, // Order for Odd Fish
-            1802, // Perilous Peaks Poga
+            1800, // Travel by Turtle
             1803, // Catch My Metaphor
-            1804, // Starry-finned
+            1802, // Perilous Peaks Poga
             1805, // Eeling Cleanse
+            1804, // Starry-finned
             1806, // Fish Tacos
             1807, // Hungry Hungry Whalaqee
+            1784, // Strong Arm for Stone
+            1785, // Old and Bubbly
+            1783, // Tough Tuff
+            1786, // Abandoned Architecture
+            1788, // Gleamstone for Lazybones
+            1787, // Mountain Fish
+            1790, // Building the Banks
+            1789, // Fuelgiving Passionwork
+            1791, // Pebbles for a Path
+            1793, // Material for a Mindgenius
+            1792, // Sampled Starfall
+            1794, // Vestiges of War
+            1796, // Burning Rival
+            1797, // No Takebacks for Workshirk
+            1795, // Plains, Stone, Fish
         ],
     };
 }

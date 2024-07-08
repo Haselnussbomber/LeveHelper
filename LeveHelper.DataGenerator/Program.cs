@@ -40,7 +40,7 @@ var issuers = new uint[] {
     1018997, // Keltraeng, Kugane (11, 9)
     1027847, // Eirikur, The Crystarium (9, 9)
     1037263, // Grigge, Old Sharlayan (12, 13)
-    1048392, // Br'uk Ts'on, Tuliyollal (13, 12)
+    1048390, // Malihali, Tuliyollal (13, 12)
 };
 
 var httpClient = new HttpClient();
