@@ -27,7 +27,7 @@ public record WindowState(
     MapService MapService,
     TeleportService TeleportService,
     ImGuiContextMenuService ImGuiContextMenuService,
-    LeveService QuestService,
+    LeveService LeveService,
     LeveRequiredItemsCache LeveRequiredItemsCache)
 {
     public RequiredItem[] LeveRequiredItems { get; private set; } = [];
@@ -39,7 +39,7 @@ public record WindowState(
 
     public void UpdateList()
     {
-        var acceptedCraftAndGatherLeves = QuestService.GetActiveLeves()
+        var acceptedCraftAndGatherLeves = LeveService.GetActiveLeves()
             .Where(leve => LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) && requiredItems.Length > 0);
 
         // list all items required for CraftLeves and GatherLeves

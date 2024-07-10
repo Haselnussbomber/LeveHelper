@@ -21,7 +21,7 @@ public class MainWindow : SimpleWindow
     private readonly IClientState ClientState;
     private readonly ICommandManager CommandManager;
     private readonly ConfigWindow ConfigWindow;
-    private readonly LeveService QuestService;
+    private readonly LeveService LeveService;
     private readonly WindowState WindowState;
     private readonly FilterManager FilterManager;
 
@@ -42,7 +42,7 @@ public class MainWindow : SimpleWindow
         IClientState clientState,
         ICommandManager commandManager,
         ConfigWindow configWindow,
-        LeveService questService,
+        LeveService leveService,
         WindowState windowState,
         FilterManager filterManager,
         DebugTab debugTab,
@@ -56,7 +56,7 @@ public class MainWindow : SimpleWindow
         ClientState = clientState;
         CommandManager = commandManager;
         ConfigWindow = configWindow;
-        QuestService = questService;
+        LeveService = leveService;
         WindowState = windowState;
         FilterManager = filterManager;
 
@@ -142,7 +142,7 @@ public class MainWindow : SimpleWindow
 
     public override void Update()
     {
-        var activeLevequestIds = QuestService.GetActiveLeveIds();
+        var activeLevequestIds = LeveService.GetActiveLeveIds();
         if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
         {
             LastActiveLevequestIds = activeLevequestIds;
