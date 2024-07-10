@@ -7,7 +7,6 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using HaselCommon.Windowing;
-using HaselCommon.Windowing.Interfaces;
 using ImGuiNET;
 using LeveHelper.Records;
 
@@ -35,7 +34,7 @@ public class MainWindow : SimpleWindow
     private IEnumerable<ushort> LastActiveLevequestIds = [];
 
     public MainWindow(
-        IWindowManager windowManager,
+        WindowManager windowManager,
         TextService textService,
         AddonObserver addonObserver,
         IDalamudPluginInterface pluginInterface,

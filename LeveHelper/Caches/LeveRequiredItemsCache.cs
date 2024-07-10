@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HaselCommon.Caching;
 using HaselCommon.Services;
-using LeveHelper.Sheets;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Caches;
@@ -30,7 +29,7 @@ public class LeveRequiredItemsCache(ExcelService ExcelService, LeveService LeveS
                 {
                     if (!dict.TryGetValue(entry.Item, out var reqItem))
                     {
-                        reqItem = new RequiredItem(ExcelService.GetRow<LeveHelperItem>((uint)entry.Item)!, 0);
+                        reqItem = new RequiredItem(ExcelService.GetRow<Item>((uint)entry.Item)!, 0);
                         dict.Add(entry.Item, reqItem);
                     }
 

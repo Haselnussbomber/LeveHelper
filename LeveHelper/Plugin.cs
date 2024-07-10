@@ -41,6 +41,7 @@ public sealed class Plugin : IDalamudPlugin
             .AddSingleton(PluginConfig.Load(pluginInterface, pluginLog))
 
             // LeveHelper
+            .AddSingleton<ExtendedItemService>()
             .AddIServices<IFilter>()
             .AddSingleton<FiltersState>()
             .AddSingleton<FilterManager>()

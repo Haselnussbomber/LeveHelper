@@ -60,6 +60,7 @@ public class FilterManager : IDisposable
     private void OnLanguageChanged(string langCode)
     {
         State.Reload();
+        Update();
     }
 
     private uint byId(Leve item)

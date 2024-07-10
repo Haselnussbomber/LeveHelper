@@ -15,7 +15,6 @@ using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Filters;
 using LeveHelper.Records;
-using LeveHelper.Sheets;
 using LeveHelper.Utils;
 using Lumina.Excel.GeneratedSheets;
 
@@ -309,10 +308,7 @@ public class ListTab(
             {
                 foreach (var entry in requiredItems)
                 {
-                    if (entry.Item is LeveHelperItem reqItem)
-                    {
-                        WindowState.DrawItem(reqItem, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{reqItem.RowId}");
-                    }
+                    WindowState.DrawItem(entry.Item, entry.Amount, $"##LeveTooltip_{item.RowId}_RequiredItems_{entry.Item.RowId}");
                 }
             }
 

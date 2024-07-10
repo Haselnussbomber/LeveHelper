@@ -1,17 +1,21 @@
-using LeveHelper.Sheets;
+using LeveHelper.Services;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
 public record QueuedItem
 {
-    public QueuedItem(LeveHelperItem Item, uint AmountNeeded)
+    private readonly ExtendedItemService ExtendedItemService;
+
+    public QueuedItem(Item Item, uint AmountNeeded, ExtendedItemService ExtendedItemService)
     {
         this.Item = Item;
         this.AmountNeeded = AmountNeeded;
+        this.ExtendedItemService = ExtendedItemService;
     }
 
-    public LeveHelperItem Item { get; init; }
-    public uint AmountHave => Item.QuantityOwned;
+    public Item Item { get; init; }
+    public uint AmountHave => ExtendedItemService.GetQuantity(Item.RowId);
     public uint AmountNeeded { get; set; }
     public uint AmountLeft
     {

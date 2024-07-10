@@ -1,6 +1,5 @@
 using HaselCommon.Services;
 using HaselCommon.Windowing;
-using HaselCommon.Windowing.Interfaces;
 using ImGuiNET;
 using LeveHelper.Config;
 
@@ -12,7 +11,7 @@ public class ConfigWindow : SimpleWindow
     private readonly PluginConfig PluginConfig;
 
     public ConfigWindow(
-        IWindowManager windowManager,
+        WindowManager windowManager,
         TextService textService,
         PluginConfig pluginConfig)
         : base(windowManager, textService.Translate("WindowTitle.Configuration"))

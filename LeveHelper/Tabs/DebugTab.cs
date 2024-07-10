@@ -4,12 +4,12 @@ using Dalamud.Interface.Windowing;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Records;
-using LeveHelper.Sheets;
-using GatheringItem = HaselCommon.Sheets.ExtendedGatheringItem;
+using LeveHelper.Services;
+using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapService MapService)
+public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapService MapService, ExtendedItemService ItemService)
 {
     [Conditional("DEBUG")]
     public void Draw(Window window)
@@ -31,30 +31,34 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
         ImGui.TableSetupColumn("GatheringPoints", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableHeadersRow();
 
-        var itemSheet = ExcelService.GetSheet<LeveHelperItem>();
-        foreach (var item in ExcelService.GetSheet<GatheringItem>())
+        var itemSheet = ExcelService.GetSheet<Item>();
+        foreach (var gatheringItem in ExcelService.GetSheet<GatheringItem>())
         {
-            if (item.RowId == 0 || item.Item == 0 || item.Item >= 1000000)
+            if (gatheringItem.RowId == 0 || gatheringItem.Item == 0 || gatheringItem.Item >= 1000000)
+                continue;
+
+            var item = ExcelService.GetRow<Item>((uint)gatheringItem.Item);
+            if (item == null)
                 continue;
 
             ImGui.TableNextRow();
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(item.RowId.ToString());
+            ImGui.TextUnformatted(gatheringItem.RowId.ToString());
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(item.Item.ToString());
+            ImGui.TextUnformatted(gatheringItem.Item.ToString());
             ImGui.SameLine();
-            WindowState.DrawItem(ExcelService.GetRow<LeveHelperItem>(item.ItemRow.Row));
+            WindowState.DrawItem(item);
 
             ImGui.TableNextColumn();
-            foreach (var point in item.GatheringPoints)
+            foreach (var point in ItemService.GetGatheringPoints(gatheringItem))
             {
                 ImGui.TextUnformatted($"{point.RowId} => {point.PlaceName.Value?.Name ?? ""}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())
-                    MapService.OpenMap(point, item.ItemRow.Value, "LeveHelper");
+                    MapService.OpenMap(point, item, "LeveHelper");
             }
         }
     }
