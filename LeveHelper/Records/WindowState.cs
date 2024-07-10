@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -214,9 +215,8 @@ public record WindowState(
         else if (item.QuantityOwned < neededCount || item.HasAllIngredients == false)
             color = Colors.Grey;
 
-        ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
-        ImGui.Selectable($"{(neededCount > 0 ? $"{item.QuantityOwned}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
-        ImGui.PopStyleColor();
+        using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
+            ImGui.Selectable($"{(neededCount > 0 ? $"{item.QuantityOwned}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
 
         if (ImGui.IsItemHovered())
         {

@@ -182,9 +182,8 @@ public class ListTab(
             else if (isTownLocked && item.Town.Row != startTown)
                 color = Colors.Grey;
 
-            ImGui.PushStyleColor(ImGuiCol.Text, (uint)color);
-            ImGui.Selectable(item.Name);
-            ImGui.PopStyleColor();
+            using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
+                ImGui.Selectable(item.Name);
 
             if (ImGui.IsItemHovered())
             {
