@@ -12,12 +12,13 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public class FilterManager
+public class FilterManager : IDisposable
 {
     private readonly PluginConfig PluginConfig;
     private readonly TextService TextService;
     private readonly LeveIssuerCache LeveIssuerCache;
     private readonly LeveService LeveService;
+    private readonly TranslationManager TranslationManager;
 
     public FiltersState State { get; set; }
     public List<IFilter> Filters { get; private set; } = [];
@@ -28,13 +29,15 @@ public class FilterManager
         TextService textService,
         LeveIssuerCache leveIssuerCache,
         LeveService leveService,
-        IEnumerable<IFilter> filters)
+        IEnumerable<IFilter> filters,
+        TranslationManager translationManager)
     {
         State = filtersState;
         PluginConfig = pluginConfig;
         TextService = textService;
         LeveIssuerCache = leveIssuerCache;
         LeveService = leveService;
+        TranslationManager = translationManager;
 
         foreach (var filter in filters)
         {
@@ -45,6 +48,18 @@ public class FilterManager
         Filters.Sort((filter1, filter2) => filter2.Order - filter1.Order);
 
         Update();
+
+        TranslationManager.LanguageChanged += OnLanguageChanged;
+    }
+
+    public void Dispose()
+    {
+        TranslationManager.LanguageChanged -= OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(string langCode)
+    {
+        State.Reload();
     }
 
     private uint byId(Leve item)
