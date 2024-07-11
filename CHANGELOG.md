@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.1.7] (2024-07-12)
+
+- **Fixed:** Quantities are now updated when an inventory change occurs.
+- **Fixed:** The text on the Queue and Recipe Tree tabs when no leve quest is accepted is no longer incorrect.
+
 ## [2.1.6] (2024-07-08)
 
 - **Fixed:** Issuer for Dawntrail leves is Malihali, not Br'uk Ts'on.
@@ -212,6 +217,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.3...v2.1.4
