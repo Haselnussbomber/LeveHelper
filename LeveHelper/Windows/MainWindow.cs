@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Command;
+using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -19,6 +20,7 @@ public class MainWindow : SimpleWindow
     private readonly IDalamudPluginInterface PluginInterface;
     private readonly IClientState ClientState;
     private readonly ICommandManager CommandManager;
+    private readonly IGameInventory GameInventory;
     private readonly ConfigWindow ConfigWindow;
     private readonly LeveService LeveService;
     private readonly WindowState WindowState;
@@ -40,6 +42,7 @@ public class MainWindow : SimpleWindow
         IDalamudPluginInterface pluginInterface,
         IClientState clientState,
         ICommandManager commandManager,
+        IGameInventory gameInventory,
         ConfigWindow configWindow,
         LeveService leveService,
         WindowState windowState,
@@ -54,6 +57,7 @@ public class MainWindow : SimpleWindow
         PluginInterface = pluginInterface;
         ClientState = clientState;
         CommandManager = commandManager;
+        GameInventory = gameInventory;
         ConfigWindow = configWindow;
         LeveService = leveService;
         WindowState = windowState;
@@ -100,10 +104,12 @@ public class MainWindow : SimpleWindow
         TextService.LanguageChanged += OnLanguageChanged;
         AddonObserver.AddonOpen += OnAddonOpen;
         AddonObserver.AddonClose += OnAddonClose;
+        GameInventory.InventoryChangedRaw += OnInventoryChangedRaw;
     }
 
     public new void Dispose()
     {
+        GameInventory.InventoryChangedRaw -= OnInventoryChangedRaw;
         AddonObserver.AddonOpen -= OnAddonOpen;
         AddonObserver.AddonClose -= OnAddonClose;
         TextService.LanguageChanged -= OnLanguageChanged;
@@ -125,7 +131,10 @@ public class MainWindow : SimpleWindow
         FilterManager.Update();
     }
 
-    public void OnLanguageChange() => Refresh();
+    private void OnInventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
+    {
+        Refresh();
+    }
 
     private void OnAddonOpen(string addonName)
     {

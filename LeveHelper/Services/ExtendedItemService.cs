@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.Inventory.InventoryEventArgTypes;
-using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using LeveHelper.Caches;
 using Lumina.Excel.GeneratedSheets;
@@ -11,28 +8,13 @@ namespace LeveHelper.Services;
 public class ExtendedItemService : ItemService
 {
     private readonly ExcelService ExcelService;
-    private readonly IGameInventory GameInventory;
     private readonly ItemIngredientsCache ItemIngredientsCache;
     private readonly ItemQuantityCache ItemQuantityCache = new();
 
-    public ExtendedItemService(ExcelService excelService, TextService textService, IGameInventory gameInventory) : base(excelService, textService)
+    public ExtendedItemService(ExcelService excelService, TextService textService) : base(excelService, textService)
     {
         ExcelService = excelService;
-        GameInventory = gameInventory;
         ItemIngredientsCache = new ItemIngredientsCache(excelService, this);
-
-        GameInventory.InventoryChangedRaw += GameInventory_InventoryChangedRaw;
-    }
-
-    public void Dispose()
-    {
-        GameInventory.InventoryChangedRaw -= GameInventory_InventoryChangedRaw;
-    }
-
-    private void GameInventory_InventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
-    {
-        foreach (var evt in events)
-            InvalidateQuantity(evt.Item.ItemId);
     }
 
     public void InvalidateQuantity(Item item) => InvalidateQuantity(item.RowId);
