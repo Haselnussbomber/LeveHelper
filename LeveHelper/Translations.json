@@ -128,8 +128,8 @@
   },
 
   "QueueTab.NoActiveLevequests": {
-    "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
-    "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+    "en": "No accepted Levequests",
+    "de": "Keine angenommenen Levequests"
   },
   "QueueTab.Refresh": {
     "en": "Refresh",
@@ -157,8 +157,8 @@
   },
 
   "RecipeTreeTab.NoActiveLevequests": {
-    "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
-    "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+    "en": "No accepted Levequests",
+    "de": "Keine angenommenen Levequests"
   },
   "RecipeTreeTab.Refresh": {
     "en": "Refresh",
