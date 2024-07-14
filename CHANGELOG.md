@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Fixed:** Ingredients for recipes that yield more than one item are now correctly calculated.
+
 ## [2.1.7] (2024-07-12)
 
 - **Fixed:** Quantities are now updated when an inventory change occurs.

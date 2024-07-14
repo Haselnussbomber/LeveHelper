@@ -145,9 +145,10 @@ public record WindowState(
 
         if (node.AmountLeft != 0)
         {
+            float resultAmount = ItemService.IsCraftable(item) ? ItemService.GetRecipes(item).First().AmountResult : 1;
+
             foreach (var dependency in ItemService.GetIngredients(item))
             {
-                float resultAmount = ItemService.IsCraftable(dependency.Item) ? ItemService.GetRecipes(dependency.Item).First().AmountResult : 1;
                 var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / resultAmount);
                 TraverseItems(dependency.Item, totalAmount, neededAmounts);
             }
