@@ -84,6 +84,7 @@ public partial class PluginConfig
     public FilterConfigs Filters { get; init; } = new();
     public bool NotifyWantedTarget { get; set; } = true;
     public bool NotifyTreasure { get; set; } = true;
+    public bool ShowImportOnTeamCraftButton { get; set; } = false;
 }
 
 public class FilterConfigs

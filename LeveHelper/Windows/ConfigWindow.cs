@@ -1,4 +1,5 @@
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using HaselCommon.Windowing;
 using ImGuiNET;
 using LeveHelper.Config;
@@ -44,6 +45,18 @@ public class ConfigWindow : SimpleWindow
                 PluginConfig.NotifyTreasure = notifyTreasure;
                 PluginConfig.Save();
             }
+        }
+
+        // Show button to import the crafting list to TeamCraft
+        {
+            var showImportOnTeamCraftButton = PluginConfig.ShowImportOnTeamCraftButton;
+            if (ImGui.Checkbox(TextService.Translate("Config.ShowImportOnTeamCraftButton.Label"), ref showImportOnTeamCraftButton))
+            {
+                PluginConfig.ShowImportOnTeamCraftButton = showImportOnTeamCraftButton;
+                PluginConfig.Save();
+            }
+            using (ImGuiUtils.ConfigIndent())
+                TextService.Draw(Colors.Grey, "Config.ShowImportOnTeamCraftButton.Description");
         }
     }
 }

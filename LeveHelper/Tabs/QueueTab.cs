@@ -1,15 +1,29 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using Dalamud.Utility;
 using HaselCommon.Extensions;
 using HaselCommon.Services;
 using ImGuiNET;
+using LeveHelper.Caches;
+using LeveHelper.Config;
 using LeveHelper.Records;
+using LeveHelper.Services;
 using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
-public class QueueTab(WindowState WindowState, TextService TextService, ExcelService ExcelService, LeveService LeveService)
+public class QueueTab(
+    WindowState WindowState,
+    TextService TextService,
+    ExcelService ExcelService,
+    LeveService LeveService,
+    ExtendedItemService ItemService,
+    LeveRequiredItemsCache LeveRequiredItemsCache,
+    PluginConfig PluginConfig)
 {
     public void Draw(Window window)
     {
@@ -26,6 +40,9 @@ public class QueueTab(WindowState WindowState, TextService TextService, ExcelSer
             ImGuiHelpers.CenteredText(TextService.Translate("QueueTab.NoActiveLevequests"));
             return;
         }
+
+        if (PluginConfig.ShowImportOnTeamCraftButton)
+            DrawExportButton();
 
         var i = 0;
 
@@ -84,6 +101,54 @@ public class QueueTab(WindowState WindowState, TextService TextService, ExcelSer
         else
         {
             TextService.Draw("QueueTab.ReadyForTurnIn");
+        }
+    }
+
+    private void DrawExportButton()
+    {
+        var needsToCraftItems = false;
+
+        foreach (var leve in LeveService.GetActiveLeves())
+        {
+            if (!LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) || requiredItems.Length == 0)
+                continue;
+
+            needsToCraftItems = true;
+            break;
+        }
+
+        if (!needsToCraftItems)
+            return;
+
+        if (ImGui.Button(TextService.Translate("QueueTab.ImportOnTeamCraft")))
+        {
+            var items = new Dictionary<uint, (uint, uint)>(); // itemId = (recipeId, amount)
+
+            foreach (var leve in LeveService.GetActiveLeves())
+            {
+                if (!LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) || requiredItems.Length == 0)
+                    continue;
+
+                foreach (var item in requiredItems)
+                {
+                    if (items.TryGetValue(item.Item.RowId, out var tuple))
+                    {
+                        items[item.Item.RowId] = (tuple.Item1, tuple.Item2 + item.Amount);
+                    }
+                    else
+                    {
+                        var recipes = ItemService.GetRecipes(item.Item);
+
+                        if (recipes != null && recipes.Length == 1)
+                            items[item.Item.RowId] = (recipes.First().RowId, item.Amount);
+                        else
+                            items[item.Item.RowId] = (0, item.Amount);
+                    }
+                }
+            }
+
+            var importstring = string.Join(';', items.Select(kv => $"{kv.Key},{(kv.Value.Item1 == 0 ? "null" : kv.Value.Item1)},{kv.Value.Item2}"));
+            Util.OpenLink($"https://ffxivteamcraft.com/import/{Convert.ToBase64String(Encoding.UTF8.GetBytes(importstring))}");
         }
     }
 }

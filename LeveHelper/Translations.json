@@ -20,6 +20,14 @@
     "en": "Notify when Treasure is found",
     "de": "Benachrichtigen wenn Schatztruhe gefunden wurde"
   },
+  "Config.ShowImportOnTeamCraftButton.Label": {
+    "en": "Show button to import the crafting list to TeamCraft",
+    "de": "Schaltfläche zum Importieren der Fertigungsliste in TeamCraft anzeigen"
+  },
+  "Config.ShowImportOnTeamCraftButton.Description": {
+    "en": "Displayed under the Queue tab.",
+    "de": "Wird unter dem Aufgaben-Tab angezeigt."
+  },
 
   "TitleBarButton.ToggleConfig.Tooltip.OpenConfig": {
     "en": "Open Configuration",
@@ -131,9 +139,9 @@
     "en": "No accepted Levequests",
     "de": "Keine angenommenen Levequests"
   },
-  "QueueTab.Refresh": {
-    "en": "Refresh",
-    "de": "Aktualisieren"
+  "QueueTab.ImportOnTeamCraft": {
+    "en": "Import List on TeamCraft",
+    "de": "Auf TeamCraft importieren"
   },
   "QueueTab.Category.Crystals": {
     "en": "Crystals:",
