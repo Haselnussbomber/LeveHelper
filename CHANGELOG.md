@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.0] (2024-07-18)
+
+- **Added:** A config option to show a button that lets you import a list of required items on TeamCraft (default off). It will be displayed under the Queue tab.
+- **Fixed:** Ingredients are now correctly calculated. For real this time. And also under the Recipe Tree tab. (Hopefully.)
+
 ## [2.1.8] (2024-07-15)
 
 - **Fixed:** Ingredients for recipes that yield more than one item are now correctly calculated.
@@ -221,6 +226,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.2.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.8...v2.2.0
 [2.1.8]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.5...v2.1.6
