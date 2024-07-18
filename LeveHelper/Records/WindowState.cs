@@ -181,7 +181,7 @@ public record WindowState(
             if (entryIngredients.Length != 0)
             {
                 float resultAmount = ItemService.IsCraftable(entry.Item) ? ItemService.GetRecipes(entry.Item).First().AmountResult : 1;
-                var ingredientCount = (uint)(ingredientAmount / resultAmount);
+                var ingredientCount = (uint)Math.Ceiling(ingredientAmount / resultAmount);
                 DrawIngredients($"{key}_{entry.Item.RowId}", entryIngredients, ingredientCount, depth + 1);
             }
         }
