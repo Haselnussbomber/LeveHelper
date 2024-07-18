@@ -149,7 +149,7 @@ public record WindowState(
 
             foreach (var dependency in ItemService.GetIngredients(item))
             {
-                var totalAmount = (uint)Math.Ceiling((double)amount * dependency.Amount / resultAmount);
+                var totalAmount = (uint)Math.Ceiling(amount / resultAmount) * dependency.Amount;
                 TraverseItems(dependency.Item, totalAmount, neededAmounts);
             }
         }
