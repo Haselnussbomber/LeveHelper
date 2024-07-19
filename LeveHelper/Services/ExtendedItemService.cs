@@ -1,4 +1,5 @@
 using System.Linq;
+using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using LeveHelper.Caches;
 using Lumina.Excel.GeneratedSheets;
@@ -11,7 +12,7 @@ public class ExtendedItemService : ItemService
     private readonly ItemIngredientsCache ItemIngredientsCache;
     private readonly ItemQuantityCache ItemQuantityCache = new();
 
-    public ExtendedItemService(ExcelService excelService, TextService textService) : base(excelService, textService)
+    public ExtendedItemService(IClientState clientState, ExcelService excelService, TextService textService) : base(clientState, excelService, textService)
     {
         ExcelService = excelService;
         ItemIngredientsCache = new ItemIngredientsCache(excelService, this);
@@ -43,7 +44,7 @@ public class ExtendedItemService : ItemService
         if (IsCrystal(item))
             return ItemQueueCategory.Crystals;
 
-        if (IsGatherable(item) || IsFish(item))
+        if (IsGatherable(item) || IsFish(item) || IsSpearfish(item))
             return ItemQueueCategory.Gatherable;
 
         if (IsCraftable(item))

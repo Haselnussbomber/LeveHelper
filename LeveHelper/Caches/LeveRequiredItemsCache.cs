@@ -14,7 +14,7 @@ public class LeveRequiredItemsCache(ExcelService ExcelService, LeveService LeveS
         if (leve == null)
             return null;
 
-        if (!LeveService.IsCraftLeve(leve))
+        if (!(LeveService.IsCraftLeve(leve) || LeveService.IsFishingLeve(leve)))
             return null;
 
         var craftLeve = ExcelService.GetRow<CraftLeve>((uint)leve.DataId);

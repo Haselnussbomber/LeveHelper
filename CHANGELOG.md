@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** Fishing leves now show the required fish in the Levequests tab.
+- **Added:** Spearfish are now listed in the Queue tab.
+
 ## [2.2.0] (2024-07-18)
 
 - **Added:** A config option to show a button that lets you import a list of required items on TeamCraft (default off). It will be displayed under the Queue tab.

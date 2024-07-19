@@ -103,6 +103,18 @@ public record WindowState(
                         zones.Add(spot.TerritoryType.Row, [entry]);
                     }
                 }
+
+                foreach (var point in ItemService.GetSpearfishingGatheringPoints(entry.Item))
+                {
+                    if (zones.TryGetValue(point.TerritoryType.Row, out var list))
+                    {
+                        list.Add(entry);
+                    }
+                    else
+                    {
+                        zones.Add(point.TerritoryType.Row, [entry]);
+                    }
+                }
             }
 
             // for each item, get the one zone with the most items in it
@@ -199,7 +211,7 @@ public record WindowState(
             key += "_" + item.RowId.ToString();
 
         // draw icons to the right: Gather, Vendor..
-        var isLeveRequiredItem = LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
+        var isLeveRequiredItem = !(ItemService.IsFish(item) || ItemService.IsSpearfish(item)) && LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
         TextureService.DrawIcon(new GameIconLookup(item.Icon, isLeveRequiredItem), 20);
         ImGui.SameLine();
@@ -220,11 +232,11 @@ public record WindowState(
 
             // TODO: info about what leve/recipe needs this?
 
-            if (ItemService.IsCraftable(item) == true)
+            if (ItemService.IsCraftable(item))
             {
                 ImGui.SetTooltip(TextService.GetAddonText(1414)); // "Search for Item by Crafting Method"
             }
-            else if (ItemService.IsGatherable(item) == true)
+            else if (ItemService.IsGatherable(item))
             {
                 if (territoryType != null)
                 {
@@ -235,7 +247,7 @@ public record WindowState(
                     ImGui.SetTooltip(TextService.GetAddonText(1472)); // "Search for Item by Gathering Method"
                 }
             }
-            else if (ItemService.IsFish(item) == true)
+            else if (ItemService.IsFish(item) || ItemService.IsSpearfish(item))
             {
                 ImGui.SetTooltip(TextService.GetAddonText(8506)); // "Open Map"
             }
@@ -260,7 +272,7 @@ public record WindowState(
 
         if (ImGui.IsItemClicked())
         {
-            if (ItemService.IsCraftable(item) == true)
+            if (ItemService.IsCraftable(item))
             {
                 unsafe
                 {
@@ -269,7 +281,7 @@ public record WindowState(
                 }
             }
             // TODO: preferance setting?
-            else if (ItemService.IsGatherable(item) == true)
+            else if (ItemService.IsGatherable(item))
             {
                 unsafe
                 {
@@ -286,9 +298,14 @@ public record WindowState(
                     ImGui.SetWindowFocus(null);
                 }
             }
-            else if (ItemService.IsFish(item) == true)
+            else if (ItemService.IsFish(item))
             {
                 MapService.OpenMap(ItemService.GetFishingSpots(item).First(), item, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
+                ImGui.SetWindowFocus(null);
+            }
+            else if (ItemService.IsSpearfish(item))
+            {
+                MapService.OpenMap(ItemService.GetSpearfishingGatheringPoints(item).First(), item, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
                 ImGui.SetWindowFocus(null);
             }
             else
@@ -328,6 +345,13 @@ public record WindowState(
         else if (ItemService.IsFish(item))
         {
             classJobIcon = Statics.GetFishingSpotIcon(ItemService.GetFishingSpots(item).First());
+        }
+        else if (ItemService.IsSpearfish(item))
+        {
+            var point = ItemService.GetSpearfishingGatheringPoints(item).First();
+            var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
+            var rare = !Statics.IsGatheringTypeRare(point.Type);
+            classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
         }
 
         if (showIndicators && classJobIcon != 0)
