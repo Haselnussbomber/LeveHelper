@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.3.0] (2024-07-19)
 
 - **Added:** Fishing leves now show the required fish in the Levequests tab.
 - **Added:** Spearfish are now listed in the Queue tab.
@@ -231,6 +231,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.3.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.8...v2.2.0
 [2.1.8]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.1.6...v2.1.7
