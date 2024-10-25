@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using HaselCommon.Extensions;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Config;
@@ -64,7 +63,7 @@ public class TypeFilter(
         ImGui.SetNextItemWidth(250);
         var preview = Config.SelectedType == 0
             ? TextService.Translate("TypeFilter.Selectable.All")
-            : ExcelService.GetRow<LeveAssignmentType>(Config.SelectedType)?.Name.ExtractText() ?? string.Empty;
+            : ExcelService.GetRow<LeveAssignmentType>(Config.SelectedType)?.Name.AsReadOnly().ExtractText() ?? string.Empty;
         using (var combo = ImRaii.Combo("##Combo", preview))
         {
             if (combo)
@@ -81,7 +80,7 @@ public class TypeFilter(
 
                 TextureService.DrawIcon(62501, 20);
                 ImGui.SameLine();
-                if (ImGui.Selectable(ExcelService.GetRow<LeveAssignmentType>(1)!.Name.ExtractText() + "##Battlecraft", Config.SelectedType == 1))
+                if (ImGui.Selectable(ExcelService.GetRow<LeveAssignmentType>(1)!.Name.AsReadOnly().ExtractText() + "##Battlecraft", Config.SelectedType == 1))
                 {
                     Set(1);
                     FilterManager!.Update();
@@ -145,7 +144,7 @@ public class TypeFilter(
         if (Config.SelectedType != suggestedType)
         {
             var suggestedName = suggestedType == 1
-                ? ExcelService.GetRow<LeveAssignmentType>(1)!.Name.ExtractText()
+                ? ExcelService.GetRow<LeveAssignmentType>(1)!.Name.AsReadOnly().ExtractText()
                 : ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
             if (suggestedName != null && ImGui.Button(TextService.Translate("TypeFilter.SetSuggestion", suggestedName)))
             {
@@ -159,7 +158,7 @@ public class TypeFilter(
         => ids
             .Select((rowId) => ExcelService.GetRow<LeveAssignmentType>(rowId))
             .OfType<LeveAssignmentType>()
-            .OrderBy(entry => entry.Name.ExtractText())
+            .OrderBy(entry => entry.Name.AsReadOnly().ExtractText())
             .ToArray();
 
     public bool Run()
@@ -167,13 +166,13 @@ public class TypeFilter(
         if (Groups.Count == 0)
         {
             // HowTo#69 => Fieldcraft Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(69)!.Name.ExtractText(), CreateGroup(2, 3, 4));
+            Groups.Add(ExcelService.GetRow<HowTo>(69)!.Name.AsReadOnly().ExtractText(), CreateGroup(2, 3, 4));
 
             // HowTo#67 => Tradecraft Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(67)!.Name.ExtractText(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
+            Groups.Add(ExcelService.GetRow<HowTo>(67)!.Name.AsReadOnly().ExtractText(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
 
             // HowTo#112 => Grand Company Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(112)!.Name.ExtractText(), CreateGroup(16, 17, 18));
+            Groups.Add(ExcelService.GetRow<HowTo>(112)!.Name.AsReadOnly().ExtractText(), CreateGroup(16, 17, 18));
 
             // HowTo#218 => Temple Leves -- no leve is assigned to these
             //_groups.Add(ExcelService.GetRow<HowTo>(218)!.Name.ExtractText(), CreateGroup(13, 14, 15));

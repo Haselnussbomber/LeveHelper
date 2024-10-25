@@ -1,6 +1,6 @@
+using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Utils;
-using HaselCommon.Windowing;
 using ImGuiNET;
 using LeveHelper.Config;
 
@@ -56,7 +56,7 @@ public class ConfigWindow : SimpleWindow
                 PluginConfig.Save();
             }
             using (ImGuiUtils.ConfigIndent())
-                TextService.Draw(Colors.Grey, "Config.ShowImportOnTeamCraftButton.Description");
+                TextService.Draw(Color.Grey, "Config.ShowImportOnTeamCraftButton.Description");
         }
     }
 }

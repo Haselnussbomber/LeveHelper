@@ -1,24 +1,21 @@
 using System.Collections.Generic;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using HaselCommon.Game;
 using HaselCommon.Services;
 using LeveHelper.Config;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Text;
 
 namespace LeveHelper.Services;
 
 public unsafe class WantedTargetScanner : IDisposable
 {
     private readonly IFramework Framework;
-    private readonly IClientState ClientState;
     private readonly IObjectTable ObjectTable;
-    private readonly IChatGui ChatGui;
     private readonly PluginConfig PluginConfig;
-    private readonly ExcelService ExcelService;
     private readonly TextService TextService;
     private readonly MapService MapService;
 
@@ -62,20 +59,14 @@ public unsafe class WantedTargetScanner : IDisposable
 
     public WantedTargetScanner(
         IFramework framework,
-        IClientState clientState,
         IObjectTable objectTable,
-        IChatGui chatGui,
         PluginConfig pluginConfig,
-        ExcelService excelService,
         TextService textService,
         MapService mapService)
     {
         Framework = framework;
-        ClientState = clientState;
         ObjectTable = objectTable;
-        ChatGui = chatGui;
         PluginConfig = pluginConfig;
-        ExcelService = excelService;
         TextService = textService;
         MapService = mapService;
 
@@ -114,14 +105,6 @@ public unsafe class WantedTargetScanner : IDisposable
         if (!IsBattleLeveDirector(activeDirector))
             return;
 
-        var territoryTypeId = ClientState.TerritoryType;
-        if (territoryTypeId == 0)
-            return;
-
-        var territoryType = ExcelService.GetRow<TerritoryType>(territoryTypeId);
-        if (territoryType == null)
-            return;
-
         foreach (var obj in ObjectTable)
         {
             if (PluginConfig.NotifyTreasure
@@ -132,15 +115,12 @@ public unsafe class WantedTargetScanner : IDisposable
                 if (mapLink == null)
                     continue;
 
-                var sb = new SeStringBuilder();
-
-                sb.AddUiForeground(69);
-                sb.AddText("[LeveHelper] ");
-                sb.AddUiForegroundOff();
-
-                sb.Append(TextService.TranslateSe("WantedTargetScanner.Treasure.Notification", SeString.Parse(mapLink.Value.Data.ToArray())));
-
-                ChatGui.Print(sb.Build());
+                Chat.Print(new SeStringBuilder()
+                    .PushColorType(69)
+                    .Append("[LeveHelper] ")
+                    .PopColorType()
+                    .Append(TextService.TranslateSeString("WantedTargetScanner.Treasure.Notification", mapLink.Value))
+                    .ToReadOnlySeString());
 
                 FoundTreasures.Add(obj.EntityId);
             }
@@ -156,15 +136,12 @@ public unsafe class WantedTargetScanner : IDisposable
                 if (mapLink == null)
                     continue;
 
-                var sb = new SeStringBuilder();
-
-                sb.AddUiForeground(69);
-                sb.AddText("[LeveHelper] ");
-                sb.AddUiForegroundOff();
-
-                sb.Append(TextService.TranslateSe("WantedTargetScanner.WantedTarget.Notification", SeString.Parse(mapLink.Value.Data.ToArray())));
-
-                ChatGui.Print(sb.Build());
+                Chat.Print(new SeStringBuilder()
+                    .PushColorType(69)
+                    .Append("[LeveHelper] ")
+                    .PopColorType()
+                    .Append(TextService.TranslateSeString("WantedTargetScanner.WantedTarget.Notification", mapLink.Value))
+                    .ToReadOnlySeString());
 
                 FoundWantedTargets.Add(obj.EntityId);
             }

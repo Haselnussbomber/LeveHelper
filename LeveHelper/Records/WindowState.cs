@@ -9,9 +9,10 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using HaselCommon.Extensions.Sheets;
+using HaselCommon.Game;
+using HaselCommon.Graphics;
 using HaselCommon.Services;
-using HaselCommon.Utils;
-using HaselCommon.Utils.Globals;
 using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Services;
@@ -216,12 +217,12 @@ public record WindowState(
         TextureService.DrawIcon(new GameIconLookup(item.Icon, isLeveRequiredItem), 20);
         ImGui.SameLine();
 
-        var color = Colors.White;
+        var color = Color.White;
 
         if (ItemService.GetQuantity(item) >= neededCount)
-            color = Colors.Green;
+            color = Color.Green;
         else if (ItemService.GetQuantity(item) < neededCount || ItemService.HasAllIngredients(item) == false)
-            color = Colors.Grey;
+            color = Color.Grey;
 
         using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
             ImGui.Selectable($"{(neededCount > 0 ? $"{ItemService.GetQuantity(item)}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
@@ -261,11 +262,11 @@ public record WindowState(
                 ImGui.GetWindowDrawList().AddText(
                     UiBuilder.IconFont, 12,
                     ImGui.GetWindowPos() + pos + new Vector2(2),
-                    Colors.Grey,
+                    Color.Grey,
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
+                ImGui.TextColored(Color.Grey, $"https://www.garlandtools.org/db/#item/{item.RowId}");
                 ImGui.EndTooltip();
             }
         }
@@ -339,18 +340,18 @@ public record WindowState(
         {
             var point = ItemService.GetGatheringPoints(item).First();
             var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-            var rare = !Statics.IsGatheringTypeRare(point.Type);
+            var rare = !Misc.IsGatheringTypeRare(point.Type);
             classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
         }
         else if (ItemService.IsFish(item))
         {
-            classJobIcon = Statics.GetFishingSpotIcon(ItemService.GetFishingSpots(item).First());
+            classJobIcon = ItemService.GetFishingSpots(item).First().GetFishingSpotIcon();
         }
         else if (ItemService.IsSpearfish(item))
         {
             var point = ItemService.GetSpearfishingGatheringPoints(item).First();
             var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-            var rare = !Statics.IsGatheringTypeRare(point.Type);
+            var rare = !Misc.IsGatheringTypeRare(point.Type);
             classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
         }
 

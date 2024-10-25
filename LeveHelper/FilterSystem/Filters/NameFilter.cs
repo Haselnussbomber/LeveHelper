@@ -1,6 +1,5 @@
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
-using HaselCommon.Extensions;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Config;
@@ -62,7 +61,7 @@ public class NameFilter(PluginConfig PluginConfig, TextService TextService) : IF
         if (string.IsNullOrWhiteSpace(Config.CurrentName))
             return false;
 
-        FilterManager!.State.Leves = FilterManager.State.Leves.Where(row => row.Name.ExtractText().Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
+        FilterManager!.State.Leves = FilterManager.State.Leves.Where(row => row.Name.AsReadOnly().ExtractText().Contains(Config.CurrentName, StringComparison.InvariantCultureIgnoreCase));
 
         return true;
     }

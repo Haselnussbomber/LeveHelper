@@ -5,7 +5,6 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
-using HaselCommon.Extensions;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Caches;
@@ -64,7 +63,7 @@ public class QueueTab(
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in WindowState.Gatherable)
                 {
-                    ImGui.TextUnformatted(ExcelService.GetRow<PlaceName>(kv.TerritoryType.PlaceName.Row)?.Name.ExtractText());
+                    ImGui.TextUnformatted(ExcelService.GetRow<PlaceName>(kv.TerritoryType.PlaceName.Row)?.Name.AsReadOnly().ExtractText());
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)

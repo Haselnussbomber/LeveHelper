@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using HaselCommon.Extensions;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Config;
@@ -122,7 +121,7 @@ public class LocationFilter(PluginConfig PluginConfig, TextService TextService, 
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
             .Select(group => group.First())
-            .Select(item => (item.RowId, Name: item.Name.ExtractText()))
+            .Select(item => (item.RowId, Name: item.Name.AsReadOnly().ExtractText()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 

@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Interface.Utility.Raii;
-using HaselCommon.Extensions;
+using HaselCommon.Graphics;
 using HaselCommon.Services;
-using HaselCommon.Utils;
 using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Config;
@@ -18,7 +17,6 @@ public class FilterManager : IDisposable
     private readonly TextService TextService;
     private readonly LeveIssuerCache LeveIssuerCache;
     private readonly LeveService LeveService;
-    private readonly TranslationManager TranslationManager;
 
     public FiltersState State { get; set; }
     public List<IFilter> Filters { get; private set; } = [];
@@ -29,15 +27,13 @@ public class FilterManager : IDisposable
         TextService textService,
         LeveIssuerCache leveIssuerCache,
         LeveService leveService,
-        IEnumerable<IFilter> filters,
-        TranslationManager translationManager)
+        IEnumerable<IFilter> filters)
     {
         State = filtersState;
         PluginConfig = pluginConfig;
         TextService = textService;
         LeveIssuerCache = leveIssuerCache;
         LeveService = leveService;
-        TranslationManager = translationManager;
 
         foreach (var filter in filters)
         {
@@ -49,12 +45,12 @@ public class FilterManager : IDisposable
 
         Update();
 
-        TranslationManager.LanguageChanged += OnLanguageChanged;
+        TextService.LanguageChanged += OnLanguageChanged;
     }
 
     public void Dispose()
     {
-        TranslationManager.LanguageChanged -= OnLanguageChanged;
+        TextService.LanguageChanged -= OnLanguageChanged;
     }
 
     private void OnLanguageChanged(string langCode)
@@ -73,7 +69,7 @@ public class FilterManager : IDisposable
         => item.LeveAssignmentType.Value?.Name ?? "";
 
     private string byName(Leve item)
-        => item.Name.ExtractText();
+        => item.Name.AsReadOnly().ExtractText();
 
     private string byIssuer(Leve item)
     {
@@ -165,7 +161,7 @@ public class FilterManager : IDisposable
 
         var someFilterSet = Filters.Any(filter => filter.HasValue());
 
-        using var treeNodeColor = someFilterSet ? ImRaii.PushColor(ImGuiCol.Text, (uint)Colors.Green) : null;
+        using var treeNodeColor = someFilterSet ? ImRaii.PushColor(ImGuiCol.Text, (uint)Color.Green) : null;
         using var treeNode = ImRaii.TreeNode(TextService.Translate("FilterManager.Title"), ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.FramePadding);
         if (!treeNode.Success)
             return;

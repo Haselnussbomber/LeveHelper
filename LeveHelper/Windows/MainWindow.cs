@@ -6,8 +6,8 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Windowing;
 using ImGuiNET;
 using LeveHelper.Records;
 

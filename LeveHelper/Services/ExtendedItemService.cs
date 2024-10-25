@@ -12,7 +12,7 @@ public class ExtendedItemService : ItemService
     private readonly ItemIngredientsCache ItemIngredientsCache;
     private readonly ItemQuantityCache ItemQuantityCache = new();
 
-    public ExtendedItemService(IClientState clientState, ExcelService excelService, TextService textService) : base(clientState, excelService, textService)
+    public ExtendedItemService(IClientState clientState, ExcelService excelService, SeStringEvaluatorService seStringEvaluatorService) : base(clientState, excelService, seStringEvaluatorService)
     {
         ExcelService = excelService;
         ItemIngredientsCache = new ItemIngredientsCache(excelService, this);

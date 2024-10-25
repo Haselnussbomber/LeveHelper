@@ -1,10 +1,8 @@
-using System.IO;
 using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using HaselCommon.Extensions;
+using HaselCommon.Extensions.DependencyInjection;
 using HaselCommon.Logger;
-using InteropGenerator.Runtime;
 using LeveHelper.Caches;
 using LeveHelper.Config;
 using LeveHelper.Interfaces;
@@ -27,7 +25,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         Service
             // Dalamud & HaselCommon
-            .Initialize(pluginInterface)
+            .Initialize(pluginInterface, pluginLog)
 
             // Logging
             .AddLogging(builder =>

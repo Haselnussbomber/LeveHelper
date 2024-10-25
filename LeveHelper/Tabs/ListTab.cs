@@ -8,9 +8,9 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using HaselCommon.Extensions;
+using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Utils;
 using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Filters;
@@ -168,18 +168,18 @@ public class ListTab(
             // Name
             ImGui.TableNextColumn();
 
-            var color = Colors.Red;
+            var color = Color.Red;
 
             if (isReadyForTurnIn)
                 color = LeveHelperColors.YellowGreen;
             else if (isFailed)
                 color = LeveHelperColors.Freesia;
             else if (isAccepted)
-                color = Colors.Yellow;
+                color = Color.Yellow;
             else if (isComplete)
-                color = Colors.Green;
+                color = Color.Green;
             else if (isTownLocked && item.Town.Row != startTown)
-                color = Colors.Grey;
+                color = Color.Grey;
 
             using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
                 ImGui.Selectable(item.Name);
@@ -224,14 +224,14 @@ public class ListTab(
                     }
                     else if (isComplete)
                     {
-                        ImGuiUtils.Icon(FontAwesomeIcon.Check, Colors.Green);
+                        ImGuiUtils.Icon(FontAwesomeIcon.Check, Color.Green);
                         ImGui.SameLine();
                         TextService.Draw("ListTab.Leve.Tooltip.Status.Completed");
                     }
 
                     else
                     {
-                        ImGuiUtils.Icon(FontAwesomeIcon.Times, Colors.Red);
+                        ImGuiUtils.Icon(FontAwesomeIcon.Times, Color.Red);
                         ImGui.SameLine();
                         TextService.Draw("ListTab.Leve.Tooltip.Status.Incomplete");
                     }
@@ -239,8 +239,8 @@ public class ListTab(
 
                 if (isTownLocked)
                 {
-                    ImGuiUtils.Icon(FontAwesomeIcon.Exclamation, Colors.Yellow);
-                    TextService.Draw("ListTab.Leve.Tooltip.TownLocked", item.Town.Value?.Name.ExtractText() ?? string.Empty);
+                    ImGuiUtils.Icon(FontAwesomeIcon.Exclamation, Color.Yellow);
+                    TextService.Draw("ListTab.Leve.Tooltip.TownLocked", item.Town.Value?.Name.AsReadOnly().ExtractText() ?? string.Empty);
                 }
 
                 /*
@@ -297,8 +297,8 @@ public class ListTab(
                 {
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                     ImGui.BeginTooltip();
-                    ImGuiUtils.Icon(FontAwesomeIcon.ExternalLinkAlt, Colors.Grey);
-                    ImGui.TextColored(Colors.Grey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
+                    ImGuiUtils.Icon(FontAwesomeIcon.ExternalLinkAlt, Color.Grey);
+                    ImGui.TextColored(Color.Grey, $"https://www.garlandtools.org/db/#leve/{item.RowId}");
                     ImGui.EndTooltip();
                 }
                 ImGui.EndPopup();
