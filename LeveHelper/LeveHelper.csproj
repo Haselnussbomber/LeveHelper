@@ -52,7 +52,7 @@
   </Target>
   
   <PropertyGroup>
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
     <OutputPath>..\bin\</OutputPath>
     <DebugType>full</DebugType>
   </PropertyGroup>
