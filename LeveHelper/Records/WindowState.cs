@@ -345,14 +345,21 @@ public record WindowState(
         }
         else if (ItemService.IsFish(item))
         {
-            classJobIcon = ItemService.GetFishingSpots(item).First().GetFishingSpotIcon();
+            var spot = ItemService.GetFishingSpots(item).FirstOrDefault();
+            if (spot != null)
+            {
+                classJobIcon = spot.GetFishingSpotIcon();
+            }
         }
         else if (ItemService.IsSpearfish(item))
         {
-            var point = ItemService.GetSpearfishingGatheringPoints(item).First();
-            var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-            var rare = !Misc.IsGatheringTypeRare(point.Type);
-            classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
+            var point = ItemService.GetSpearfishingGatheringPoints(item).FirstOrDefault();
+            if (point != null)
+            {
+                var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
+                var rare = !Misc.IsGatheringTypeRare(point.Type);
+                classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
+            }
         }
 
         if (showIndicators && classJobIcon != 0)
