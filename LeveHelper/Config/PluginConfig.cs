@@ -94,4 +94,5 @@ public class FilterConfigs
     public LocationFilterConfiguration LocationFilter { get; init; } = new();
     public NameFilterConfiguration NameFilter { get; init; } = new();
     public StatusFilterConfiguration StatusFilter { get; init; } = new();
+    public LevelFilterConfiguration LevelFilter { get; init; } = new();
 }

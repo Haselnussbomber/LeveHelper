@@ -144,15 +144,9 @@ public class FilterManager : IDisposable
         Update();
     }
 
-    public IFilter? GetFilter<T>()
+    public T GetFilter<T>() where T : IFilter
     {
-        return Filters.Find(item => item.GetType() == typeof(T));
-    }
-
-    public void SetValue<T>(dynamic value)
-    {
-        GetFilter<T>()?.Set(value);
-        Update();
+        return (T)Filters.Single(item => item.GetType() == typeof(T));
     }
 
     public void Draw()

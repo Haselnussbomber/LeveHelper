@@ -9,5 +9,4 @@ public interface IFilter
     void Draw();
     bool Run();
     bool HasValue();
-    void Set(dynamic value);
 }

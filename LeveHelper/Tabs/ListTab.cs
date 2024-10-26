@@ -161,7 +161,7 @@ public class ListTab(
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    FilterManager.SetValue<TypeFilter>(item.LeveAssignmentType.Row);
+                    FilterManager.GetFilter<TypeFilter>().Set(item.LeveAssignmentType.Row);
                 }
             }
 
@@ -335,7 +335,7 @@ public class ListTab(
 
                     if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                     {
-                        FilterManager.SetValue<LevemeteFilter>(issuer.RowId);
+                        FilterManager.GetFilter<LevemeteFilter>().Set(issuer.RowId);
                     }
 
                     if (i < issuers.Length - 1)

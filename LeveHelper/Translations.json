@@ -191,6 +191,15 @@
     "de": "Alle"
   },
 
+  "LevelFilter.MinLevel.Label": {
+    "en": "Min Level:",
+    "de": "Mindeststufe:"
+  },
+  "LevelFilter.MaxLevel.Label": {
+    "en": "Max Level:",
+    "de": "Maximalstufe:"
+  },
+
   "LocationFilter.Label": {
     "en": "Location:",
     "de": "Bestimmungsort:"
