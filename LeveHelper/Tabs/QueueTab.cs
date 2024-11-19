@@ -7,21 +7,17 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Caches;
 using LeveHelper.Config;
 using LeveHelper.Records;
 using LeveHelper.Services;
-using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper;
 
 public class QueueTab(
     WindowState WindowState,
     TextService TextService,
-    ExcelService ExcelService,
     LeveService LeveService,
     ExtendedItemService ItemService,
-    LeveRequiredItemsCache LeveRequiredItemsCache,
     PluginConfig PluginConfig)
 {
     public void Draw(Window window)
@@ -63,7 +59,7 @@ public class QueueTab(
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in WindowState.Gatherable)
                 {
-                    ImGui.TextUnformatted(ExcelService.GetRow<PlaceName>(kv.TerritoryType.PlaceName.Row)?.Name.AsReadOnly().ExtractText());
+                    ImGui.TextUnformatted(kv.TerritoryType.Value.PlaceName.Value.Name.ExtractText());
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
@@ -109,7 +105,8 @@ public class QueueTab(
 
         foreach (var leve in LeveService.GetActiveLeves())
         {
-            if (!LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) || requiredItems.Length == 0)
+            var requiredItems = LeveService.GetRequiredItems(leve);
+            if (requiredItems.Length == 0)
                 continue;
 
             needsToCraftItems = true;
@@ -125,7 +122,8 @@ public class QueueTab(
 
             foreach (var leve in LeveService.GetActiveLeves())
             {
-                if (!LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) || requiredItems.Length == 0)
+                var requiredItems = LeveService.GetRequiredItems(leve);
+                if (requiredItems.Length == 0)
                     continue;
 
                 foreach (var item in requiredItems)
@@ -138,7 +136,7 @@ public class QueueTab(
                     {
                         var recipes = ItemService.GetRecipes(item.Item);
 
-                        if (recipes != null && recipes.Length == 1)
+                        if (recipes != null && recipes.Count() == 1)
                             items[item.Item.RowId] = (recipes.First().RowId, item.Amount);
                         else
                             items[item.Item.RowId] = (0, item.Amount);

@@ -13,12 +13,14 @@ using HaselCommon.Extensions.Sheets;
 using HaselCommon.Game;
 using HaselCommon.Graphics;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using ImGuiNET;
-using LeveHelper.Caches;
 using LeveHelper.Services;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
+using Lumina.Extensions;
 using Lumina.Text;
-using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
+using TerritoryType = Lumina.Excel.Sheets.TerritoryType;
 
 namespace LeveHelper.Records;
 
@@ -31,10 +33,9 @@ public record WindowState(
     TeleportService TeleportService,
     ImGuiContextMenuService ImGuiContextMenuService,
     LeveService LeveService,
-    LeveRequiredItemsCache LeveRequiredItemsCache,
     ExtendedItemService ItemService)
 {
-    public RequiredItem[] LeveRequiredItems { get; private set; } = [];
+    public ItemAmount[] LeveRequiredItems { get; private set; } = [];
     public QueuedItem[] RequiredItems { get; private set; } = [];
     public QueuedItem[] Crystals { get; private set; } = [];
     public ZoneItems[] Gatherable { get; private set; } = [];
@@ -44,20 +45,21 @@ public record WindowState(
     public void UpdateList()
     {
         var acceptedCraftAndGatherLeves = LeveService.GetActiveLeves()
-            .Where(leve => LeveRequiredItemsCache.TryGetValue(leve.RowId, out var requiredItems) && requiredItems.Length > 0);
+            .Select(leve => (Leve: leve, Items: LeveService.GetRequiredItems(leve)))
+            .Where(items => items.Items.Length > 0);
 
         // list all items required for CraftLeves and GatherLeves
         LeveRequiredItems = acceptedCraftAndGatherLeves
-            .SelectMany(leve => LeveRequiredItemsCache.GetValue(leve.RowId) ?? [])
+            .SelectMany(entry => entry.Items)
             .ToArray();
 
         // gather a list of all items needed to craft everything
         var neededAmounts = new Dictionary<uint, QueuedItem>();
-        foreach (var leve in acceptedCraftAndGatherLeves)
+        foreach (var li in acceptedCraftAndGatherLeves)
         {
-            foreach (var entry in LeveRequiredItemsCache.GetValue(leve.RowId) ?? [])
+            foreach (var itemAmount in li.Items)
             {
-                TraverseItems(entry.Item, entry.Amount, neededAmounts);
+                TraverseItems(itemAmount.Item, itemAmount.Amount, neededAmounts);
             }
         }
 
@@ -83,37 +85,37 @@ public record WindowState(
             {
                 foreach (var point in ItemService.GetGatheringPoints(entry.Item))
                 {
-                    if (zones.TryGetValue(point.TerritoryType.Row, out var list))
+                    if (zones.TryGetValue(point.TerritoryType.RowId, out var list))
                     {
                         list.Add(entry);
                     }
                     else
                     {
-                        zones.Add(point.TerritoryType.Row, [entry]);
+                        zones.Add(point.TerritoryType.RowId, [entry]);
                     }
                 }
 
                 foreach (var spot in ItemService.GetFishingSpots(entry.Item))
                 {
-                    if (zones.TryGetValue(spot.TerritoryType.Row, out var list))
+                    if (zones.TryGetValue(spot.TerritoryType.RowId, out var list))
                     {
                         list.Add(entry);
                     }
                     else
                     {
-                        zones.Add(spot.TerritoryType.Row, [entry]);
+                        zones.Add(spot.TerritoryType.RowId, [entry]);
                     }
                 }
 
                 foreach (var point in ItemService.GetSpearfishingGatheringPoints(entry.Item))
                 {
-                    if (zones.TryGetValue(point.TerritoryType.Row, out var list))
+                    if (zones.TryGetValue(point.TerritoryType.RowId, out var list))
                     {
                         list.Add(entry);
                     }
                     else
                     {
-                        zones.Add(point.TerritoryType.Row, [entry]);
+                        zones.Add(point.TerritoryType.RowId, [entry]);
                     }
                 }
             }
@@ -128,8 +130,8 @@ public record WindowState(
                     .ThenBy(zone => zone.Key.CompareTo(ClientState.TerritoryType))
                     .First();
 
-                if (!groupedGatherables.ContainsKey(zone.Key))
-                    groupedGatherables.Add(zone.Key, new(ExcelService.GetRow<TerritoryType>(zone.Key)!, zone.Value));
+                if (!groupedGatherables.ContainsKey(zone.Key) && ExcelService.TryGetRow<TerritoryType>(zone.Key, out var territoryType))
+                    groupedGatherables.Add(zone.Key, new(territoryType.AsRef(), zone.Value));
             }
 
             Gatherable = groupedGatherables.Values.Distinct().ToArray();
@@ -171,7 +173,7 @@ public record WindowState(
             neededAmounts.Add(item.RowId, node);
     }
 
-    public void DrawIngredients(string key, RequiredItem[] ingredients, uint parentAmount = 1, int depth = 0)
+    public void DrawIngredients(string key, ItemAmount[] ingredients, uint parentAmount = 1, int depth = 0)
     {
         if (depth > 0)
             ImGui.Indent();
@@ -203,11 +205,8 @@ public record WindowState(
             ImGui.Unindent();
     }
 
-    public void DrawItem(Item item, uint neededCount = 0, string key = "Item", bool showIndicators = false, TerritoryType? territoryType = null)
+    public void DrawItem(Item item, uint neededCount = 0, string key = "Item", bool showIndicators = false, RowRef<TerritoryType> territoryType = default)
     {
-        if (item == null)
-            return;
-
         if (key == "Item")
             key += "_" + item.RowId.ToString();
 
@@ -225,7 +224,7 @@ public record WindowState(
             color = Color.Grey;
 
         using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
-            ImGui.Selectable($"{(neededCount > 0 ? $"{ItemService.GetQuantity(item)}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+            ImGui.Selectable($"{(neededCount > 0 ? $"{ItemService.GetQuantity(item)}/{neededCount} " : "")}{ItemService.GetItemName(item)}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
 
         if (ImGui.IsItemHovered())
         {
@@ -239,7 +238,7 @@ public record WindowState(
             }
             else if (ItemService.IsGatherable(item))
             {
-                if (territoryType != null)
+                if (territoryType.IsValid)
                 {
                     ImGui.SetTooltip(TextService.GetAddonText(8506)); // "Open Map"
                 }
@@ -286,10 +285,10 @@ public record WindowState(
             {
                 unsafe
                 {
-                    if (territoryType != null)
+                    if (territoryType.IsValid)
                     {
-                        var point = ItemService.GetGatheringPoints(item).First(point => point.TerritoryType.Row == territoryType.RowId);
-                        MapService.OpenMap(point, item, "LeveHelper");
+                        var point = ItemService.GetGatheringPoints(item).First(point => point.TerritoryType.RowId == territoryType.RowId);
+                        MapService.OpenMap(point, item.AsRef(), "LeveHelper");
                     }
                     else
                     {
@@ -299,14 +298,14 @@ public record WindowState(
                     ImGui.SetWindowFocus(null);
                 }
             }
-            else if (ItemService.IsFish(item))
+            else if (ItemService.IsFish(item) && ItemService.GetFishingSpots(item).TryGetFirst(out var spot))
             {
-                MapService.OpenMap(ItemService.GetFishingSpots(item).First(), item, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
+                MapService.OpenMap(spot, item.AsRef(), new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
                 ImGui.SetWindowFocus(null);
             }
             else if (ItemService.IsSpearfish(item))
             {
-                MapService.OpenMap(ItemService.GetSpearfishingGatheringPoints(item).First(), item, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
+                MapService.OpenMap(ItemService.GetSpearfishingGatheringPoints(item).First(), item.AsRef(), new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString());
                 ImGui.SetWindowFocus(null);
             }
             else
@@ -317,16 +316,17 @@ public record WindowState(
 
         ImGuiContextMenuService.Draw($"##ItemContextMenu_{key}_Tooltip", (builder) =>
         {
+            var itemRef = item.AsRef();
             builder
-                .AddSearchCraftingMethod(item)
-                .AddSearchGatheringMethod(item)
-                .AddOpenInFishGuide(item)
-                .AddOpenMapForGatheringPoint(item, territoryType, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString())
-                .AddOpenMapForFishingSpot(item, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString())
+                .AddSearchCraftingMethod(itemRef)
+                .AddSearchGatheringMethod(itemRef)
+                .AddOpenInFishGuide(itemRef)
+                .AddOpenMapForGatheringPoint(itemRef, territoryType, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString())
+                .AddOpenMapForFishingSpot(itemRef, new SeStringBuilder().Append("LeveHelper").ToReadOnlySeString())
                 .AddSeparator()
                 .AddItemFinder(item.RowId)
                 .AddCopyItemName(item.RowId)
-                .AddItemSearch(item)
+                .AddItemSearch(itemRef)
                 .AddOpenOnGarlandTools("item", item.RowId);
         });
 
@@ -334,27 +334,27 @@ public record WindowState(
 
         if (ItemService.IsCraftable(item))
         {
-            classJobIcon = 62008 + ItemService.GetRecipes(item).First().CraftType.Row;
+            classJobIcon = 62008 + ItemService.GetRecipes(item).First().CraftType.RowId;
         }
         else if (ItemService.IsGatherable(item))
         {
-            var point = ItemService.GetGatheringPoints(item).First();
-            var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-            var rare = !Misc.IsGatheringTypeRare(point.Type);
-            classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
+            if (ItemService.GetGatheringPoints(item).TryGetFirst(out var point))
+            {
+                var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
+                var rare = !Misc.IsGatheringTypeRare(point.Type);
+                classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
+            }
         }
         else if (ItemService.IsFish(item))
         {
-            var spot = ItemService.GetFishingSpots(item).FirstOrDefault();
-            if (spot != null)
+            if (ItemService.GetFishingSpots(item).TryGetFirst(out var spot))
             {
                 classJobIcon = spot.GetFishingSpotIcon();
             }
         }
         else if (ItemService.IsSpearfish(item))
         {
-            var point = ItemService.GetSpearfishingGatheringPoints(item).FirstOrDefault();
-            if (point != null)
+            if (ItemService.GetSpearfishingGatheringPoints(item).TryGetFirst(out var point))
             {
                 var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
                 var rare = !Misc.IsGatheringTypeRare(point.Type);

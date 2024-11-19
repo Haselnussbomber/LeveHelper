@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
-public record ZoneItems(TerritoryType TerritoryType, HashSet<QueuedItem> Items);
+public record ZoneItems(RowRef<TerritoryType> TerritoryType, HashSet<QueuedItem> Items);

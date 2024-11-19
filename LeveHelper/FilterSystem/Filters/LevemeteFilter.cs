@@ -6,7 +6,6 @@ using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Config;
 using LeveHelper.Interfaces;
-using Lumina.Excel.GeneratedSheets;
 
 namespace LeveHelper.Filters;
 
@@ -97,7 +96,6 @@ public class LevemeteFilter(
         Levemetes = FilterManager!.State.Leves
             .Select(row => LeveIssuerCache.GetValue(row.RowId) ?? [])
             .Where(issuers => issuers.Length != 0)
-            .Cast<ENpcResident[]>()
             .SelectMany(resident => resident)
             .Distinct()
             .Select(item => (item.RowId, Name: TextService.GetENpcResidentName(item.RowId)))

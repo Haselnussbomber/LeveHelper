@@ -44,7 +44,8 @@ var issuers = new uint[] {
 };
 
 var httpClient = new HttpClient();
-httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("LeveHelper.DataGenerator", "0.0.1"));
+httpClient.DefaultRequestHeaders.UserAgent.Clear();
+httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("LeveHelper.DataGenerator/0.0.1");
 
 var gameData = new GameData(args[0]);
 var ENpcResidentSheet = gameData.Excel.GetSheet<ENpcResident>()!;

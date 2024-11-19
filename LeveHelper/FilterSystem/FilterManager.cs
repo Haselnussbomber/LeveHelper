@@ -7,7 +7,7 @@ using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Config;
 using LeveHelper.Interfaces;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
@@ -66,10 +66,10 @@ public class FilterManager : IDisposable
         => item.ClassJobLevel;
 
     private string byType(Leve item)
-        => item.LeveAssignmentType.Value?.Name ?? "";
+        => item.LeveAssignmentType.ValueNullable?.Name.ExtractText() ?? string.Empty;
 
     private string byName(Leve item)
-        => item.Name.AsReadOnly().ExtractText();
+        => item.Name.ExtractText();
 
     private string byIssuer(Leve item)
     {

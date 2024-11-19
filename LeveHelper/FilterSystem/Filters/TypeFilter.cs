@@ -7,7 +7,8 @@ using ImGuiNET;
 using LeveHelper.Config;
 using LeveHelper.Interfaces;
 using LeveHelper.Utils;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Filters;
 
@@ -28,7 +29,7 @@ public class TypeFilter(
 
     public FilterManager? FilterManager { get; set; }
 
-    private Dictionary<string, LeveAssignmentType[]> Groups { get; set; } = [];
+    private Dictionary<string, RowRef<LeveAssignmentType>[]> Groups { get; set; } = [];
 
     public void Reload()
     {
@@ -63,7 +64,7 @@ public class TypeFilter(
         ImGui.SetNextItemWidth(250);
         var preview = Config.SelectedType == 0
             ? TextService.Translate("TypeFilter.Selectable.All")
-            : ExcelService.GetRow<LeveAssignmentType>(Config.SelectedType)?.Name.AsReadOnly().ExtractText() ?? string.Empty;
+            : ExcelService.TryGetRow<LeveAssignmentType>(Config.SelectedType, out var leveAssignmentType) ? leveAssignmentType.Name.ExtractText() : string.Empty;
         using (var combo = ImRaii.Combo("##Combo", preview))
         {
             if (combo)
@@ -80,7 +81,7 @@ public class TypeFilter(
 
                 TextureService.DrawIcon(62501, 20);
                 ImGui.SameLine();
-                if (ImGui.Selectable(ExcelService.GetRow<LeveAssignmentType>(1)!.Name.AsReadOnly().ExtractText() + "##Battlecraft", Config.SelectedType == 1))
+                if (ImGui.Selectable((ExcelService.TryGetRow<LeveAssignmentType>(1, out var battleCraftType) ? battleCraftType.Name.ExtractText() : string.Empty) + "##Battlecraft", Config.SelectedType == 1))
                 {
                     Set(1);
                     FilterManager!.Update();
@@ -96,17 +97,20 @@ public class TypeFilter(
 
                     foreach (var type in group.Value)
                     {
+                        if (!type.IsValid)
+                            continue;
+
                         var indent = "    ";
 
-                        if (type.Icon != 0)
+                        if (type.Value.Icon != 0)
                         {
-                            TextureService.DrawIcon(type.Icon, 20);
+                            TextureService.DrawIcon(type.Value.Icon, 20);
                             ImGui.SameLine();
                             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2);
                             indent = "";
                         }
 
-                        if (ImGui.Selectable($"{indent}{type.Name}##Entry_{type.RowId}", Config.SelectedType == type.RowId))
+                        if (ImGui.Selectable($"{indent}{type.Value.Name.ExtractText()}##Entry_{type.RowId}", Config.SelectedType == type.RowId))
                         {
                             Set(type.RowId);
                             FilterManager!.Update();
@@ -123,7 +127,7 @@ public class TypeFilter(
 
         ImGui.SameLine();
 
-        var suggestedType = ClientState.LocalPlayer?.ClassJob.Id switch
+        var suggestedType = ClientState.LocalPlayer?.ClassJob.RowId switch
         {
             16 => 2, // Miner
             17 => 3, // Botanist
@@ -143,9 +147,9 @@ public class TypeFilter(
 
         if (Config.SelectedType != suggestedType)
         {
-            var suggestedName = suggestedType == 1
-                ? ExcelService.GetRow<LeveAssignmentType>(1)!.Name.AsReadOnly().ExtractText()
-                : ClientState.LocalPlayer?.ClassJob.GameData?.Name?.ToString();
+            var suggestedName = suggestedType == 1 && ExcelService.TryGetRow<LeveAssignmentType>(1, out var battleCraftType)
+                ? battleCraftType.Name.ExtractText()
+                : ClientState.LocalPlayer?.ClassJob.ValueNullable?.Name.ExtractText() ?? string.Empty;
             if (suggestedName != null && ImGui.Button(TextService.Translate("TypeFilter.SetSuggestion", suggestedName)))
             {
                 Set((uint)suggestedType);
@@ -154,11 +158,11 @@ public class TypeFilter(
         }
     }
 
-    private LeveAssignmentType[] CreateGroup(params uint[] ids)
+    private RowRef<LeveAssignmentType>[] CreateGroup(params uint[] ids)
         => ids
-            .Select((rowId) => ExcelService.GetRow<LeveAssignmentType>(rowId))
-            .OfType<LeveAssignmentType>()
-            .OrderBy(entry => entry.Name.AsReadOnly().ExtractText())
+            .Select(rowId => ExcelService.CreateRef<LeveAssignmentType>(rowId))
+            .Where(rowRef => rowRef.IsValid)
+            .OrderBy(rowRef => rowRef.Value.Name.ExtractText())
             .ToArray();
 
     public bool Run()
@@ -166,13 +170,16 @@ public class TypeFilter(
         if (Groups.Count == 0)
         {
             // HowTo#69 => Fieldcraft Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(69)!.Name.AsReadOnly().ExtractText(), CreateGroup(2, 3, 4));
+            if (ExcelService.TryGetRow<HowTo>(69, out var howTo))
+                Groups.Add(howTo.Name.ExtractText(), CreateGroup(2, 3, 4));
 
             // HowTo#67 => Tradecraft Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(67)!.Name.AsReadOnly().ExtractText(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
+            if (ExcelService.TryGetRow(67, out howTo))
+                Groups.Add(howTo.Name.ExtractText(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
 
             // HowTo#112 => Grand Company Leves
-            Groups.Add(ExcelService.GetRow<HowTo>(112)!.Name.AsReadOnly().ExtractText(), CreateGroup(16, 17, 18));
+            if (ExcelService.TryGetRow(112, out howTo))
+                Groups.Add(howTo.Name.ExtractText(), CreateGroup(16, 17, 18));
 
             // HowTo#218 => Temple Leves -- no leve is assigned to these
             //_groups.Add(ExcelService.GetRow<HowTo>(218)!.Name.ExtractText(), CreateGroup(13, 14, 15));
@@ -181,7 +188,7 @@ public class TypeFilter(
         if (Config.SelectedType == 0)
             return false;
 
-        FilterManager!.State.Leves = FilterManager.State.Leves.Where(item => item.LeveAssignmentType.Row == Config.SelectedType);
+        FilterManager!.State.Leves = FilterManager.State.Leves.Where(item => item.LeveAssignmentType.RowId == Config.SelectedType);
 
         return true;
     }

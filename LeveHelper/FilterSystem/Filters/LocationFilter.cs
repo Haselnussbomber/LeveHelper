@@ -6,7 +6,7 @@ using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Config;
 using LeveHelper.Interfaces;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Filters;
 
@@ -99,7 +99,7 @@ public class LocationFilter(PluginConfig PluginConfig, TextService TextService, 
             if (LastTerritoryId != territoryId)
             {
                 LastTerritoryId = territoryId;
-                CurrentPlaceNameId = ExcelService.GetRow<TerritoryType>(territoryId)?.PlaceName?.Row ?? 0;
+                CurrentPlaceNameId = ExcelService.TryGetRow<TerritoryType>(territoryId, out var territoryType) ? territoryType.PlaceName.RowId : 0;
             }
         }
 
@@ -116,19 +116,20 @@ public class LocationFilter(PluginConfig PluginConfig, TextService TextService, 
     public bool Run()
     {
         Locations = FilterManager!.State.Leves
-            .Select(row => row.PlaceNameStartZone.Value)
-            .Where(item => item != null)
+            .Select(row => row.PlaceNameStartZone)
+            .Where(rowRef => rowRef.IsValid)
+            .Select(rowRef => rowRef.Value)
             .Cast<PlaceName>()
             .GroupBy(item => item.RowId)
             .Select(group => group.First())
-            .Select(item => (item.RowId, Name: item.Name.AsReadOnly().ExtractText()))
+            .Select(item => (item.RowId, Name: item.Name.ExtractText()))
             .OrderBy(item => item.Name)
             .ToDictionary(item => item.RowId, item => item.Name);
 
         if (Config.SelectedLocation == 0)
             return false;
 
-        var selection = FilterManager.State.Leves.Where(item => item.PlaceNameStartZone.Row == Config.SelectedLocation);
+        var selection = FilterManager.State.Leves.Where(item => item.PlaceNameStartZone.RowId == Config.SelectedLocation);
         if (!selection.Any())
         {
             Config.SelectedLocation = 0;

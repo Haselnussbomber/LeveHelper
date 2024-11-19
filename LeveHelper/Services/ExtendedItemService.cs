@@ -2,20 +2,19 @@ using System.Linq;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using LeveHelper.Caches;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Services;
 
 public class ExtendedItemService : ItemService
 {
     private readonly ExcelService ExcelService;
-    private readonly ItemIngredientsCache ItemIngredientsCache;
     private readonly ItemQuantityCache ItemQuantityCache = new();
 
-    public ExtendedItemService(IClientState clientState, ExcelService excelService, SeStringEvaluatorService seStringEvaluatorService) : base(clientState, excelService, seStringEvaluatorService)
+    public ExtendedItemService(IClientState clientState, ExcelService excelService, ItemService itemService, TextService textService, SeStringEvaluatorService seStringEvaluatorService)
+        : base(clientState, excelService, textService, seStringEvaluatorService)
     {
         ExcelService = excelService;
-        ItemIngredientsCache = new ItemIngredientsCache(excelService, this);
     }
 
     public void InvalidateQuantity(Item item) => InvalidateQuantity(item.RowId);
@@ -26,10 +25,6 @@ public class ExtendedItemService : ItemService
     public uint GetQuantity(uint itemId)
         => ItemQuantityCache.GetValue(itemId);
 
-    public RequiredItem[] GetIngredients(Item item) => GetIngredients(item.RowId);
-    public RequiredItem[] GetIngredients(uint itemId)
-        => ItemIngredientsCache.GetValue(itemId) ?? [];
-
     public bool HasAllIngredients(Item item) => HasAllIngredients(item.RowId);
     public bool HasAllIngredients(uint itemId)
         => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item.RowId) > ingredient.Amount);
@@ -37,8 +32,7 @@ public class ExtendedItemService : ItemService
     public ItemQueueCategory GetQueueCategory(Item item) => GetQueueCategory(item.RowId);
     public ItemQueueCategory GetQueueCategory(uint itemId)
     {
-        var item = ExcelService.GetRow<Item>(itemId);
-        if (item == null)
+        if (!ExcelService.TryGetRow<Item>(itemId, out var item))
             return ItemQueueCategory.None;
 
         if (IsCrystal(item))

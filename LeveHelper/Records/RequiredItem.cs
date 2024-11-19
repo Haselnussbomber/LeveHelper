@@ -1,15 +1,16 @@
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
 public record RequiredItem
 {
-    public RequiredItem(Item Item, uint Amount)
+    public RequiredItem(RowRef<Item> Item, uint Amount)
     {
         this.Item = Item;
         this.Amount = Amount;
     }
 
-    public Item Item { get; init; }
+    public RowRef<Item> Item { get; init; }
     public uint Amount { get; set; }
 }

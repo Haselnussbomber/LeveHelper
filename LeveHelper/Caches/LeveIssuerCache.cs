@@ -1,16 +1,17 @@
 using System.Linq;
-using HaselCommon.Caching;
+using HaselCommon.Cache;
 using HaselCommon.Services;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Caches;
 
-public class LeveIssuerCache(ExcelService ExcelService) : MemoryCache<uint, ENpcResident[]>
+public class LeveIssuerCache(ExcelService ExcelService) : MemoryCache<uint, RowRef<ENpcResident>[]>
 {
-    public override ENpcResident[]? CreateEntry(uint leveRowId)
+    public override RowRef<ENpcResident>[]? CreateEntry(uint leveRowId)
         => LeveHelper.Data.Issuers
             .Where((kv) => kv.Value.Contains(leveRowId))
             .Distinct()
-            .Select((kv) => ExcelService.GetRow<ENpcResident>(kv.Key)!)
+            .Select((kv) => ExcelService.CreateRef<ENpcResident>(kv.Key))
             .ToArray();
 }

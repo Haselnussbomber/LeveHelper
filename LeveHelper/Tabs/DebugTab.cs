@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using HaselCommon.Extensions.Sheets;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Records;
 using LeveHelper.Services;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
@@ -34,11 +36,10 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
         var itemSheet = ExcelService.GetSheet<Item>();
         foreach (var gatheringItem in ExcelService.GetSheet<GatheringItem>())
         {
-            if (gatheringItem.RowId == 0 || gatheringItem.Item == 0 || gatheringItem.Item >= 1000000)
+            if (gatheringItem.RowId == 0 || gatheringItem.Item.RowId == 0 || gatheringItem.Item.RowId >= 1000000)
                 continue;
 
-            var item = ExcelService.GetRow<Item>((uint)gatheringItem.Item);
-            if (item == null)
+            if (gatheringItem.Item.TryGetValue<Item>(out var item))
                 continue;
 
             ImGui.TableNextRow();
@@ -54,11 +55,11 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
             ImGui.TableNextColumn();
             foreach (var point in ItemService.GetGatheringPoints(gatheringItem))
             {
-                ImGui.TextUnformatted($"{point.RowId} => {point.PlaceName.Value?.Name ?? ""}");
+                ImGui.TextUnformatted($"{point.RowId} => {point.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())
-                    MapService.OpenMap(point, item, "LeveHelper");
+                    MapService.OpenMap(point, item.AsRef(), "LeveHelper");
             }
         }
     }

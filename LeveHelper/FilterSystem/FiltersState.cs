@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HaselCommon.Services;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
@@ -40,7 +40,7 @@ public class FiltersState
     public void Reload()
     {
         AllLeves = ExcelService.GetSheet<Leve>()
-            .Where(row => row.LeveClient.Row != 0 && !ExcludedLeves.Contains(row.RowId))
+            .Where(row => row.LeveClient.RowId != 0 && !ExcludedLeves.Contains(row.RowId))
             .ToArray();
     }
 }

@@ -1,5 +1,5 @@
 using LeveHelper.Services;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 

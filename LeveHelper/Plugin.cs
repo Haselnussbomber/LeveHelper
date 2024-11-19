@@ -46,7 +46,6 @@ public sealed class Plugin : IDalamudPlugin
             .AddSingleton<WindowState>()
             .AddSingleton<WantedTargetScanner>()
             .AddSingleton<LeveIssuerCache>()
-            .AddSingleton<LeveRequiredItemsCache>()
             .AddSingleton<DebugTab>()
             .AddSingleton<ListTab>()
             .AddSingleton<QueueTab>()
