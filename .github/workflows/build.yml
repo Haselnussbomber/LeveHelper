@@ -38,10 +38,11 @@ jobs:
           submodules: true
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           cache: true
           cache-dependency-path: ${{ env.plugin_name }}/packages.lock.json
+          dotnet-version: 8.0.x
 
       - name: Determine Dalamud Branch
         id: branch
@@ -63,7 +64,8 @@ jobs:
             }')[steps.branch.outputs.branch] }}
         run: |
           curl -o latest.zip ${{ env.DALAMUD_URL }}
-          unzip latest.zip -d ~/dalamud/
+          mkdir -p ~/.xlcore/dalamud/Hooks/dev/
+          unzip latest.zip -d ~/.xlcore/dalamud/Hooks/dev/
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
@@ -77,7 +79,7 @@ jobs:
 
       - name: Upload Build Artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: bin/${{ env.plugin_name }}/*
 
@@ -91,21 +93,21 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download Build Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Extract release notes
         id: extract-release-notes
-        uses: ffurrer2/extract-release-notes@v1
+        uses: ffurrer2/extract-release-notes@v2
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.plugin_name }} ${{ github.ref_name }}
           body: ${{ steps.extract-release-notes.outputs.release_notes }}
           files: artifact/*
 
       - name: Trigger Repo Update
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ github.repository_owner }}/MyDalamudPlugins
