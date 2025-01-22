@@ -20,6 +20,7 @@ public class StatusFilterConfiguration
     public CompletedStatus SelectedStatus = CompletedStatus.Any;
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class StatusFilter(
     PluginConfig PluginConfig,
     TextService TextService,

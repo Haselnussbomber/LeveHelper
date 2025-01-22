@@ -1,49 +1,55 @@
+using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using LeveHelper.Caches;
 using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Services;
 
-public class ExtendedItemService : ItemService
+[RegisterSingleton]
+public class ExtendedItemService(IClientState clientState, ExcelService excelService, SeStringEvaluatorService seStringEvaluatorService, TextService textService) : ItemService(clientState, excelService, seStringEvaluatorService, textService)
 {
-    private readonly ExcelService ExcelService;
-    private readonly ItemQuantityCache ItemQuantityCache = new();
+    private readonly ItemQuantityCache _itemQuantityCache = new();
+    private readonly Dictionary<uint, ItemQueueCategory> _itemQueueCategoryCache = [];
 
-    public ExtendedItemService(IClientState clientState, ExcelService excelService, ItemService itemService, TextService textService, SeStringEvaluatorService seStringEvaluatorService)
-        : base(clientState, excelService, textService, seStringEvaluatorService)
-    {
-        ExcelService = excelService;
-    }
+    public void InvalidateQuantity(ItemId itemId)
+        => _itemQuantityCache.Remove(itemId);
 
-    public void InvalidateQuantity(Item item) => InvalidateQuantity(item.RowId);
-    public void InvalidateQuantity(uint itemId)
-        => ItemQuantityCache.Remove(itemId);
+    public uint GetQuantity(ItemId itemId)
+        => _itemQuantityCache.GetValue(itemId);
 
-    public uint GetQuantity(Item item) => GetQuantity(item.RowId);
-    public uint GetQuantity(uint itemId)
-        => ItemQuantityCache.GetValue(itemId);
-
-    public bool HasAllIngredients(Item item) => HasAllIngredients(item.RowId);
-    public bool HasAllIngredients(uint itemId)
+    public bool HasAllIngredients(ItemId itemId)
         => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item.RowId) > ingredient.Amount);
 
-    public ItemQueueCategory GetQueueCategory(Item item) => GetQueueCategory(item.RowId);
-    public ItemQueueCategory GetQueueCategory(uint itemId)
+    public ItemQueueCategory GetQueueCategory(ItemId itemId)
     {
-        if (!ExcelService.TryGetRow<Item>(itemId, out var item))
-            return ItemQueueCategory.None;
+        if (_itemQueueCategoryCache.TryGetValue(itemId, out var category))
+            return category;
 
-        if (IsCrystal(item))
-            return ItemQueueCategory.Crystals;
+        if (!excelService.TryGetRow<Item>(itemId, out var item))
+        {
+            category = ItemQueueCategory.None;
+        }
+        else if (IsCrystal(item))
+        {
+            category = ItemQueueCategory.Crystals;
+        }
+        else if (IsGatherable(item) || IsFish(item) || IsSpearfish(item))
+        {
+            category = ItemQueueCategory.Gatherable;
+        }
+        else if (IsCraftable(item))
+        {
+            category = ItemQueueCategory.Craftable;
+        }
+        else
+        {
+            category = ItemQueueCategory.OtherSources;
+        }
 
-        if (IsGatherable(item) || IsFish(item) || IsSpearfish(item))
-            return ItemQueueCategory.Gatherable;
-
-        if (IsCraftable(item))
-            return ItemQueueCategory.Craftable;
-
-        return ItemQueueCategory.OtherSources;
+        _itemQueueCategoryCache.Add(itemId, category);
+        return category;
     }
 }

@@ -6,6 +6,7 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class FiltersState
 {
     public Leve[] AllLeves { get; private set; } = null!;

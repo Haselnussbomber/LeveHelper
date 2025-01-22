@@ -15,6 +15,7 @@ public class LocationFilterConfiguration
     public uint SelectedLocation = 0;
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class LocationFilter(PluginConfig PluginConfig, TextService TextService, ExcelService ExcelService) : IFilter
 {
     public int Order => 3;

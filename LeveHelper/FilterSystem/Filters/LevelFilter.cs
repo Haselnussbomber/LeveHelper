@@ -16,6 +16,7 @@ public class LevelFilterConfiguration
     public int MaxLevel = 0;
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class LevelFilter(PluginConfig PluginConfig, TextService TextService) : IFilter
 {
     public int Order => 1;

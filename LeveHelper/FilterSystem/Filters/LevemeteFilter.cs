@@ -14,6 +14,7 @@ public class LevemeteFilterConfiguration
     public uint SelectedLevemete = 0;
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class LevemeteFilter(
     PluginConfig PluginConfig,
     TextService TextService,

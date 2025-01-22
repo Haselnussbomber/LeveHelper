@@ -1,16 +1,13 @@
+using System.IO;
 using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using HaselCommon.Extensions.DependencyInjection;
-using HaselCommon.Logger;
-using LeveHelper.Caches;
+using HaselCommon;
+using InteropGenerator.Runtime;
 using LeveHelper.Config;
-using LeveHelper.Interfaces;
-using LeveHelper.Records;
 using LeveHelper.Services;
 using LeveHelper.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace LeveHelper;
 
@@ -23,40 +20,6 @@ public sealed class Plugin : IDalamudPlugin
         ISigScanner sigScanner,
         IDataManager dataManager)
     {
-        Service
-            // Dalamud & HaselCommon
-            .Initialize(pluginInterface, pluginLog)
-
-            // Logging
-            .AddLogging(builder =>
-            {
-                builder.ClearProviders();
-                builder.SetMinimumLevel(LogLevel.Trace);
-                builder.AddProvider(new DalamudLoggerProvider(pluginLog));
-            })
-
-            // Config
-            .AddSingleton(PluginConfig.Load(pluginInterface, pluginLog))
-
-            // LeveHelper
-            .AddSingleton<ExtendedItemService>()
-            .AddIServices<IFilter>()
-            .AddSingleton<FiltersState>()
-            .AddSingleton<FilterManager>()
-            .AddSingleton<WindowState>()
-            .AddSingleton<WantedTargetScanner>()
-            .AddSingleton<LeveIssuerCache>()
-            .AddSingleton<DebugTab>()
-            .AddSingleton<ListTab>()
-            .AddSingleton<QueueTab>()
-            .AddSingleton<RecipeTreeTab>()
-
-            // Windows
-            .AddSingleton<MainWindow>()
-            .AddSingleton<ConfigWindow>();
-
-        Service.BuildProvider();
-
 #if HAS_LOCAL_CS
         FFXIVClientStructs.Interop.Generated.Addresses.Register();
         Resolver.GetInstance.Setup(
@@ -66,7 +29,14 @@ public sealed class Plugin : IDalamudPlugin
         Resolver.GetInstance.Resolve();
 #endif
 
-        // TODO: IHostedService?
+        Service.Collection
+            .AddDalamud(pluginInterface)
+            .AddSingleton(PluginConfig.Load)
+            .AddHaselCommon()
+            .AddLeveHelper();
+
+        Service.BuildProvider();
+
         framework.RunOnFrameworkThread(() =>
         {
             Service.Get<WantedTargetScanner>();

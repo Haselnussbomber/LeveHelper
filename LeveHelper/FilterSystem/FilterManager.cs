@@ -11,9 +11,11 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class FilterManager : IDisposable
 {
     private readonly PluginConfig PluginConfig;
+    private readonly LanguageProvider LanguageProvider;
     private readonly TextService TextService;
     private readonly LeveIssuerCache LeveIssuerCache;
     private readonly LeveService LeveService;
@@ -24,6 +26,7 @@ public class FilterManager : IDisposable
     public FilterManager(
         FiltersState filtersState,
         PluginConfig pluginConfig,
+        LanguageProvider languageProvider,
         TextService textService,
         LeveIssuerCache leveIssuerCache,
         LeveService leveService,
@@ -31,6 +34,7 @@ public class FilterManager : IDisposable
     {
         State = filtersState;
         PluginConfig = pluginConfig;
+        LanguageProvider = languageProvider;
         TextService = textService;
         LeveIssuerCache = leveIssuerCache;
         LeveService = leveService;
@@ -45,12 +49,13 @@ public class FilterManager : IDisposable
 
         Update();
 
-        TextService.LanguageChanged += OnLanguageChanged;
+        LanguageProvider.LanguageChanged += OnLanguageChanged;
     }
 
     public void Dispose()
     {
-        TextService.LanguageChanged -= OnLanguageChanged;
+        LanguageProvider.LanguageChanged -= OnLanguageChanged;
+        GC.SuppressFinalize(this);
     }
 
     private void OnLanguageChanged(string langCode)

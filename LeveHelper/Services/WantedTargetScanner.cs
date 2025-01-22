@@ -11,6 +11,7 @@ using Lumina.Text;
 
 namespace LeveHelper.Services;
 
+[RegisterSingleton]
 public unsafe class WantedTargetScanner : IDisposable
 {
     private readonly IFramework Framework;

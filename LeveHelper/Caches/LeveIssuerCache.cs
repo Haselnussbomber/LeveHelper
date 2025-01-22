@@ -6,6 +6,7 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Caches;
 
+[RegisterSingleton]
 public class LeveIssuerCache(ExcelService ExcelService) : MemoryCache<uint, RowRef<ENpcResident>[]>
 {
     public override RowRef<ENpcResident>[]? CreateEntry(uint leveRowId)

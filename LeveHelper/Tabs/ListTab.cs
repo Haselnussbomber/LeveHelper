@@ -20,6 +20,7 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class ListTab(
     WindowState WindowState,
     FilterManager FilterManager,
@@ -28,8 +29,7 @@ public class ListTab(
     ExcelService ExcelService,
     MapService MapService,
     LeveService LeveService,
-    LeveIssuerCache LeveIssuerCache,
-    ItemService ItemService)
+    LeveIssuerCache LeveIssuerCache)
 {
     private const int TextWrapBreakpoint = 820;
 

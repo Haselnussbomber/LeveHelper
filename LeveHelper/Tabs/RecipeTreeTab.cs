@@ -7,6 +7,7 @@ using LeveHelper.Records;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class RecipeTreeTab(WindowState WindowState, TextService TextService, LeveService LeveService)
 {
     public void Draw(Window window)

@@ -13,6 +13,7 @@ using LeveHelper.Services;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class QueueTab(
     WindowState WindowState,
     TextService TextService,
@@ -59,7 +60,7 @@ public class QueueTab(
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in WindowState.Gatherable)
                 {
-                    ImGui.TextUnformatted(kv.TerritoryType.Value.PlaceName.Value.Name.ExtractText());
+                    ImGui.TextUnformatted(kv.TerritoryType.PlaceName.Value.Name.ExtractText());
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)

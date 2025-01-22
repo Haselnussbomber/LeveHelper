@@ -17,6 +17,7 @@ public class TypeFilterConfiguration
     public uint SelectedType = 0;
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class TypeFilter(
     IClientState ClientState,
     PluginConfig PluginConfig,

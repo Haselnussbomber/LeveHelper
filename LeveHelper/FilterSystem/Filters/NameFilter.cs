@@ -12,6 +12,7 @@ public class NameFilterConfiguration
     public string CurrentName = "";
 }
 
+[RegisterSingleton<IFilter>(Duplicate = DuplicateStrategy.Append)]
 public class NameFilter(PluginConfig PluginConfig, TextService TextService) : IFilter
 {
     public int Order => 0;

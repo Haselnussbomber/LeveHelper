@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Common.Lua;
-using HaselCommon.Extensions.Sheets;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Records;
@@ -11,6 +9,7 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper;
 
+[RegisterSingleton]
 public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapService MapService, ExtendedItemService ItemService)
 {
     [Conditional("DEBUG")]
@@ -59,7 +58,7 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())
-                    MapService.OpenMap(point, item.AsRef(), "LeveHelper");
+                    MapService.OpenMap(point, item, "LeveHelper");
             }
         }
     }

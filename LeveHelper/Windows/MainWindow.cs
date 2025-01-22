@@ -13,8 +13,10 @@ using LeveHelper.Records;
 
 namespace LeveHelper.Windows;
 
+[RegisterSingleton]
 public class MainWindow : SimpleWindow
 {
+    private readonly LanguageProvider LanguageProvider;
     private readonly TextService TextService;
     private readonly AddonObserver AddonObserver;
     private readonly IDalamudPluginInterface PluginInterface;
@@ -37,6 +39,7 @@ public class MainWindow : SimpleWindow
 
     public MainWindow(
         WindowManager windowManager,
+        LanguageProvider languageProvider,
         TextService textService,
         AddonObserver addonObserver,
         IDalamudPluginInterface pluginInterface,
@@ -52,6 +55,7 @@ public class MainWindow : SimpleWindow
         RecipeTreeTab recipeTreeTab,
         ListTab listTab) : base(windowManager, textService.Translate("WindowTitle.Main"))
     {
+        LanguageProvider = languageProvider;
         TextService = textService;
         AddonObserver = addonObserver;
         PluginInterface = pluginInterface;
@@ -101,7 +105,7 @@ public class MainWindow : SimpleWindow
 
         PluginInterface.UiBuilder.OpenMainUi += Toggle;
         PluginInterface.UiBuilder.OpenConfigUi += ConfigWindow.Toggle;
-        TextService.LanguageChanged += OnLanguageChanged;
+        LanguageProvider.LanguageChanged += OnLanguageChanged;
         AddonObserver.AddonOpen += OnAddonOpen;
         AddonObserver.AddonClose += OnAddonClose;
         GameInventory.InventoryChangedRaw += OnInventoryChangedRaw;
@@ -112,12 +116,13 @@ public class MainWindow : SimpleWindow
         GameInventory.InventoryChangedRaw -= OnInventoryChangedRaw;
         AddonObserver.AddonOpen -= OnAddonOpen;
         AddonObserver.AddonClose -= OnAddonClose;
-        TextService.LanguageChanged -= OnLanguageChanged;
+        LanguageProvider.LanguageChanged -= OnLanguageChanged;
         PluginInterface.UiBuilder.OpenConfigUi -= ConfigWindow.Toggle;
         PluginInterface.UiBuilder.OpenMainUi -= Toggle;
         CommandManager.RemoveHandler("/lh");
         CommandManager.RemoveHandler("/levehelper");
         base.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private void OnLanguageChanged(string langCode)

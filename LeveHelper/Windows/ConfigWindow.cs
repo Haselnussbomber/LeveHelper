@@ -6,6 +6,7 @@ using LeveHelper.Config;
 
 namespace LeveHelper.Windows;
 
+[RegisterSingleton]
 public class ConfigWindow : SimpleWindow
 {
     private readonly TextService TextService;
