@@ -3,14 +3,18 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Records;
 using LeveHelper.Services;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper;
+namespace LeveHelper.Tabs;
 
 [RegisterSingleton]
-public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapService MapService, ExtendedItemService ItemService)
+public class DebugTab(
+    CraftQueueState windowState,
+    ExcelService excelService,
+    MapService mapService,
+    ExtendedItemService itemService,
+    TextService textService)
 {
     [Conditional("DEBUG")]
     public void Draw(Window window)
@@ -26,19 +30,18 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
         using var tabItem = ImRaii.TabItem("Gathering Items");
         if (!tabItem) return;
 
-        using var table = ImRaii.Table("##GatheringItemsTable", 3);
+        using var table = ImRaii.Table("##GatheringItemsTable", 3, ImGuiTableFlags.RowBg);
         ImGui.TableSetupColumn("RowId", ImGuiTableColumnFlags.WidthFixed, 50);
         ImGui.TableSetupColumn("Item", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableSetupColumn("GatheringPoints", ImGuiTableColumnFlags.WidthStretch);
         ImGui.TableHeadersRow();
 
-        var itemSheet = ExcelService.GetSheet<Item>();
-        foreach (var gatheringItem in ExcelService.GetSheet<GatheringItem>())
+        foreach (var gatheringItem in excelService.GetSheet<GatheringItem>())
         {
             if (gatheringItem.RowId == 0 || gatheringItem.Item.RowId == 0 || gatheringItem.Item.RowId >= 1000000)
                 continue;
 
-            if (gatheringItem.Item.TryGetValue<Item>(out var item))
+            if (!gatheringItem.Item.TryGetValue<Item>(out var item))
                 continue;
 
             ImGui.TableNextRow();
@@ -47,18 +50,22 @@ public class DebugTab(WindowState WindowState, ExcelService ExcelService, MapSer
             ImGui.TextUnformatted(gatheringItem.RowId.ToString());
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(gatheringItem.Item.ToString());
+            ImGui.TextUnformatted(gatheringItem.Item.RowId.ToString());
             ImGui.SameLine();
-            WindowState.DrawItem(item);
+            windowState.DrawItem(item);
 
             ImGui.TableNextColumn();
-            foreach (var point in ItemService.GetGatheringPoints(gatheringItem))
+
+            using var node = ImRaii.TreeNode($"{itemService.GetGatheringPoints(gatheringItem).Length} Gathering Points###GatheringPoints_{gatheringItem.RowId}", ImGuiTreeNodeFlags.SpanAvailWidth);
+            if (!node) continue;
+
+            foreach (var point in itemService.GetGatheringPoints(gatheringItem))
             {
-                ImGui.TextUnformatted($"{point.RowId} => {point.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty}");
+                ImGui.TextUnformatted($"{point.RowId} => {textService.GetPlaceName(point.PlaceName.RowId)}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())
-                    MapService.OpenMap(point, item, "LeveHelper");
+                    mapService.OpenMap(point, item, "LeveHelper");
             }
         }
     }

@@ -82,6 +82,9 @@
     "en": "Type",
     "de": "Typ"
   },
+  "ListTab.Column.Status": {
+    "en": "Status"
+  },
   "ListTab.Column.Name": {
     "en": "Name",
     "de": "Titel"
@@ -89,6 +92,22 @@
   "ListTab.Column.Levemete": {
     "en": "Levemete",
     "de": "Auftraggeber"
+  },
+  "ListTab.ColumnFilter.RightClickToResetFilters": {
+    "en": "Right-click to reset filter.",
+    "de": "Rechtsklicken, um Filter zurückzusetzen."
+  },
+  "ListTab.ColumnFilter.MiddleClickToSelect": {
+    "en": "Middle-click to select {0}.",
+    "de": "Mittelklicken, um {0} auszuwählen."
+  },
+  "ListTab.ColumnFilter.EnableAll": {
+    "en": "All",
+    "de": "Alle"
+  },
+  "ListTab.ColumnFilter.EnableAny": {
+    "en": "Any",
+    "de": "Beliebig"
   },
   "ListTab.LeveType.Tooltip": {
     "en": "{0}\nRight Click: Filter by Type",
@@ -110,7 +129,7 @@
     "en": "Accepted",
     "de": "Angenommen"
   },
-  "ListTab.Leve.Tooltip.Status.Completed": {
+  "ListTab.Leve.Tooltip.Status.Complete": {
     "en": "Completed",
     "de": "Abgeschlossen"
   },
@@ -133,6 +152,10 @@
   "ListTab.Levemete.ContextMenu.Tooltip": {
     "en": "Left Click: Open Map\nRight Click: Filter by Levemete",
     "de": "Linksklick: Karte öffnen\nRechtsklick: Nach Auftraggeber filtern"
+  },
+  "ListTab.Levemete.ContextMenu.TooltipNoMap": {
+    "en": "Right Click: Filter by Levemete",
+    "de": "Rechtsklick: Nach Auftraggeber filtern"
   },
 
   "QueueTab.NoActiveLevequests": {
@@ -225,17 +248,29 @@
     "en": "Any",
     "de": "Beliebig"
   },
+  "StatusFilter.Status.ReadyForTurnIn": {
+    "en": "Ready for turn in",
+    "de": "Bereit zur Abgabe"
+  },
+  "StatusFilter.Status.Started": {
+    "en": "Started",
+    "de": "Gestartet"
+  },
+  "StatusFilter.Status.Failed": {
+    "en": "Failed",
+    "de": "Fehlgeschlagen"
+  },
+  "StatusFilter.Status.Accepted": {
+    "en": "Accepted",
+    "de": "Angenommen"
+  },
   "StatusFilter.Status.Complete": {
-    "en": "Complete",
+    "en": "Completed",
     "de": "Abgeschlossen"
   },
   "StatusFilter.Status.Incomplete": {
     "en": "Incomplete",
     "de": "Nicht abgeschlossen"
-  },
-  "StatusFilter.Status.Accepted": {
-    "en": "Accepted",
-    "de": "Angenommen"
   },
 
   "TypeFilter.Label": {

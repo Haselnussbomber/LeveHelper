@@ -8,14 +8,13 @@ using Dalamud.Utility;
 using HaselCommon.Services;
 using ImGuiNET;
 using LeveHelper.Config;
-using LeveHelper.Records;
 using LeveHelper.Services;
 
-namespace LeveHelper;
+namespace LeveHelper.Tabs;
 
 [RegisterSingleton]
 public class QueueTab(
-    WindowState WindowState,
+    CraftQueueState WindowState,
     TextService TextService,
     LeveService LeveService,
     ExtendedItemService ItemService,

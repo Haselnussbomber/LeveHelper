@@ -1,76 +1,47 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Command;
-using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Gui;
 using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Records;
+using LeveHelper.Tabs;
 
 namespace LeveHelper.Windows;
 
 [RegisterSingleton]
 public class MainWindow : SimpleWindow
 {
-    private readonly LanguageProvider LanguageProvider;
-    private readonly TextService TextService;
-    private readonly AddonObserver AddonObserver;
-    private readonly IDalamudPluginInterface PluginInterface;
-    private readonly IClientState ClientState;
-    private readonly ICommandManager CommandManager;
-    private readonly IGameInventory GameInventory;
-    private readonly ConfigWindow ConfigWindow;
-    private readonly LeveService LeveService;
-    private readonly WindowState WindowState;
-    private readonly FilterManager FilterManager;
+    private readonly IClientState _clientState;
 
-    private readonly QueueTab QueueTab;
-    private readonly RecipeTreeTab RecipeTreeTab;
-    private readonly ListTab ListTab;
-    private readonly DebugTab DebugTab;
-
-    private readonly CommandInfo CommandInfo;
-
-    private IEnumerable<ushort> LastActiveLevequestIds = [];
+    private readonly QueueTab _queueTab;
+    private readonly RecipeTreeTab _recipeTreeTab;
+    private readonly ListTab _listTab;
+#if DEBUG
+    private readonly DebugTab _debugTab;
+#endif
 
     public MainWindow(
         WindowManager windowManager,
-        LanguageProvider languageProvider,
         TextService textService,
-        AddonObserver addonObserver,
-        IDalamudPluginInterface pluginInterface,
         IClientState clientState,
-        ICommandManager commandManager,
-        IGameInventory gameInventory,
         ConfigWindow configWindow,
-        LeveService leveService,
-        WindowState windowState,
-        FilterManager filterManager,
+
+        // Tabs
+#if DEBUG
         DebugTab debugTab,
+#endif
         QueueTab queueTab,
         RecipeTreeTab recipeTreeTab,
         ListTab listTab) : base(windowManager, textService.Translate("WindowTitle.Main"))
     {
-        LanguageProvider = languageProvider;
-        TextService = textService;
-        AddonObserver = addonObserver;
-        PluginInterface = pluginInterface;
-        ClientState = clientState;
-        CommandManager = commandManager;
-        GameInventory = gameInventory;
-        ConfigWindow = configWindow;
-        LeveService = leveService;
-        WindowState = windowState;
-        FilterManager = filterManager;
+        _clientState = clientState;
 
-        DebugTab = debugTab;
-        QueueTab = queueTab;
-        RecipeTreeTab = recipeTreeTab;
-        ListTab = listTab;
+        _listTab = listTab;
+        _queueTab = queueTab;
+        _recipeTreeTab = recipeTreeTab;
+#if DEBUG
+        _debugTab = debugTab;
+#endif
 
         Size = new Vector2(830, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
@@ -84,95 +55,38 @@ public class MainWindow : SimpleWindow
         {
             Icon = Dalamud.Interface.FontAwesomeIcon.Cog,
             IconOffset = new(0, 1),
-            ShowTooltip = () => ImGui.SetTooltip(textService.Translate($"TitleBarButton.ToggleConfig.Tooltip.{(ConfigWindow.IsOpen ? "Close" : "Open")}Config")),
-            Click = (button) => { ConfigWindow.Toggle(); }
+            ShowTooltip = () =>
+            {
+                using var tooltip = ImRaii.Tooltip();
+                textService.Draw(windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen
+                    ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
+                    : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig");
+            },
+            Click = (button) =>
+            {
+                if (windowManager.TryGetWindow<ConfigWindow>(out var configWindow))
+                    configWindow.Toggle();
+                else
+                    windowManager.CreateOrOpen(Service.Get<ConfigWindow>);
+            }
         });
-
-        ListTab = listTab;
-        QueueTab = queueTab;
-        RecipeTreeTab = recipeTreeTab;
-#if DEBUG
-        DebugTab = debugTab;
-#endif
-
-        CommandInfo = new CommandInfo((_, _) => Toggle())
-        {
-            HelpMessage = textService.Translate("LeveHelper.CommandHandlerHelpMessage")
-        };
-
-        CommandManager.AddHandler("/levehelper", CommandInfo);
-        CommandManager.AddHandler("/lh", CommandInfo);
-
-        PluginInterface.UiBuilder.OpenMainUi += Toggle;
-        PluginInterface.UiBuilder.OpenConfigUi += ConfigWindow.Toggle;
-        LanguageProvider.LanguageChanged += OnLanguageChanged;
-        AddonObserver.AddonOpen += OnAddonOpen;
-        AddonObserver.AddonClose += OnAddonClose;
-        GameInventory.InventoryChangedRaw += OnInventoryChangedRaw;
     }
 
-    public new void Dispose()
+    public override bool DrawConditions()
     {
-        GameInventory.InventoryChangedRaw -= OnInventoryChangedRaw;
-        AddonObserver.AddonOpen -= OnAddonOpen;
-        AddonObserver.AddonClose -= OnAddonClose;
-        LanguageProvider.LanguageChanged -= OnLanguageChanged;
-        PluginInterface.UiBuilder.OpenConfigUi -= ConfigWindow.Toggle;
-        PluginInterface.UiBuilder.OpenMainUi -= Toggle;
-        CommandManager.RemoveHandler("/lh");
-        CommandManager.RemoveHandler("/levehelper");
-        base.Dispose();
-        GC.SuppressFinalize(this);
+        return _clientState.IsLoggedIn;
     }
-
-    private void OnLanguageChanged(string langCode)
-    {
-        CommandInfo.HelpMessage = TextService.Translate("LeveHelper.CommandHandlerHelpMessage");
-    }
-
-    private void Refresh()
-    {
-        WindowState.UpdateList();
-        FilterManager.Update();
-    }
-
-    private void OnInventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
-    {
-        Refresh();
-    }
-
-    private void OnAddonOpen(string addonName)
-    {
-        if (addonName is "Catch")
-            Refresh();
-    }
-
-    private void OnAddonClose(string addonName)
-    {
-        if (addonName is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
-            Refresh();
-    }
-
-    public override void Update()
-    {
-        var activeLevequestIds = LeveService.GetActiveLeveIds();
-        if (!LastActiveLevequestIds.SequenceEqual(activeLevequestIds))
-        {
-            LastActiveLevequestIds = activeLevequestIds;
-            Refresh();
-        }
-    }
-
-    public override bool DrawConditions() => ClientState.IsLoggedIn;
 
     public override void Draw()
     {
         using var tabbar = ImRaii.TabBar("LeveHelperTabs", ImGuiTabBarFlags.Reorderable);
         if (!tabbar) return;
 
-        ListTab.Draw(this);
-        QueueTab.Draw(this);
-        RecipeTreeTab.Draw(this);
-        DebugTab.Draw(this);
+        _listTab.Draw(this);
+        _queueTab.Draw(this);
+        _recipeTreeTab.Draw(this);
+#if DEBUG
+        _debugTab.Draw(this);
+#endif
     }
 }

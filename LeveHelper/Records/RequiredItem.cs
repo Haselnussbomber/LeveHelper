@@ -1,7 +1,7 @@
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper;
+namespace LeveHelper.Records;
 
 public record RequiredItem
 {

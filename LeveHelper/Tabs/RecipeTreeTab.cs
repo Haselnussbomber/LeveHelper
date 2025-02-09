@@ -3,12 +3,12 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Services;
 using ImGuiNET;
-using LeveHelper.Records;
+using LeveHelper.Services;
 
-namespace LeveHelper;
+namespace LeveHelper.Tabs;
 
 [RegisterSingleton]
-public class RecipeTreeTab(WindowState WindowState, TextService TextService, LeveService LeveService)
+public class RecipeTreeTab(CraftQueueState WindowState, TextService TextService, LeveService LeveService)
 {
     public void Draw(Window window)
     {

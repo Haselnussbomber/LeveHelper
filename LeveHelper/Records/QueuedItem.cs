@@ -1,7 +1,7 @@
 using LeveHelper.Services;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper;
+namespace LeveHelper.Records;
 
 public record QueuedItem
 {

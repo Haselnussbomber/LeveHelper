@@ -1,4 +1,4 @@
-namespace LeveHelper;
+namespace LeveHelper.Enums;
 
 public enum ItemQueueCategory
 {

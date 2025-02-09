@@ -1,8 +1,8 @@
-using System.Net.Http.Headers;
 using System.Text;
 using HtmlAgilityPack;
 using Lumina;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
+using Lumina.Extensions;
 
 var issuers = new uint[] {
     1000970, // T'mokkri, Limsa Lominsa Upper Decks (11, 11)
@@ -53,13 +53,27 @@ var LeveSheet = gameData.Excel.GetSheet<Leve>()!;
 
 Directory.CreateDirectory("cache");
 
-Leve? FindLeveByName(string title) => title switch
+bool TryFindLeveByName(string title, out Leve leve)
 {
-    "Blood in the Water (20)" => LeveSheet.GetRow(804), // => "Blood in the Water"
-    "Blood in the Water (68)" => LeveSheet.GetRow(1400), // => "Blood in the Water"
-    "Perhaps Not-So-Common" => LeveSheet.GetRow(1393), // => "Perhaps Not-so-common"
-    "An Historical Flavor" => LeveSheet.GetRow(1644), // => "A Historical Flavor"
-    _ => LeveSheet.FirstOrDefault(leve => leve?.Name?.ToString() == title, null)
+    if (title == "Blood in the Water (20)") // => "Blood in the Water"
+        return LeveSheet.TryGetRow(804, out leve);
+
+    if (title == "Blood in the Water (68)") // => "Blood in the Water"
+        return LeveSheet.TryGetRow(1400, out leve);
+
+    if (title == "An Historical Flavor") // => "A Historical Flavor"
+        return LeveSheet.TryGetRow(1644, out leve);
+
+    var _leve = LeveSheet.FirstOrNull(leve => string.Equals(leve.Name.ExtractText(), title, StringComparison.InvariantCultureIgnoreCase));
+    if (_leve.HasValue)
+    {
+        leve = _leve.Value;
+        return true;
+    }
+
+    Console.WriteLine($"Leve {title} not found.");
+    leve = default;
+    return false;
 };
 
 string Indent(int level, string line) => $"{new string(' ', level * 4)}{line}";
@@ -76,11 +90,10 @@ sb.AppendLine(Indent(1, "{"));
 
 foreach (var issuerId in issuers)
 {
-    var issuer = ENpcResidentSheet.GetRow(issuerId);
-    if (issuer == null)
+    if (!ENpcResidentSheet.TryGetRow(issuerId, out var issuer))
         continue;
 
-    var name = issuer.Singular.ToString();
+    var name = issuer.Singular.ExtractText();
     var body = string.Empty;
     var cacheFile = $"cache/{name}.html";
 
@@ -116,8 +129,7 @@ foreach (var issuerId in issuers)
 
     foreach (var leveName in leveNames)
     {
-        var leve = FindLeveByName(leveName);
-        if (leve == null)
+        if (!TryFindLeveByName(leveName, out var leve))
         {
             Console.WriteLine($"Levequest '{leveName}' by issuer '{leveName}' ({issuerId}) not found");
             continue;
