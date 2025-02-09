@@ -29,7 +29,7 @@ You can search for Leves by Id and Name, and filter by:
 
 The Queue tab displays a list of tasks for accepted Craftleves:
 
-![Queue](https://github.com/user-attachments/assets/d15f44ba-d98e-4e99-a650-0c34c031d7d7)
+![Queue](https://github.com/user-attachments/assets/156f397c-b015-4ae0-b67d-865418aa5500)
 
 (Note: The required item is shown as HQ item, because you will receive bonus rewards when you turn it in).
 
