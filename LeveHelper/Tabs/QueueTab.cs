@@ -60,7 +60,7 @@ public partial class QueueTab
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in _windowState.Gatherable)
                 {
-                    ImGui.TextUnformatted(kv.TerritoryType.PlaceName.Value.Name.ExtractText());
+                    ImGui.TextUnformatted(_textService.GetPlaceName(kv.TerritoryType.PlaceName.RowId));
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
