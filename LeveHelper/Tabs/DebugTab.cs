@@ -9,7 +9,7 @@ namespace LeveHelper.Tabs;
 
 [RegisterSingleton]
 public class DebugTab(
-    CraftQueueState windowState,
+    CraftQueueState state,
     ExcelService excelService,
     MapService mapService,
     ExtendedItemService itemService,
@@ -51,7 +51,7 @@ public class DebugTab(
             ImGui.TableNextColumn();
             ImGui.TextUnformatted(gatheringItem.Item.RowId.ToString());
             ImGui.SameLine();
-            windowState.DrawItem(item);
+            state.DrawItem(item);
 
             ImGui.TableNextColumn();
 

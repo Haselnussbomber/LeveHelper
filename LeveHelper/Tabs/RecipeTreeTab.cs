@@ -7,7 +7,7 @@ using LeveHelper.Services;
 namespace LeveHelper.Tabs;
 
 [RegisterSingleton]
-public class RecipeTreeTab(CraftQueueState WindowState, TextService TextService, LeveService LeveService)
+public class RecipeTreeTab(CraftQueueState State, TextService TextService, LeveService LeveService)
 {
     public void Draw(Window window)
     {
@@ -26,6 +26,6 @@ public class RecipeTreeTab(CraftQueueState WindowState, TextService TextService,
         }
 
         ImGui.Spacing();
-        WindowState.DrawIngredients("RecipeTree", WindowState.LeveRequiredItems, 1);
+        State.DrawIngredients("RecipeTree", State.LeveRequiredItems, 1);
     }
 }

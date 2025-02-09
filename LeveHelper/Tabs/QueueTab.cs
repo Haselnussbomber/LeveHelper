@@ -15,7 +15,7 @@ namespace LeveHelper.Tabs;
 [RegisterSingleton, AutoConstruct]
 public partial class QueueTab
 {
-    private readonly CraftQueueState _windowState;
+    private readonly CraftQueueState _state;
     private readonly TextService _textService;
     private readonly LeveService _leveService;
     private readonly ExtendedItemService _itemService;
@@ -42,53 +42,53 @@ public partial class QueueTab
 
         var i = 0;
 
-        if (_windowState.RequiredItems.Length != 0)
+        if (_state.RequiredItems.Length != 0)
         {
-            if (_windowState.Crystals.Length != 0)
+            if (_state.Crystals.Length != 0)
             {
                 ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Crystals"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in _windowState.Crystals)
+                foreach (var entry in _state.Crystals)
                 {
-                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
-            if (_windowState.Gatherable.Length != 0)
+            if (_state.Gatherable.Length != 0)
             {
                 ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Gather"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var kv in _windowState.Gatherable)
+                foreach (var kv in _state.Gatherable)
                 {
                     ImGui.TextUnformatted(_textService.GetPlaceName(kv.TerritoryType.PlaceName.RowId));
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
                     {
-                        _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
+                        _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
                     }
                 }
             }
 
-            if (_windowState.OtherSources.Length != 0)
+            if (_state.OtherSources.Length != 0)
             {
                 ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Other"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in _windowState.OtherSources)
+                foreach (var entry in _state.OtherSources)
                 {
-                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
-            if (_windowState.Craftable.Length != 0)
+            if (_state.Craftable.Length != 0)
             {
                 ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Craft"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in _windowState.Craftable)
+                foreach (var entry in _state.Craftable)
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
                     // TODO: sort by dependency and job???
-                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
