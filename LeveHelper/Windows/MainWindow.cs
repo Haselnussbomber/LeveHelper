@@ -25,7 +25,7 @@ public partial class MainWindow : SimpleWindow
     [AutoPostConstruct]
     private void Initialize()
     {
-        Size = new Vector2(830, 600);
+        Size = new Vector2(940, 640);
         SizeCondition = ImGuiCond.FirstUseEver;
         SizeConstraints = new()
         {
