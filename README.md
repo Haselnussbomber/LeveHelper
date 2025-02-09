@@ -1,6 +1,6 @@
 # LeveHelper
 
-**LeveHelper** is a small plugin that lists all Levequests, so you can easily keep track of which ones you haven't completed yet.
+**LeveHelper** is a small plugin that helps you keep track of your Levequests.
 
 You will not find this plugin in the official plugin repository.  
 However, you're free to add my custom repository to get updates whenever I release a new version:  
@@ -8,28 +8,37 @@ https://raw.githubusercontent.com/Haselnussbomber/MyDalamudPlugins/main/repo.jso
 
 Open with `/levehelper` or just `/lh`.
 
+## Levequests
+
+This tab displays a filterable Levequests table.
+
 ![Screenshot](https://github.com/user-attachments/assets/2f56a0dc-9ae8-4ff2-904b-95b498ca656e)
 
-The Levequests table is filterable by Id, Name, ...
+You can search for Leves by Id and Name, and filter by:
 
-Min and Max Level,
+- Min and Max Level,  
+  ![Level Filter](https://github.com/user-attachments/assets/eb11aa68-ad3e-4939-a2b5-eefc362faf41)
+- Status,  
+  ![Status Filter](https://github.com/user-attachments/assets/d8edcdd7-1e4a-4732-b0cf-bfaa12901802)
+- Type,  
+  ![Type Filter](https://github.com/user-attachments/assets/87af0d29-0a80-469b-97f3-7b77708649be)
+- and Levemete.  
+  ![Levemete Filter](https://github.com/user-attachments/assets/531831b2-7933-4032-98cf-d3559d7fa2ca)
 
-![Level Filter](https://github.com/user-attachments/assets/eb11aa68-ad3e-4939-a2b5-eefc362faf41)
+## Queue
 
-Status,
-
-![Status Filter](https://github.com/user-attachments/assets/d8edcdd7-1e4a-4732-b0cf-bfaa12901802)
-
-Type,
-
-![Type Filter](https://github.com/user-attachments/assets/87af0d29-0a80-469b-97f3-7b77708649be)
-
-and Levemete.
-
-![Levemete Filter](https://github.com/user-attachments/assets/531831b2-7933-4032-98cf-d3559d7fa2ca)
-
-Additionally, the Queue tab displays a list of tasks for accepted Craftleves:
+The Queue tab displays a list of tasks for accepted Craftleves:
 
 ![Queue](https://github.com/user-attachments/assets/d15f44ba-d98e-4e99-a650-0c34c031d7d7)
 
 (Note: The required item is shown as HQ item, because you will receive bonus rewards when you turn it in).
+
+## Recipe Tree
+
+The Recipe Tree tab displays a list of items you need to craft for accepted Craftleves, including all their ingredients:
+
+![Recipe Tree](https://github.com/user-attachments/assets/21a90b95-f81e-4928-bbd2-3664f877dd9f)
+
+## Notifications
+
+Additionally, when a treasure chest or wanted target is found during a leve, the plugin will print a notification in the chat with a flag link to its location. These can be turned off in the configuration.
