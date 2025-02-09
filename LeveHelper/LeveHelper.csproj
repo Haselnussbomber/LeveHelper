@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoCtor" Version="2.5.0" />
     <PackageReference Include="Injectio" Version="4.0.0" PrivateAssets="all" />
   </ItemGroup>
 

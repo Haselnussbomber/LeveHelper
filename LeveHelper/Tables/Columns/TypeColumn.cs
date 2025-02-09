@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
-[RegisterTransient]
-public class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
+[RegisterTransient, AutoConstruct]
+public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
 {
     private readonly PluginConfig _config;
     private readonly ExcelService _excelService;
@@ -24,17 +24,9 @@ public class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
     private LeveListTable _table = null!;
     private bool _popupOpen;
 
-    public TypeColumn(
-        PluginConfig config,
-        ExcelService excelService,
-        TextService textService,
-        TextureService textureService)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _config = config;
-        _excelService = excelService;
-        _textService = textService;
-        _textureService = textureService;
-
         LabelKey = "ListTab.Column.Type";
         Flags = ImGuiTableColumnFlags.WidthFixed;
         Width = 200;
@@ -167,10 +159,10 @@ public class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
             using var tooltip = ImRaii.Tooltip();
 
             if (_config.Filters.Type != 0)
-                _textService.Draw("ListTab.ColumnFilter.RightClickToResetFilters");
+                ImGui.TextUnformatted(_textService.Translate("ListTab.ColumnFilter.RightClickToResetFilters"));
 
             if (_config.Filters.Type != suggestedType)
-                _textService.Draw("ListTab.ColumnFilter.MiddleClickToSelect", suggestedName);
+                ImGui.TextUnformatted(_textService.Translate("ListTab.ColumnFilter.MiddleClickToSelect", suggestedName));
         }
 
         if (!combo)

@@ -7,9 +7,7 @@ using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Tables;
-using Microsoft.Extensions.Primitives;
 
 namespace LeveHelper.Tabs;
 

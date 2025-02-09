@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using AutoCtor;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -13,14 +14,13 @@ using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
 using HaselCommon.Services.SeStringEvaluation;
-using ImGuiNET;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
-[RegisterTransient]
-public class NameColumn : ColumnString<Leve>
+[RegisterTransient, AutoConstruct]
+public partial class NameColumn : ColumnString<Leve>
 {
     private readonly PluginConfig _config;
     private readonly LeveService _leveService;
@@ -28,19 +28,9 @@ public class NameColumn : ColumnString<Leve>
     private readonly SeStringEvaluatorService _seStringEvaluator;
     private readonly ImGuiContextMenuService _imGuiContextMenu;
 
-    public NameColumn(
-        PluginConfig config,
-        LeveService leveService,
-        ITextureProvider textureProvider,
-        SeStringEvaluatorService seStringEvaluator,
-        ImGuiContextMenuService imGuiContextMenu)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _config = config;
-        _leveService = leveService;
-        _textureProvider = textureProvider;
-        _seStringEvaluator = seStringEvaluator;
-        _imGuiContextMenu = imGuiContextMenu;
-
         LabelKey = "ListTab.Column.Name";
         Width = 2;
 

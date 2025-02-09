@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Plugin.Services;
+using AutoCtor;
 using HaselCommon.Services;
 using HaselCommon.Utils;
 using LeveHelper.Caches;
@@ -9,10 +9,10 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Services;
 
-[RegisterSingleton]
-public class ExtendedItemService(IClientState clientState, ExcelService excelService, SeStringEvaluatorService seStringEvaluatorService, TextService textService) : ItemService(clientState, excelService, seStringEvaluatorService, textService)
+[RegisterTransient, AutoConstruct]
+public partial class ExtendedItemService : ItemService
 {
-    private readonly ExcelService _excelService = excelService;
+    private readonly ExcelService _excelService;
     private readonly ItemQuantityCache _itemQuantityCache = new();
     private readonly Dictionary<uint, ItemQueueCategory> _itemQueueCategoryCache = [];
 

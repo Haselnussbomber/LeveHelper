@@ -1,3 +1,4 @@
+using AutoCtor;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -6,14 +7,13 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
-[RegisterTransient]
-public class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
+[RegisterTransient, AutoConstruct]
+public partial class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
 {
     private readonly PluginConfig _config;
     private readonly TextService _textService;
@@ -21,11 +21,9 @@ public class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
     private LeveListTable _table = null!;
     private bool _popupOpen;
 
-    public LevelColumn(PluginConfig config, TextService textService)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _config = config;
-        _textService = textService;
-
         LabelKey = "ListTab.Column.Level";
         Flags = ImGuiTableColumnFlags.WidthFixed;
         Width = 50;
@@ -101,7 +99,7 @@ public class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
 
         void DrawInput(ref bool changed, string key, ref int value)
         {
-            _textService.Draw($"LevelFilter.{key}.Label");
+            ImGui.TextUnformatted(_textService.Translate($"LevelFilter.{key}.Label"));
 
             ImGui.SetNextItemWidth(250);
             changed |= ImGui.SliderInt("###Input" + key, ref value, 0, maxLevel);

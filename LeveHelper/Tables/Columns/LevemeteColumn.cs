@@ -1,4 +1,5 @@
 using System.Linq;
+using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
@@ -6,17 +7,16 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Caches;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
 public record IssuerEntry(int Id, string Name, uint TerritoryType, string PlaceName);
 
-[RegisterTransient]
-public class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
+[RegisterTransient, AutoConstruct]
+public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
 {
     private readonly PluginConfig _config;
     private readonly TextService _textService;
@@ -29,23 +29,10 @@ public class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable
     private bool _popupOpen;
     private IssuerEntry[] _issuers;
 
-    public LevemeteColumn(
-        PluginConfig config,
-        TextService textService,
-        MapService mapService,
-        IClientState clientState,
-        LeveIssuerCache leveIssuerCache,
-        ResidentLevelCache residentLevelCache)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _config = config;
-        _textService = textService;
-        _mapService = mapService;
-        _clientState = clientState;
-        _leveIssuerCache = leveIssuerCache;
-        _residentLevelCache = residentLevelCache;
-
         LabelKey = "ListTab.Column.Levemete";
-
         _issuers = GetIssuers();
     }
 

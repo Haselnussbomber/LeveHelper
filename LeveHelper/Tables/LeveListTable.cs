@@ -1,4 +1,5 @@
 using System.Linq;
+using AutoCtor;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions.Collections;
@@ -6,15 +7,13 @@ using HaselCommon.Extensions.Strings;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
-using LeveHelper.Tables.LeveListTableColumns;
+using LeveHelper.Tables.Columns;
 using Lumina.Excel.Sheets;
-using static HaselCommon.Globals.ColorHelpers;
 
 namespace LeveHelper.Tables;
 
-[RegisterTransient]
-public class LeveListTable : Table<Leve>
+[RegisterTransient, AutoConstruct]
+public partial class LeveListTable : Table<Leve>
 {
     public static Color ComboBorder { get; } = hex(0x836627);
 
@@ -28,26 +27,17 @@ public class LeveListTable : Table<Leve>
     private readonly ExcelService _excelService;
     private readonly LeveService _leveService;
     private readonly IClientState _clientState;
+    private readonly RowIdColumn rowIdColumn;
+    private readonly LevelColumn levelColumn;
+    private readonly StatusColumn statusColumn;
+    private readonly TypeColumn typeColumn;
+    private readonly NameColumn nameColumn;
+    private readonly LevemeteColumn levemeteColumn;
 
-    public LeveListTable(
-        RowIdColumn rowIdColumn,
-        LevelColumn levelColumn,
-        StatusColumn statusColumn,
-        TypeColumn typeColumn,
-        NameColumn nameColumn,
-        LevemeteColumn levemeteColumn,
-
-        // Services
-        ExcelService excelService,
-        LanguageProvider languageProvider,
-        LeveService leveService,
-
-        // Dalamud Services
-        IClientState clientState) : base("LeveListTable", languageProvider)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _excelService = excelService;
-        _leveService = leveService;
-        _clientState = clientState;
+        Id = "LeveListTable";
 
         Columns = [
             rowIdColumn,
@@ -80,7 +70,7 @@ public class LeveListTable : Table<Leve>
     {
         var town = PlayerState.Instance()->StartTown;
         Rows = _excelService.GetSheet<Leve>()
-            .Where(row => row.LeveClient.RowId != 0 && !ExcludedLeves.Contains(row.RowId) && (_leveService.IsTownLocked(row) ? row.Town.RowId == town : true))
+            .Where(row => row.LeveClient.RowId != 0 && !ExcludedLeves.Contains(row.RowId) && (!_leveService.IsTownLocked(row) || row.Town.RowId == town))
             .ToList();
     }
 

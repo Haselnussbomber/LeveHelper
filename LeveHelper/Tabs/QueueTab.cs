@@ -1,93 +1,94 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Config;
 using LeveHelper.Services;
 
 namespace LeveHelper.Tabs;
 
-[RegisterSingleton]
-public class QueueTab(
-    CraftQueueState WindowState,
-    TextService TextService,
-    LeveService LeveService,
-    ExtendedItemService ItemService,
-    PluginConfig PluginConfig)
+[RegisterSingleton, AutoConstruct]
+public partial class QueueTab
 {
+    private readonly CraftQueueState _windowState;
+    private readonly TextService _textService;
+    private readonly LeveService _leveService;
+    private readonly ExtendedItemService _itemService;
+    private readonly PluginConfig _config;
+
     public void Draw(Window window)
     {
-        using var tab = ImRaii.TabItem(TextService.Translate("Tabs.Queue"));
+        using var tab = ImRaii.TabItem(_textService.Translate("Tabs.Queue"));
         if (!tab) return;
 
         window.RespectCloseHotkey = false;
 
         using var windowId = ImRaii.PushId("##QueueTab");
 
-        if (!LeveService.HasAcceptedLeveQuests())
+        if (!_leveService.HasAcceptedLeveQuests())
         {
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
-            ImGuiHelpers.CenteredText(TextService.Translate("QueueTab.NoActiveLevequests"));
+            ImGuiHelpers.CenteredText(_textService.Translate("QueueTab.NoActiveLevequests"));
             return;
         }
 
-        if (PluginConfig.ShowImportOnTeamCraftButton)
+        if (_config.ShowImportOnTeamCraftButton)
             DrawExportButton();
 
         var i = 0;
 
-        if (WindowState.RequiredItems.Length != 0)
+        if (_windowState.RequiredItems.Length != 0)
         {
-            if (WindowState.Crystals.Length != 0)
+            if (_windowState.Crystals.Length != 0)
             {
-                TextService.Draw("QueueTab.Category.Crystals");
+                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Crystals"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in WindowState.Crystals)
+                foreach (var entry in _windowState.Crystals)
                 {
-                    WindowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
-            if (WindowState.Gatherable.Length != 0)
+            if (_windowState.Gatherable.Length != 0)
             {
-                TextService.Draw("QueueTab.Category.Gather");
+                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Gather"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var kv in WindowState.Gatherable)
+                foreach (var kv in _windowState.Gatherable)
                 {
                     ImGui.TextUnformatted(kv.TerritoryType.PlaceName.Value.Name.ExtractText());
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
                     {
-                        WindowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
+                        _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
                     }
                 }
             }
 
-            if (WindowState.OtherSources.Length != 0)
+            if (_windowState.OtherSources.Length != 0)
             {
-                TextService.Draw("QueueTab.Category.Other");
+                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Other"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in WindowState.OtherSources)
+                foreach (var entry in _windowState.OtherSources)
                 {
-                    WindowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
-            if (WindowState.Craftable.Length != 0)
+            if (_windowState.Craftable.Length != 0)
             {
-                TextService.Draw("QueueTab.Category.Craft");
+                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Craft"));
                 using var indent = ImRaii.PushIndent();
-                foreach (var entry in WindowState.Craftable)
+                foreach (var entry in _windowState.Craftable)
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
                     // TODO: sort by dependency and job???
-                    WindowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _windowState.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
                 }
             }
 
@@ -95,7 +96,7 @@ public class QueueTab(
         }
         else
         {
-            TextService.Draw("QueueTab.ReadyForTurnIn");
+            ImGui.TextUnformatted(_textService.Translate("QueueTab.ReadyForTurnIn"));
         }
     }
 
@@ -103,9 +104,9 @@ public class QueueTab(
     {
         var needsToCraftItems = false;
 
-        foreach (var leve in LeveService.GetActiveLeves())
+        foreach (var leve in _leveService.GetActiveLeves())
         {
-            var requiredItems = LeveService.GetRequiredItems(leve);
+            var requiredItems = _leveService.GetRequiredItems(leve);
             if (requiredItems.Length == 0)
                 continue;
 
@@ -116,13 +117,13 @@ public class QueueTab(
         if (!needsToCraftItems)
             return;
 
-        if (ImGui.Button(TextService.Translate("QueueTab.ImportOnTeamCraft")))
+        if (ImGui.Button(_textService.Translate("QueueTab.ImportOnTeamCraft")))
         {
             var items = new Dictionary<uint, (uint, uint)>(); // itemId = (recipeId, amount)
 
-            foreach (var leve in LeveService.GetActiveLeves())
+            foreach (var leve in _leveService.GetActiveLeves())
             {
-                var requiredItems = LeveService.GetRequiredItems(leve);
+                var requiredItems = _leveService.GetRequiredItems(leve);
                 if (requiredItems.Length == 0)
                     continue;
 
@@ -134,7 +135,7 @@ public class QueueTab(
                     }
                     else
                     {
-                        var recipes = ItemService.GetRecipes(item.Item);
+                        var recipes = _itemService.GetRecipes(item.Item);
 
                         if (recipes != null && recipes.Count() == 1)
                             items[item.Item.RowId] = (recipes.First().RowId, item.Amount);

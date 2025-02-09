@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net8.0-windows7.0": {
+      "AutoCtor": {
+        "type": "Direct",
+        "requested": "[2.5.0, )",
+        "resolved": "2.5.0",
+        "contentHash": "RpVKYLs6CDNI0EAQA786+ZxM3Jj7L3oE72K1MBj1bgKnFSuZSEWhsEjQrCAca3UZvvU7CSxG8V5E8AI6pvBHfg=="
+      },
       "DalamudPackager": {
         "type": "Direct",
         "requested": "[11.0.0, )",

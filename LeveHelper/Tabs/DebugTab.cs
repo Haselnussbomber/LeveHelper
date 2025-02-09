@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Services;
 using Lumina.Excel.Sheets;
 

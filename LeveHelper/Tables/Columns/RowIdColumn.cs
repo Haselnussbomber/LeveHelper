@@ -1,8 +1,7 @@
 using HaselCommon.Gui.ImGuiTable;
-using ImGuiNET;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
 [RegisterTransient]
 public class RowIdColumn : ColumnNumber<Leve>

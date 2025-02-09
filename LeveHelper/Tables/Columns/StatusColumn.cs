@@ -1,36 +1,33 @@
 using System.Linq;
+using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Config;
 using LeveHelper.Enums;
 using Lumina.Excel.Sheets;
 
-namespace LeveHelper.Tables.LeveListTableColumns;
+namespace LeveHelper.Tables.Columns;
 
-[RegisterTransient]
-public class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable>
+[RegisterTransient, AutoConstruct]
+public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable>
 {
     private readonly PluginConfig _config;
     private readonly TextService _textService;
     private readonly LeveService _leveService;
     private readonly LeveStatus _anyFlags = Enum.GetValues<LeveStatus>().Aggregate((a, b) => a | b);
-    private readonly LeveStatus[] _values;
 
     private LeveListTable _table = null!;
     private bool _popupOpen;
+    private LeveStatus[] _values;
     private string[] _names = [];
     private LeveStatus _filterValue;
 
-    public StatusColumn(PluginConfig config, TextService textService, LeveService leveService)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _config = config;
-        _textService = textService;
-        _leveService = leveService;
-
         LabelKey = "ListTab.Column.Status";
         Flags = ImGuiTableColumnFlags.WidthFixed;
         Width = 120;
@@ -93,7 +90,7 @@ public class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable>
     {
         var value = ToStatus(row);
         using (ImRaii.PushColor(ImGuiCol.Text, (uint)(value == LeveStatus.Complete ? Color.Green : (value == LeveStatus.Accepted ? Color.Yellow : Color.Red))))
-            _textService.Draw("StatusFilter.Status." + Enum.GetName(value));
+            ImGui.TextUnformatted(_textService.Translate("StatusFilter.Status." + Enum.GetName(value)));
     }
 
     public override unsafe int Compare(Leve a, Leve b)

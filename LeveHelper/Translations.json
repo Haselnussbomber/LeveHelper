@@ -6,11 +6,12 @@
     "en": "Open Window",
     "de": "Öffne Fenster"
   },
-  "WindowTitle.Main": {
+  "MainWindow.Title": {
     "en": "LeveHelper"
   },
-  "WindowTitle.Configuration": {
-    "en": "LeveHelper Configuration"
+  "ConfigWindow.Title": {
+    "en": "LeveHelper Configuration",
+    "de": "LeveHelper Konfiguration"
   },
   "Config.NotifyWantedTarget": {
     "en": "Notify when Wanted Target is found",

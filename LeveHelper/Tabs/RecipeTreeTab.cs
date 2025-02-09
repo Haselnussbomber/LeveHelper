@@ -2,7 +2,6 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Services;
 
 namespace LeveHelper.Tabs;

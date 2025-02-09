@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using AutoCtor;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
@@ -15,7 +16,6 @@ using HaselCommon.Game;
 using HaselCommon.Graphics;
 using HaselCommon.Services;
 using HaselCommon.Utils;
-using ImGuiNET;
 using LeveHelper.Enums;
 using LeveHelper.Records;
 using Lumina.Excel.Sheets;
@@ -24,8 +24,8 @@ using TerritoryType = Lumina.Excel.Sheets.TerritoryType;
 
 namespace LeveHelper.Services;
 
-[RegisterSingleton]
-public class CraftQueueState : IDisposable
+[RegisterTransient, AutoConstruct]
+public partial class CraftQueueState : IDisposable
 {
     private readonly IClientState _clientState;
     private readonly ExcelService _excelService;
@@ -40,31 +40,9 @@ public class CraftQueueState : IDisposable
     private readonly IFramework _framework;
     private ushort[] _lastActiveLevequestIds = [];
 
-    public CraftQueueState(
-        IClientState clientState,
-        ExcelService excelService,
-        TextureService textureService,
-        TextService textService,
-        MapService mapService,
-        ImGuiContextMenuService imGuiContextMenuService,
-        LeveService leveService,
-        ExtendedItemService itemService,
-        AddonObserver addonObserver,
-        IGameInventory gameInventory,
-        IFramework framework)
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _clientState = clientState;
-        _excelService = excelService;
-        _textureService = textureService;
-        _textService = textService;
-        _mapService = mapService;
-        _imGuiContextMenuService = imGuiContextMenuService;
-        _leveService = leveService;
-        _itemService = itemService;
-        _addonObserver = addonObserver;
-        _gameInventory = gameInventory;
-        _framework = framework;
-
         _addonObserver.AddonOpen += OnAddonOpen;
         _addonObserver.AddonClose += OnAddonClose;
         _gameInventory.InventoryChangedRaw += OnInventoryChangedRaw;
@@ -339,7 +317,7 @@ public class CraftQueueState : IDisposable
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 ImGui.BeginTooltip();
-                _textService.Draw("ItemContextMenu.OpenOnGarlandTools");
+                ImGui.TextUnformatted(_textService.Translate("ItemContextMenu.OpenOnGarlandTools"));
 
                 var pos = ImGui.GetCursorPos();
                 ImGui.GetWindowDrawList().AddText(

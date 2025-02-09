@@ -1,26 +1,20 @@
+using AutoCtor;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Config;
 
 namespace LeveHelper.Windows;
 
-[RegisterSingleton]
-public class ConfigWindow : SimpleWindow
+[RegisterTransient, AutoConstruct]
+public partial class ConfigWindow : SimpleWindow
 {
-    private readonly TextService TextService;
-    private readonly PluginConfig PluginConfig;
+    private readonly TextService _textService;
+    private readonly PluginConfig _config;
 
-    public ConfigWindow(
-        WindowManager windowManager,
-        TextService textService,
-        PluginConfig pluginConfig)
-        : base(windowManager, textService.Translate("WindowTitle.Configuration"))
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        TextService = textService;
-        PluginConfig = pluginConfig;
-
         AllowClickthrough = false;
         AllowPinning = false;
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
@@ -30,34 +24,37 @@ public class ConfigWindow : SimpleWindow
     {
         // Notify when Wanted Target is found
         {
-            var notifyWantedTarget = PluginConfig.NotifyWantedTarget;
-            if (ImGui.Checkbox(TextService.Translate("Config.NotifyWantedTarget"), ref notifyWantedTarget))
+            var notifyWantedTarget = _config.NotifyWantedTarget;
+            if (ImGui.Checkbox(_textService.Translate("Config.NotifyWantedTarget"), ref notifyWantedTarget))
             {
-                PluginConfig.NotifyWantedTarget = notifyWantedTarget;
-                PluginConfig.Save();
+                _config.NotifyWantedTarget = notifyWantedTarget;
+                _config.Save();
             }
         }
 
         // Notify when Treasure is found
         {
-            var notifyTreasure = PluginConfig.NotifyTreasure;
-            if (ImGui.Checkbox(TextService.Translate("Config.NotifyTreasure"), ref notifyTreasure))
+            var notifyTreasure = _config.NotifyTreasure;
+            if (ImGui.Checkbox(_textService.Translate("Config.NotifyTreasure"), ref notifyTreasure))
             {
-                PluginConfig.NotifyTreasure = notifyTreasure;
-                PluginConfig.Save();
+                _config.NotifyTreasure = notifyTreasure;
+                _config.Save();
             }
         }
 
         // Show button to import the crafting list to TeamCraft
         {
-            var showImportOnTeamCraftButton = PluginConfig.ShowImportOnTeamCraftButton;
-            if (ImGui.Checkbox(TextService.Translate("Config.ShowImportOnTeamCraftButton.Label"), ref showImportOnTeamCraftButton))
+            var showImportOnTeamCraftButton = _config.ShowImportOnTeamCraftButton;
+            if (ImGui.Checkbox(_textService.Translate("Config.ShowImportOnTeamCraftButton.Label"), ref showImportOnTeamCraftButton))
             {
-                PluginConfig.ShowImportOnTeamCraftButton = showImportOnTeamCraftButton;
-                PluginConfig.Save();
+                _config.ShowImportOnTeamCraftButton = showImportOnTeamCraftButton;
+                _config.Save();
             }
             using (ImGuiUtils.ConfigIndent())
-                TextService.Draw(Color.Grey, "Config.ShowImportOnTeamCraftButton.Description");
+            using (Color.Grey.Push(ImGuiCol.Text))
+                ImGui.TextUnformatted(_textService.Translate("Config.ShowImportOnTeamCraftButton.Description"));
+
+            ImGui.Spacing();
         }
     }
 }

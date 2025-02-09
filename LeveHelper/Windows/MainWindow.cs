@@ -1,16 +1,18 @@
 using System.Numerics;
+using AutoCtor;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using HaselCommon.Gui;
 using HaselCommon.Services;
-using ImGuiNET;
 using LeveHelper.Tabs;
 
 namespace LeveHelper.Windows;
 
-[RegisterSingleton]
-public class MainWindow : SimpleWindow
+[RegisterTransient, AutoConstruct]
+public partial class MainWindow : SimpleWindow
 {
+    private readonly WindowManager _windowManager;
+    private readonly TextService _textService;
     private readonly IClientState _clientState;
 
     private readonly QueueTab _queueTab;
@@ -20,29 +22,9 @@ public class MainWindow : SimpleWindow
     private readonly DebugTab _debugTab;
 #endif
 
-    public MainWindow(
-        WindowManager windowManager,
-        TextService textService,
-        IClientState clientState,
-        ConfigWindow configWindow,
-
-        // Tabs
-#if DEBUG
-        DebugTab debugTab,
-#endif
-        QueueTab queueTab,
-        RecipeTreeTab recipeTreeTab,
-        ListTab listTab) : base(windowManager, textService.Translate("WindowTitle.Main"))
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        _clientState = clientState;
-
-        _listTab = listTab;
-        _queueTab = queueTab;
-        _recipeTreeTab = recipeTreeTab;
-#if DEBUG
-        _debugTab = debugTab;
-#endif
-
         Size = new Vector2(830, 600);
         SizeCondition = ImGuiCond.FirstUseEver;
         SizeConstraints = new()
@@ -58,16 +40,16 @@ public class MainWindow : SimpleWindow
             ShowTooltip = () =>
             {
                 using var tooltip = ImRaii.Tooltip();
-                textService.Draw(windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen
+                ImGui.TextUnformatted(_textService.Translate(_windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen
                     ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
-                    : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig");
+                    : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig"));
             },
             Click = (button) =>
             {
-                if (windowManager.TryGetWindow<ConfigWindow>(out var configWindow))
+                if (_windowManager.TryGetWindow<ConfigWindow>(out var configWindow))
                     configWindow.Toggle();
                 else
-                    windowManager.CreateOrOpen(Service.Get<ConfigWindow>);
+                    _windowManager.CreateOrOpen(Service.Get<ConfigWindow>);
             }
         });
     }

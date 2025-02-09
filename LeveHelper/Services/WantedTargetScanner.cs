@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using AutoCtor;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
@@ -11,17 +13,11 @@ using Lumina.Text;
 
 namespace LeveHelper.Services;
 
-[RegisterSingleton]
-public unsafe class WantedTargetScanner : IDisposable
+[RegisterTransient, AutoConstruct]
+public unsafe partial class WantedTargetScanner : IDisposable
 {
-    private readonly IFramework Framework;
-    private readonly IObjectTable ObjectTable;
-    private readonly PluginConfig PluginConfig;
-    private readonly TextService TextService;
-    private readonly MapService MapService;
-
     // name ids (= rowid of BNpcName sheet)
-    private readonly List<uint> WantedTargetIds =
+    private static readonly uint[] WantedTargetIds =
     [
         471, // Angry Sow
         472, // Rotting Sentinel
@@ -53,30 +49,26 @@ public unsafe class WantedTargetScanner : IDisposable
         3720, // Tcaridyi
     ];
 
-    private readonly List<uint> FoundWantedTargets = [];
-    private readonly List<uint> FoundTreasures = [];
-    private DateTime LastCheck = DateTime.Now;
-    private Director* LastDirector;
+    private readonly IFramework _framework;
+    private readonly IObjectTable _objectTable;
+    private readonly PluginConfig _pluginConfig;
+    private readonly TextService _textService;
+    private readonly MapService _mapService;
 
-    public WantedTargetScanner(
-        IFramework framework,
-        IObjectTable objectTable,
-        PluginConfig pluginConfig,
-        TextService textService,
-        MapService mapService)
+    private readonly List<uint> _foundWantedTargets = [];
+    private readonly List<uint> _foundTreasures = [];
+    private DateTime _lastCheck = DateTime.Now;
+    private Director* _lastDirector;
+
+    [AutoPostConstruct]
+    private void Initialize()
     {
-        Framework = framework;
-        ObjectTable = objectTable;
-        PluginConfig = pluginConfig;
-        TextService = textService;
-        MapService = mapService;
-
-        Framework.Update += Framework_Update;
+        _framework.Update += Framework_Update;
     }
 
     public void Dispose()
     {
-        Framework.Update -= Framework_Update;
+        _framework.Update -= Framework_Update;
         GC.SuppressFinalize(this);
     }
 
@@ -87,32 +79,32 @@ public unsafe class WantedTargetScanner : IDisposable
 
     private void Framework_Update(IFramework framework)
     {
-        if (!PluginConfig.NotifyTreasure && !PluginConfig.NotifyWantedTarget)
+        if (!_pluginConfig.NotifyTreasure && !_pluginConfig.NotifyWantedTarget)
             return;
 
-        if (DateTime.Now - LastCheck < TimeSpan.FromSeconds(1))
+        if (DateTime.Now - _lastCheck < TimeSpan.FromSeconds(1))
             return;
 
-        LastCheck = DateTime.Now;
+        _lastCheck = DateTime.Now;
 
         var activeDirector = UIState.Instance()->DirectorTodo.Director;
-        if (LastDirector != activeDirector)
+        if (_lastDirector != activeDirector)
         {
-            LastDirector = activeDirector;
-            FoundWantedTargets.Clear();
-            FoundTreasures.Clear();
+            _lastDirector = activeDirector;
+            _foundWantedTargets.Clear();
+            _foundTreasures.Clear();
         }
 
         if (!IsBattleLeveDirector(activeDirector))
             return;
 
-        foreach (var obj in ObjectTable)
+        foreach (var obj in _objectTable)
         {
-            if (PluginConfig.NotifyTreasure
+            if (_pluginConfig.NotifyTreasure
                 && obj.ObjectKind == ObjectKind.Treasure
-                && !FoundTreasures.Contains(obj.EntityId))
+                && !_foundTreasures.Contains(obj.EntityId))
             {
-                var mapLink = MapService.GetMapLink(obj);
+                var mapLink = _mapService.GetMapLink(obj);
                 if (mapLink == null)
                     continue;
 
@@ -120,20 +112,20 @@ public unsafe class WantedTargetScanner : IDisposable
                     .PushColorType(69)
                     .Append("[LeveHelper] ")
                     .PopColorType()
-                    .Append(TextService.TranslateSeString("WantedTargetScanner.Treasure.Notification", mapLink.Value))
+                    .Append(_textService.TranslateSeString("WantedTargetScanner.Treasure.Notification", mapLink.Value))
                     .ToReadOnlySeString());
 
-                FoundTreasures.Add(obj.EntityId);
+                _foundTreasures.Add(obj.EntityId);
             }
 
-            if (PluginConfig.NotifyWantedTarget
+            if (_pluginConfig.NotifyWantedTarget
                 && obj.ObjectKind == ObjectKind.BattleNpc
                 && obj.SubKind == (byte)BattleNpcSubKind.Enemy
-                && !FoundWantedTargets.Contains(obj.EntityId)
+                && !_foundWantedTargets.Contains(obj.EntityId)
                 && obj is IBattleNpc battleNpc
                 && WantedTargetIds.Contains(battleNpc.NameId))
             {
-                var mapLink = MapService.GetMapLink(obj);
+                var mapLink = _mapService.GetMapLink(obj);
                 if (mapLink == null)
                     continue;
 
@@ -141,10 +133,10 @@ public unsafe class WantedTargetScanner : IDisposable
                     .PushColorType(69)
                     .Append("[LeveHelper] ")
                     .PopColorType()
-                    .Append(TextService.TranslateSeString("WantedTargetScanner.WantedTarget.Notification", mapLink.Value))
+                    .Append(_textService.TranslateSeString("WantedTargetScanner.WantedTarget.Notification", mapLink.Value))
                     .ToReadOnlySeString());
 
-                FoundWantedTargets.Add(obj.EntityId);
+                _foundWantedTargets.Add(obj.EntityId);
             }
         }
     }
