@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.5.0] (2025-02-18)
 
 Modernized the plugins code and reworked the Levequests table.
 
@@ -249,6 +249,7 @@ Please report if you found something is not working or if you discover a wanted 
 First release! 🥳
 
 [Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[2.5.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.2.0...v2.3.0
