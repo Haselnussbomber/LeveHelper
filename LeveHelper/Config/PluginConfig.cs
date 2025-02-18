@@ -88,6 +88,9 @@ public partial class PluginConfig
 
 public class FilterConfig
 {
+    // RowIdColumn
+    public uint RowId = 0;
+
     // LevelColumn
     public int MinLevel = 0;
     public int MaxLevel = 0;

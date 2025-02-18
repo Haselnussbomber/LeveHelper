@@ -68,7 +68,7 @@ public partial class MainWindow : SimpleWindow
         _queueTab.Draw(this);
         _recipeTreeTab.Draw(this);
 #if DEBUG
-        _debugTab.Draw(this);
+        //_debugTab.Draw(this);
 #endif
     }
 }

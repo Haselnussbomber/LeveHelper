@@ -276,6 +276,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
     private void SetValue(uint rowId)
     {
         _config.Filters.Type = rowId;
+        _config.Save();
 
         FilterNumber = (int)rowId;
         FilterRegex = null;

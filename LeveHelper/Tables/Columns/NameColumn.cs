@@ -77,6 +77,17 @@ public partial class NameColumn : ColumnString<Leve>
         }
     }
 
+    public override bool ShouldShow(Leve row)
+    {
+        if (!base.ShouldShow(row))
+            return false;
+
+        _config.Filters.Name = FilterValue;
+        _config.Save();
+
+        return true;
+    }
+
     private void DrawLeveTooltip(Leve leve)
     {
         using var id = ImRaii.PushId($"LeveTooltip{leve.RowId}");
@@ -113,7 +124,7 @@ public partial class NameColumn : ColumnString<Leve>
 
         var subTitleBuilder = new StringBuilder();
 
-        subTitleBuilder.Append(_seStringEvaluator.EvaluateFromAddon(35, new SeStringContext() { LocalParameters = [(uint)leve.ClassJobLevel] }));
+        subTitleBuilder.Append(_seStringEvaluator.EvaluateFromAddon(35, [(uint)leve.ClassJobLevel]));
 
         if (leve.JournalGenre.IsValid)
             subTitleBuilder.Append(" • " + leve.JournalGenre.Value.Name.ExtractText());

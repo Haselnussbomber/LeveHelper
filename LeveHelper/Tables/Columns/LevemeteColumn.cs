@@ -73,10 +73,9 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
         for (var i = 0; i < issuers.Length; i++)
         {
             var issuer = issuers[i];
-            var name = _textService.GetENpcResidentName(issuer.RowId);
             var level = _residentLevelCache.GetValue(issuer.RowId);
 
-            ImGui.TextUnformatted(name);
+            ImGui.TextUnformatted(_textService.GetENpcResidentName(issuer.RowId));
 
             if (ImGui.IsItemHovered())
             {
