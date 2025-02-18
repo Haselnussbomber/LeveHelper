@@ -32,6 +32,9 @@ public partial class CommandManager : IDisposable
     {
         DisableMainUiHandler();
 
+        _clientState.Login -= OnLogin;
+        _clientState.Logout -= OnLogout;
+
         _pluginInterface.UiBuilder.OpenConfigUi -= ToggleConfigWindow;
 
         GC.SuppressFinalize(this);
