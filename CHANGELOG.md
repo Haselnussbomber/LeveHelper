@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+Modernized the plugins code and reworked the Levequests table.
+
+- Uses a slightly edited version of Dalamuds Table class.
+  - Filters are now part of the column headers.
+  - For better performance, only visible rows are now rendered. Because of the technical limitation that all rows need to be the same height, the items under the levequest names had to be removed.
+- The Location column has been removed, because it is now displayed next to the levemetes name. If you're in the zone, it appears as normal white text - otherwise the zone name is grayed out.
+- Added new Status filters: Started, Failed, and Ready for Turn In.
+
 ## [2.4.1] (2024-11-20)
 
 Update for 7.1 (Dalamud API 11).
