@@ -41,4 +41,4 @@ The Recipe Tree tab displays a list of items you need to craft for accepted Craf
 
 ## Notifications
 
-Additionally, when a treasure chest or wanted target is found during a leve, the plugin will print a notification in the chat with a flag link to its location. These can be turned off in the configuration.
+When a treasure chest or wanted target is found during a battle leve, the plugin will print a notification in the chat with a flag link to its location. These can be turned off in the configuration.
