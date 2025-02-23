@@ -10,6 +10,7 @@ using HaselCommon.Game;
 using HaselCommon.Services;
 using LeveHelper.Config;
 using Lumina.Text;
+using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 
 namespace LeveHelper.Services;
 
@@ -72,10 +73,9 @@ public unsafe partial class WantedTargetScanner : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public bool IsBattleLeveDirector(Director* director)
-        => director != null &&
-           director->EventHandlerInfo != null &&
-           director->EventHandlerInfo->EventId.ContentId == EventHandlerType.BattleLeveDirector;
+    public bool IsBattleLeveDirector(EventHandler* eventHandler)
+        => eventHandler != null &&
+           eventHandler->Info.EventId.ContentId == EventHandlerType.BattleLeveDirector;
 
     private void Framework_Update(IFramework framework)
     {
@@ -95,7 +95,7 @@ public unsafe partial class WantedTargetScanner : IDisposable
             _foundTreasures.Clear();
         }
 
-        if (!IsBattleLeveDirector(activeDirector))
+        if (!IsBattleLeveDirector((EventHandler*)activeDirector))
             return;
 
         foreach (var obj in _objectTable)
