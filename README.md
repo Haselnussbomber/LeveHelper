@@ -1,6 +1,8 @@
-# LeveHelper
+<img align="left" src="LeveHelper/Assets/Icon.png" height="60px" alt="LeveHelper"/>
 
-**LeveHelper** is a small plugin that helps you keep track of your Levequests.
+**LeveHelper** is a small plugin that helps you keep track of your Levequests.<br/>
+<br/>
+<hr>
 
 You will not find this plugin in the official plugin repository.  
 However, you're free to add my custom repository to get updates whenever I release a new version:  
