@@ -84,11 +84,11 @@ public partial class CommandManager : IDisposable
 
     private void ToggleMainWindow()
     {
-        _windowManager.CreateOrToggle(Service.Get<MainWindow>);
+        _windowManager.CreateOrToggle<MainWindow>();
     }
 
     private void ToggleConfigWindow()
     {
-        _windowManager.CreateOrToggle(Service.Get<ConfigWindow>);
+        _windowManager.CreateOrToggle<ConfigWindow>();
     }
 }
