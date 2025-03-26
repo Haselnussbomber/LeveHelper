@@ -54,18 +54,18 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
 
     public virtual unsafe LeveStatus ToStatus(Leve row)
     {
-        if (_leveService.IsAccepted(row))
+        if (_leveService.IsAccepted(row.RowId))
         {
-            if (_leveService.IsFailed(row))
+            if (_leveService.IsFailed(row.RowId))
                 return LeveStatus.Complete;
-            else if (_leveService.IsReadyForTurnIn(row))
+            else if (_leveService.IsReadyForTurnIn(row.RowId))
                 return LeveStatus.Complete;
-            else if (_leveService.IsStarted(row))
+            else if (_leveService.IsStarted(row.RowId))
                 return LeveStatus.Complete;
 
             return LeveStatus.Accepted;
         }
-        else if (_leveService.IsComplete(row))
+        else if (_leveService.IsComplete(row.RowId))
         {
             return LeveStatus.Complete;
         }

@@ -64,7 +64,7 @@ public class DebugTab(
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())
-                    mapService.OpenMap(point, item, "LeveHelper");
+                    mapService.OpenMap(point, item.RowId, "LeveHelper");
             }
         }
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/11.2.0">
+<Project Sdk="Dalamud.NET.Sdk/12.0.1">
   <PropertyGroup>
-    <Version>2.5.1</Version>
+    <Version>2.5.2</Version>
     <OutputPath>..\bin\</OutputPath>
   </PropertyGroup>
 
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.5.2" PrivateAssets="all" />
+    <PackageReference Include="AutoCtor" Version="2.6.0" PrivateAssets="all" />
     <PackageReference Include="Injectio" Version="4.1.0" PrivateAssets="all" />
   </ItemGroup>
 

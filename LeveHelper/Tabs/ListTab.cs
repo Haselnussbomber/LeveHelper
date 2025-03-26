@@ -71,11 +71,11 @@ public class ListTab(TextService TextService, LeveListTable LeveListTable, LeveS
     private unsafe int GetNumTotalLeves()
     {
         var town = PlayerState.Instance()->StartTown;
-        return LeveListTable.Rows.Count(leve => !LeveService.IsTownLocked(leve) || leve.Town.RowId == town);
+        return LeveListTable.Rows.Count(leve => !LeveService.IsTownLocked(leve.RowId) || leve.Town.RowId == town);
     }
 
     private int GetNumCompletedLeves()
     {
-        return LeveListTable.Rows.Count(leve => LeveService.IsComplete(leve));
+        return LeveListTable.Rows.Count(leve => LeveService.IsComplete(leve.RowId));
     }
 }

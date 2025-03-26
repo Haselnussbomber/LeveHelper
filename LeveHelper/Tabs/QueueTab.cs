@@ -106,7 +106,7 @@ public partial class QueueTab
 
         foreach (var leve in _leveService.GetActiveLeves())
         {
-            var requiredItems = _leveService.GetRequiredItems(leve);
+            var requiredItems = _leveService.GetRequiredItems(leve.RowId);
             if (requiredItems.Length == 0)
                 continue;
 
@@ -123,7 +123,7 @@ public partial class QueueTab
 
             foreach (var leve in _leveService.GetActiveLeves())
             {
-                var requiredItems = _leveService.GetRequiredItems(leve);
+                var requiredItems = _leveService.GetRequiredItems(leve.RowId);
                 if (requiredItems.Length == 0)
                     continue;
 
@@ -135,7 +135,7 @@ public partial class QueueTab
                     }
                     else
                     {
-                        var recipes = _itemService.GetRecipes(item.Item);
+                        var recipes = _itemService.GetRecipes(item.Item.RowId);
 
                         if (recipes != null && recipes.Count() == 1)
                             items[item.Item.RowId] = (recipes.First().RowId, item.Amount);

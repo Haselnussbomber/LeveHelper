@@ -75,7 +75,7 @@ public unsafe partial class WantedTargetScanner : IDisposable
 
     public bool IsBattleLeveDirector(EventHandler* eventHandler)
         => eventHandler != null &&
-           eventHandler->Info.EventId.ContentId == EventHandlerType.BattleLeveDirector;
+           eventHandler->Info.EventId.ContentId == EventHandlerContent.BattleLeveDirector;
 
     private void Framework_Update(IFramework framework)
     {

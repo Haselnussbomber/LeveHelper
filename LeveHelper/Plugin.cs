@@ -1,5 +1,4 @@
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using HaselCommon;
 using LeveHelper.Config;
 using LeveHelper.Services;
@@ -9,7 +8,7 @@ namespace LeveHelper;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public Plugin(IDalamudPluginInterface pluginInterface, IFramework framework)
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
         Service.Collection
             .AddDalamud(pluginInterface)
@@ -17,9 +16,7 @@ public sealed class Plugin : IDalamudPlugin
             .AddHaselCommon()
             .AddLeveHelper();
 
-        Service.BuildProvider();
-
-        framework.RunOnFrameworkThread(() =>
+        Service.Initialize(() =>
         {
             Service.Get<CommandManager>();
             Service.Get<WantedTargetScanner>();

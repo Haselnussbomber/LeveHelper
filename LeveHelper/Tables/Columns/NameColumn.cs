@@ -6,14 +6,13 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using HaselCommon.Extensions.Strings;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using HaselCommon.Services.SeStringEvaluation;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
@@ -25,7 +24,7 @@ public partial class NameColumn : ColumnString<Leve>
     private readonly PluginConfig _config;
     private readonly LeveService _leveService;
     private readonly ITextureProvider _textureProvider;
-    private readonly SeStringEvaluatorService _seStringEvaluator;
+    private readonly SeStringEvaluator _seStringEvaluator;
     private readonly ImGuiContextMenuService _imGuiContextMenu;
 
     [AutoPostConstruct]
@@ -50,7 +49,7 @@ public partial class NameColumn : ColumnString<Leve>
     }
 
     public override string ToName(Leve row)
-        => row.Name.ExtractText().StripSoftHypen();
+        => row.Name.ExtractText().StripSoftHyphen();
 
     public override unsafe void DrawColumn(Leve row)
     {
@@ -58,7 +57,7 @@ public partial class NameColumn : ColumnString<Leve>
 
         if (ImGui.Selectable(ToName(row)))
         {
-            if (_leveService.IsComplete(row) || _leveService.IsAccepted(row))
+            if (_leveService.IsComplete(row.RowId) || _leveService.IsAccepted(row.RowId))
             {
                 AgentQuestJournal.Instance()->OpenForQuest(row.RowId, 2);
             }

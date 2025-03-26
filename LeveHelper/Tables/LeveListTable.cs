@@ -3,7 +3,6 @@ using AutoCtor;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions.Collections;
-using HaselCommon.Extensions.Strings;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
@@ -70,7 +69,7 @@ public partial class LeveListTable : Table<Leve>
     {
         var town = PlayerState.Instance()->StartTown;
         Rows = _excelService.GetSheet<Leve>()
-            .Where(row => row.LeveClient.RowId != 0 && !ExcludedLeves.Contains(row.RowId) && (!_leveService.IsTownLocked(row) || row.Town.RowId == town))
+            .Where(row => row.LeveClient.RowId != 0 && !ExcludedLeves.Contains(row.RowId) && (!_leveService.IsTownLocked(row.RowId) || row.Town.RowId == town))
             .ToList();
     }
 
@@ -81,6 +80,6 @@ public partial class LeveListTable : Table<Leve>
 
     public int GetNeededAllowances()
     {
-        return (_filteredRows ?? Rows).Where(leve => !_leveService.IsComplete(leve)).Sum(row => row.AllowanceCost);
+        return (_filteredRows ?? Rows).Where(leve => !_leveService.IsComplete(leve.RowId)).Sum(row => row.AllowanceCost);
     }
 }
