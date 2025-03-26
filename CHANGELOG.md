@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+Update for 7.2 (Dalamud API 12).
+
 ## [2.5.1] (2025-02-23)
 
 - **Fixed:** An incorrect EventHandlerType check for battle leves, which would spam errors in the log (for example, when in the Firmament).
