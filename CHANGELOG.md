@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Fixed:** Zones for Spearfishing spots in the Queue tab were incorrectly resolved.
+
 ## [2.5.2] (2025-03-26)
 
 Update for 7.2 (Dalamud API 12).
