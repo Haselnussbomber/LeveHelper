@@ -89,7 +89,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
     public override unsafe void DrawColumn(Leve row)
     {
         var value = ToStatus(row);
-        using (ImRaii.PushColor(ImGuiCol.Text, (uint)(value == LeveStatus.Complete ? Color.Green : (value == LeveStatus.Accepted ? Color.Yellow : Color.Red))))
+        using (ImRaii.PushColor(ImGuiCol.Text, value == LeveStatus.Complete ? Color.Green : (value == LeveStatus.Accepted ? Color.Yellow : Color.Red)))
             ImGui.TextUnformatted(_textService.Translate("StatusFilter.Status." + Enum.GetName(value)));
     }
 
@@ -135,7 +135,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         _popupOpen = true;
         var ret = false;
 
-        using var separatorColor = ImRaii.PushColor(ImGuiCol.Separator, (uint)LeveListTable.ComboBorder);
+        using var separatorColor = ImRaii.PushColor(ImGuiCol.Separator, LeveListTable.ComboBorder);
         ImGui.Spacing();
 
         // All

@@ -285,7 +285,7 @@ public partial class CraftQueueState : IDisposable
                 color = Color.Grey;
         }
 
-        using (ImRaii.PushColor(ImGuiCol.Text, (uint)color))
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
             ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item.RowId)}/{neededCount} " : "")}{_textService.GetItemName(item.RowId)}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
 
         if (ImGui.IsItemHovered())
@@ -323,7 +323,7 @@ public partial class CraftQueueState : IDisposable
                 ImGui.GetWindowDrawList().AddText(
                     UiBuilder.IconFont, 12,
                     ImGui.GetWindowPos() + pos + new Vector2(2),
-                    Color.Grey,
+                    Color.Grey.ToUInt(),
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
                 ImGui.SetCursorPos(pos + new Vector2(20, 0));
@@ -338,7 +338,7 @@ public partial class CraftQueueState : IDisposable
             {
                 unsafe
                 {
-                    AgentRecipeNote.Instance()->OpenRecipeByItemId(item.RowId);
+                    AgentRecipeNote.Instance()->SearchRecipeByItemId(item.RowId);
                     ImGui.SetWindowFocus(null);
                 }
             }

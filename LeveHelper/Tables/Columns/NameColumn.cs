@@ -131,7 +131,7 @@ public partial class NameColumn : ColumnString<Leve>
         if (subTitleBuilder.Length > 0)
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
-            using (ImRaii.PushColor(ImGuiCol.Text, (uint)Color.Grey))
+            using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
                 ImGui.TextUnformatted(subTitleBuilder.ToString());
         }
 

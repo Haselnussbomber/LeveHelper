@@ -170,7 +170,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
 
         _popupOpen = true;
 
-        using var color = ImRaii.PushColor(ImGuiCol.Separator, (uint)LeveListTable.ComboBorder);
+        using var color = ImRaii.PushColor(ImGuiCol.Separator, LeveListTable.ComboBorder);
         ImGui.Spacing();
 
         // All

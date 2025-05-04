@@ -142,7 +142,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
 
         _popupOpen = true;
 
-        using var color = ImRaii.PushColor(ImGuiCol.Separator, (uint)LeveListTable.ComboBorder);
+        using var color = ImRaii.PushColor(ImGuiCol.Separator, LeveListTable.ComboBorder);
         ImGui.Spacing();
 
         var ret = false;
@@ -171,7 +171,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
             }
 
             ImGui.TableNextColumn();
-            using (ImRaii.PushColor(ImGuiCol.Text, _clientState.TerritoryType == issuer.TerritoryType ? Color.White : ImGui.GetColorU32(ImGuiCol.TextDisabled)))
+            using (ImRaii.PushColor(ImGuiCol.Text, _clientState.TerritoryType == issuer.TerritoryType ? Color.White.ToUInt() : ImGui.GetColorU32(ImGuiCol.TextDisabled)))
             {
                 ImGui.TextUnformatted(issuer.PlaceName);
             }
