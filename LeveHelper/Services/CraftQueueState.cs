@@ -10,9 +10,9 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using HaselCommon.Extensions.Sheets;
-using HaselCommon.Game;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Services;
 using HaselCommon.Utils;
@@ -402,7 +402,7 @@ public partial class CraftQueueState : IDisposable
             if (_itemService.GetGatheringPoints(item.RowId).TryGetFirst(out var point))
             {
                 var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-                var rare = !Misc.IsGatheringTypeRare(point.Type);
+                var rare = !UIGlobals.IsExportedGatheringPointTimed(point.Type);
                 classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
             }
         }
@@ -416,7 +416,7 @@ public partial class CraftQueueState : IDisposable
             if (_itemService.GetSpearfishingGatheringPoints(item.RowId).TryGetFirst(out var point))
             {
                 var gatheringType = point.GatheringPointBase.Value!.GatheringType.Value!;
-                var rare = !Misc.IsGatheringTypeRare(point.Type);
+                var rare = !UIGlobals.IsExportedGatheringPointTimed(point.Type);
                 classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
             }
         }

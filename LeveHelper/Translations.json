@@ -9,9 +9,25 @@
   "MainWindow.Title": {
     "en": "LeveHelper"
   },
+  "LicensesWindow.Title": {
+    "en": "LeveHelper - Licenses",
+    "de": "LeveHelper - Lizenzen"
+  },
   "ConfigWindow.Title": {
     "en": "LeveHelper Configuration",
     "de": "LeveHelper Konfiguration"
+  },
+  "ConfigWindow.GitHubLink.Tooltip": {
+    "en": "Visit the LeveHelper GitHub Repository",
+    "de": "Zum LeveHelper GitHub Repository"
+  },
+  "ConfigWindow.KoFiLink.Tooltip": {
+    "en": "Support me on Ko-fi",
+    "de": "Unterstütze mich auf Ko-fi"
+  },
+  "ConfigWindow.Licenses": {
+    "en": "Licenses",
+    "de": "Lizenzen"
   },
   "Config.NotifyWantedTarget": {
     "en": "Notify when Wanted Target is found",

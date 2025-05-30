@@ -2,7 +2,6 @@ using System.Linq;
 using AutoCtor;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using HaselCommon.Extensions.Collections;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
@@ -47,7 +46,10 @@ public partial class LeveListTable : Table<Leve>
             levemeteColumn
         ];
 
-        Columns.OfType<IConnectedColumn<LeveListTable>>().ForEach(col => col.SetTable(this));
+        foreach (var col in Columns.OfType<IConnectedColumn<LeveListTable>>())
+        {
+            col.SetTable(this);
+        }
 
         Flags |= ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Hideable;
 

@@ -124,7 +124,7 @@ foreach (var issuerId in issuers)
 
     foreach (var levequestNode in levequestNodes)
     {
-        leveNames.Add(levequestNode.SelectSingleNode(".//td[1]/a").InnerText.Replace(" (Levequest)", ""));
+        leveNames.Add(levequestNode.SelectSingleNode(".//td[1]/a")!.InnerText.Replace(" (Levequest)", ""));
     }
 
     foreach (var leveName in leveNames)

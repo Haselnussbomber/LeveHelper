@@ -3,15 +3,17 @@
   <PropertyGroup>
     <Version>2.5.3</Version>
     <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Translations.json" />
+    <EmbeddedResource Include="LICENSES.md" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.6.0" PrivateAssets="all" />
-    <PackageReference Include="Injectio" Version="4.1.0" PrivateAssets="all" />
+    <PackageReference Include="AutoCtor" Version="2.8.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
