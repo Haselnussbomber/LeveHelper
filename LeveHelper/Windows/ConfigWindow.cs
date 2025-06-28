@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoCtor;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
@@ -12,6 +13,7 @@ namespace LeveHelper.Windows;
 [RegisterTransient, AutoConstruct]
 public partial class ConfigWindow : SimpleWindow
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly TextService _textService;
     private readonly PluginConfig _config;
 
@@ -79,7 +81,7 @@ public partial class ConfigWindow : SimpleWindow
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && Service.TryGet<LicensesWindow>(out var licensesWindow))
+            if (ImGui.IsMouseReleased(ImGuiMouseButton.Left) && _serviceProvider.TryGetService<LicensesWindow>(out var licensesWindow))
             {
                 Task.Run(licensesWindow.Toggle);
             }
