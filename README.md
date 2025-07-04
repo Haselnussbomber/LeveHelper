@@ -1,4 +1,4 @@
-<img align="left" src="LeveHelper/Assets/Icon.png" height="60px" alt="LeveHelper"/>
+<img align="left" src="LeveHelper/Assets/Icon.png" width="60px" height="60px" alt="LeveHelper"/>
 
 **LeveHelper** is a small plugin that helps you keep track of your Levequests.<br/>
 <br/>
