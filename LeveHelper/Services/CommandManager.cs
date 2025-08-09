@@ -1,13 +1,16 @@
+using System.Threading;
+using System.Threading.Tasks;
 using AutoCtor;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using LeveHelper.Windows;
+using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper.Services;
 
-[RegisterTransient, AutoConstruct]
-public partial class CommandManager : IDisposable
+[RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
+public partial class CommandManager : IHostedService
 {
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly WindowManager _windowManager;
@@ -15,8 +18,7 @@ public partial class CommandManager : IDisposable
     private readonly IClientState _clientState;
     private bool _mainUiHandlerRegistered;
 
-    [AutoPostConstruct]
-    private void Initialize()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _commandService.Register("/levehelper", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
         _commandService.Register("/lh", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
@@ -26,9 +28,10 @@ public partial class CommandManager : IDisposable
 
         _clientState.Login += OnLogin;
         _clientState.Logout += OnLogout;
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         DisableMainUiHandler();
 
@@ -37,7 +40,7 @@ public partial class CommandManager : IDisposable
 
         _pluginInterface.UiBuilder.OpenConfigUi -= ToggleConfigWindow;
 
-        GC.SuppressFinalize(this);
+        return Task.CompletedTask;
     }
 
     private void OnLogin()

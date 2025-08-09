@@ -61,7 +61,7 @@ public class ListTab(TextService TextService, LeveListTable LeveListTable, LeveS
             sb.Append(TextService.Translate("ListTab.Completion", numCompletedLeves, numTotalLeves, percent));
         }
 
-        ImGuiHelpers.SafeTextWrapped(sb.ToString());
+        ImGui.TextWrapped(sb.ToString());
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
         ImGui.Separator();

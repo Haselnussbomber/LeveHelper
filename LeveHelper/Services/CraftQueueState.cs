@@ -339,7 +339,7 @@ public partial class CraftQueueState : IDisposable
                 unsafe
                 {
                     AgentRecipeNote.Instance()->SearchRecipeByItemId(item.RowId);
-                    ImGui.SetWindowFocus(null);
+                    ImGui.ClearWindowFocus();
                 }
             }
             // TODO: preferance setting?
@@ -357,18 +357,18 @@ public partial class CraftQueueState : IDisposable
                         AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.RowId);
                     }
 
-                    ImGui.SetWindowFocus(null);
+                    ImGui.ClearWindowFocus();
                 }
             }
             else if (_itemService.IsFish(item.RowId) && _itemService.GetFishingSpots(item.RowId).TryGetFirst(out var spot))
             {
                 _mapService.OpenMap(spot, item.RowId, "LeveHelper");
-                ImGui.SetWindowFocus(null);
+                ImGui.ClearWindowFocus();
             }
             else if (_itemService.IsSpearfish(item.RowId))
             {
                 _mapService.OpenMap(_itemService.GetSpearfishingGatheringPoints(item.RowId).First(), item.RowId, "LeveHelper");
-                ImGui.SetWindowFocus(null);
+                ImGui.ClearWindowFocus();
             }
             else
             {

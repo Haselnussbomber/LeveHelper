@@ -95,7 +95,7 @@ public partial class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveList
         _popupOpen = true;
 
         var playerState = PlayerState.Instance();
-        var maxLevel = playerState->IsLoaded == 1 ? playerState->MaxLevel : 100;
+        var maxLevel = playerState->IsLoaded ? playerState->MaxLevel : 100;
 
         void DrawInput(ref bool changed, string key, ref int value)
         {

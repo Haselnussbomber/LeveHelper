@@ -24,7 +24,7 @@ public partial class NameColumn : ColumnString<Leve>
     private readonly PluginConfig _config;
     private readonly LeveService _leveService;
     private readonly ITextureProvider _textureProvider;
-    private readonly SeStringEvaluator _seStringEvaluator;
+    private readonly ISeStringEvaluator _seStringEvaluator;
     private readonly ImGuiContextMenuService _imGuiContextMenu;
 
     [AutoPostConstruct]
@@ -138,7 +138,7 @@ public partial class NameColumn : ColumnString<Leve>
         if (leve.IconIssuer != 0 && _textureProvider.TryGetFromGameIcon(leve.IconIssuer, out var imageTex) && imageTex.TryGetWrap(out var image, out _))
         {
             DrawSeparator(marginTop: 1, marginBottom: 5);
-            ImGui.Image(image.ImGuiHandle, GetContainedSize(image.Size));
+            ImGui.Image(image.Handle, GetContainedSize(image.Size));
         }
 
         DrawSeparator(marginTop: 1, marginBottom: 4);
@@ -147,7 +147,7 @@ public partial class NameColumn : ColumnString<Leve>
         if (hasIcon && icon != null)
         {
             ImGui.TableNextColumn(); // Icon
-            ImGui.Image(icon.ImGuiHandle, icon.Size / 2f);
+            ImGui.Image(icon.Handle, icon.Size / 2f);
         }
     }
 

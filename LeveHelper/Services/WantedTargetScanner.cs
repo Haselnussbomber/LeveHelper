@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoCtor;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -10,12 +12,13 @@ using HaselCommon.Game;
 using HaselCommon.Services;
 using LeveHelper.Config;
 using Lumina.Text;
+using Microsoft.Extensions.Hosting;
 using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 
 namespace LeveHelper.Services;
 
-[RegisterTransient, AutoConstruct]
-public unsafe partial class WantedTargetScanner : IDisposable
+[RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
+public unsafe partial class WantedTargetScanner : IHostedService
 {
     // name ids (= rowid of BNpcName sheet)
     private static readonly uint[] WantedTargetIds =
@@ -61,16 +64,16 @@ public unsafe partial class WantedTargetScanner : IDisposable
     private DateTime _lastCheck = DateTime.Now;
     private Director* _lastDirector;
 
-    [AutoPostConstruct]
-    private void Initialize()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _framework.Update += Framework_Update;
+        return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         _framework.Update -= Framework_Update;
-        GC.SuppressFinalize(this);
+        return Task.CompletedTask;
     }
 
     public bool IsBattleLeveDirector(EventHandler* eventHandler)

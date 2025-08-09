@@ -1,34 +1,34 @@
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using LeveHelper.Config;
-using LeveHelper.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    private readonly ServiceProvider _serviceProvider;
+    private readonly IHost _host;
 
-    public Plugin(IDalamudPluginInterface pluginInterface, IFramework framework)
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
-        _serviceProvider = new ServiceCollection()
-            .AddDalamud(pluginInterface)
-            .AddSingleton(PluginConfig.Load)
-            .AddHaselCommon()
-            .AddLeveHelper()
-            .BuildServiceProvider();
+        _host = new HostBuilder()
+            .UseContentRoot(pluginInterface.AssemblyLocation.Directory!.FullName)
+            .ConfigureServices(services =>
+            {
+                services.AddDalamud(pluginInterface);
+                services.AddSingleton(PluginConfig.Load);
+                services.AddHaselCommon();
+                services.AddLeveHelper();
+            })
+            .Build();
 
-        framework.RunOnFrameworkThread(() =>
-        {
-            _serviceProvider.GetRequiredService<CommandManager>();
-            _serviceProvider.GetRequiredService<WantedTargetScanner>();
-        });
+        _host.Start();
     }
 
     void IDisposable.Dispose()
     {
-        _serviceProvider.Dispose();
+        _host.StopAsync().GetAwaiter().GetResult();
+        _host.Dispose();
     }
 }
