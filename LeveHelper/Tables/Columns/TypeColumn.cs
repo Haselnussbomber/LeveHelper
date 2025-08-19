@@ -45,15 +45,15 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
 
         // HowTo#69 => Fieldcraft Leves
         if (_excelService.TryGetRow<HowTo>(69, out var howTo))
-            _groups.Add(howTo.Name.ExtractText(), CreateGroup(2, 3, 4));
+            _groups.Add(howTo.Name.ToString(), CreateGroup(2, 3, 4));
 
         // HowTo#67 => Tradecraft Leves
         if (_excelService.TryGetRow(67, out howTo))
-            _groups.Add(howTo.Name.ExtractText(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
+            _groups.Add(howTo.Name.ToString(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
 
         // HowTo#112 => Grand Company Leves
         if (_excelService.TryGetRow(112, out howTo))
-            _groups.Add(howTo.Name.ExtractText(), CreateGroup(13, 14, 15));
+            _groups.Add(howTo.Name.ToString(), CreateGroup(13, 14, 15));
     }
 
     private LeveAssignmentType[] CreateGroup(params uint[] rowIds)
@@ -66,7 +66,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
                 list.Add(row);
         }
 
-        return [.. list.OrderBy(row => row.Name.ExtractText())];
+        return [.. list.OrderBy(row => row.Name.ToString())];
     }
 
     public override int ToValue(Leve row)
@@ -95,7 +95,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             ImGui.BeginGroup();
             _textureService.DrawIcon(typeIcon, ImGui.GetTextLineHeight());
             ImGui.SameLine();
-            ImGui.Text(row.LeveAssignmentType.ValueNullable?.Name.ExtractText() ?? string.Empty);
+            ImGui.Text(row.LeveAssignmentType.ValueNullable?.Name.ToString() ?? string.Empty);
             ImGui.EndGroup();
 
             if (ImGui.IsItemHovered())
@@ -238,10 +238,10 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
     private unsafe string GetSuggestedTypeName(int suggestedType)
     {
         if (suggestedType == 1 && _excelService.TryGetRow<LeveAssignmentType>(1, out var suggestedBattleCraftType))
-            return suggestedBattleCraftType.Name.ExtractText();
+            return suggestedBattleCraftType.Name.ToString();
 
         if (_excelService.TryGetRow<ClassJob>(PlayerState.Instance()->CurrentClassJobId, out var classJob))
-            return classJob.Name.ExtractText();
+            return classJob.Name.ToString();
 
         return string.Empty;
     }
@@ -257,7 +257,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         }
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-        ImGui.Text(type.Name.ExtractText());
+        ImGui.Text(type.Name.ToString());
 
         if (clicked)
         {

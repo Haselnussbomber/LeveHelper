@@ -49,7 +49,7 @@ public partial class NameColumn : ColumnString<Leve>
     }
 
     public override string ToName(Leve row)
-        => row.Name.ExtractText().StripSoftHyphen();
+        => row.Name.ToString();
 
     public override unsafe void DrawColumn(Leve row)
     {
@@ -108,7 +108,7 @@ public partial class NameColumn : ColumnString<Leve>
         if (!popuptable) return;
 
         var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing * ImGuiHelpers.GlobalScale;
-        var title = leve.Name.ExtractText();
+        var title = leve.Name.ToString();
 
         ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
 
@@ -126,7 +126,7 @@ public partial class NameColumn : ColumnString<Leve>
         subTitleBuilder.Append(_seStringEvaluator.EvaluateFromAddon(35, [(uint)leve.ClassJobLevel]));
 
         if (leve.JournalGenre.IsValid)
-            subTitleBuilder.Append(" • " + leve.JournalGenre.Value.Name.ExtractText());
+            subTitleBuilder.Append(" • " + leve.JournalGenre.Value.Name.ToString());
 
         if (subTitleBuilder.Length > 0)
         {

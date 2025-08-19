@@ -64,7 +64,7 @@ bool TryFindLeveByName(string title, out Leve leve)
     if (title == "An Historical Flavor") // => "A Historical Flavor"
         return LeveSheet.TryGetRow(1644, out leve);
 
-    var _leve = LeveSheet.FirstOrNull(leve => string.Equals(leve.Name.ExtractText(), title, StringComparison.InvariantCultureIgnoreCase));
+    var _leve = LeveSheet.FirstOrNull(leve => string.Equals(leve.Name.ToString(), title, StringComparison.InvariantCultureIgnoreCase));
     if (_leve.HasValue)
     {
         leve = _leve.Value;
@@ -93,7 +93,7 @@ foreach (var issuerId in issuers)
     if (!ENpcResidentSheet.TryGetRow(issuerId, out var issuer))
         continue;
 
-    var name = issuer.Singular.ExtractText();
+    var name = issuer.Singular.ToString();
     var body = string.Empty;
     var cacheFile = $"cache/{name}.html";
 
