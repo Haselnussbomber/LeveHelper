@@ -46,10 +46,10 @@ public class DebugTab(
             ImGui.TableNextRow();
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(gatheringItem.RowId.ToString());
+            ImGui.Text(gatheringItem.RowId.ToString());
 
             ImGui.TableNextColumn();
-            ImGui.TextUnformatted(gatheringItem.Item.RowId.ToString());
+            ImGui.Text(gatheringItem.Item.RowId.ToString());
             ImGui.SameLine();
             state.DrawItem(item);
 
@@ -60,7 +60,7 @@ public class DebugTab(
 
             foreach (var point in itemService.GetGatheringPoints(gatheringItem))
             {
-                ImGui.TextUnformatted($"{point.RowId} => {textService.GetPlaceName(point.PlaceName.RowId)}");
+                ImGui.Text($"{point.RowId} => {textService.GetPlaceName(point.PlaceName.RowId)}");
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 if (ImGui.IsItemClicked())

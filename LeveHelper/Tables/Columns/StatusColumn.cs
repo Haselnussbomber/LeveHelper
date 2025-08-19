@@ -90,7 +90,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
     {
         var value = ToStatus(row);
         using (ImRaii.PushColor(ImGuiCol.Text, value == LeveStatus.Complete ? Color.Green : (value == LeveStatus.Accepted ? Color.Yellow : Color.Red)))
-            ImGui.TextUnformatted(_textService.Translate("StatusFilter.Status." + Enum.GetName(value)));
+            ImGui.Text(_textService.Translate("StatusFilter.Status." + Enum.GetName(value)));
     }
 
     public override unsafe int Compare(Leve a, Leve b)

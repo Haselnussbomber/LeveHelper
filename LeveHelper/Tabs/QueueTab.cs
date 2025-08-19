@@ -46,7 +46,7 @@ public partial class QueueTab
         {
             if (_state.Crystals.Length != 0)
             {
-                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Crystals"));
+                ImGui.Text(_textService.Translate("QueueTab.Category.Crystals"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in _state.Crystals)
                 {
@@ -56,11 +56,11 @@ public partial class QueueTab
 
             if (_state.Gatherable.Length != 0)
             {
-                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Gather"));
+                ImGui.Text(_textService.Translate("QueueTab.Category.Gather"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var kv in _state.Gatherable)
                 {
-                    ImGui.TextUnformatted(_textService.GetPlaceName(kv.TerritoryType.PlaceName.RowId));
+                    ImGui.Text(_textService.GetPlaceName(kv.TerritoryType.PlaceName.RowId));
 
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
@@ -72,7 +72,7 @@ public partial class QueueTab
 
             if (_state.OtherSources.Length != 0)
             {
-                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Other"));
+                ImGui.Text(_textService.Translate("QueueTab.Category.Other"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in _state.OtherSources)
                 {
@@ -82,7 +82,7 @@ public partial class QueueTab
 
             if (_state.Craftable.Length != 0)
             {
-                ImGui.TextUnformatted(_textService.Translate("QueueTab.Category.Craft"));
+                ImGui.Text(_textService.Translate("QueueTab.Category.Craft"));
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in _state.Craftable)
                 {
@@ -96,7 +96,7 @@ public partial class QueueTab
         }
         else
         {
-            ImGui.TextUnformatted(_textService.Translate("QueueTab.ReadyForTurnIn"));
+            ImGui.Text(_textService.Translate("QueueTab.ReadyForTurnIn"));
         }
     }
 

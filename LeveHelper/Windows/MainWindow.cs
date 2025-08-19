@@ -40,7 +40,7 @@ public partial class MainWindow : SimpleWindow
             ShowTooltip = () =>
             {
                 using var tooltip = ImRaii.Tooltip();
-                ImGui.TextUnformatted(_textService.Translate(_windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen
+                ImGui.Text(_textService.Translate(_windowManager.TryGetWindow<ConfigWindow>(out var configWindow) && configWindow.IsOpen
                     ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
                     : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig"));
             },

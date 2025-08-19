@@ -75,7 +75,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
             var issuer = issuers[i];
             var level = _residentLevelCache.GetValue(issuer.RowId);
 
-            ImGui.TextUnformatted(_textService.GetENpcResidentName(issuer.RowId));
+            ImGui.Text(_textService.GetENpcResidentName(issuer.RowId));
 
             if (ImGui.IsItemHovered())
             {
@@ -98,7 +98,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
             if (i < issuers.Length - 1)
             {
                 ImGui.SameLine(0, 0);
-                ImGui.TextUnformatted(",");
+                ImGui.Text(",");
                 ImGuiUtils.SameLineSpace();
             }
         }
@@ -173,7 +173,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
             ImGui.TableNextColumn();
             using (ImRaii.PushColor(ImGuiCol.Text, _clientState.TerritoryType == issuer.TerritoryType ? Color.White.ToUInt() : ImGui.GetColorU32(ImGuiCol.TextDisabled)))
             {
-                ImGui.TextUnformatted(issuer.PlaceName);
+                ImGui.Text(issuer.PlaceName);
             }
 
             if (clicked)

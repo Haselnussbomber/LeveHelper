@@ -99,7 +99,7 @@ public partial class LevelColumn : ColumnNumber<Leve>, IConnectedColumn<LeveList
 
         void DrawInput(ref bool changed, string key, ref int value)
         {
-            ImGui.TextUnformatted(_textService.Translate($"LevelFilter.{key}.Label"));
+            ImGui.Text(_textService.Translate($"LevelFilter.{key}.Label"));
 
             ImGui.SetNextItemWidth(250);
             changed |= ImGui.SliderInt("###Input" + key, ref value, 0, maxLevel);

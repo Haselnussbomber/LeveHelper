@@ -95,7 +95,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             ImGui.BeginGroup();
             _textureService.DrawIcon(typeIcon, ImGui.GetTextLineHeight());
             ImGui.SameLine();
-            ImGui.TextUnformatted(row.LeveAssignmentType.ValueNullable?.Name.ExtractText() ?? string.Empty);
+            ImGui.Text(row.LeveAssignmentType.ValueNullable?.Name.ExtractText() ?? string.Empty);
             ImGui.EndGroup();
 
             if (ImGui.IsItemHovered())
@@ -159,10 +159,10 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             using var tooltip = ImRaii.Tooltip();
 
             if (_config.Filters.Type != 0)
-                ImGui.TextUnformatted(_textService.Translate("ListTab.ColumnFilter.RightClickToResetFilters"));
+                ImGui.Text(_textService.Translate("ListTab.ColumnFilter.RightClickToResetFilters"));
 
             if (_config.Filters.Type != suggestedType)
-                ImGui.TextUnformatted(_textService.Translate("ListTab.ColumnFilter.MiddleClickToSelect", suggestedName));
+                ImGui.Text(_textService.Translate("ListTab.ColumnFilter.MiddleClickToSelect", suggestedName));
         }
 
         if (!combo)
@@ -197,7 +197,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         foreach (var group in _groups)
         {
             using (Color.Gold.Push(ImGuiCol.Text))
-                ImGui.TextUnformatted(group.Key);
+                ImGui.Text(group.Key);
 
             using var indentStyle = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, ImGui.GetStyle().ItemSpacing.X);
 
@@ -257,7 +257,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         }
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-        ImGui.TextUnformatted(type.Name.ExtractText());
+        ImGui.Text(type.Name.ExtractText());
 
         if (clicked)
         {

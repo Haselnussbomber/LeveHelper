@@ -119,7 +119,7 @@ public partial class NameColumn : ColumnString<Leve>
         using var indentSpacing = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, itemInnerSpacing.X); // TODO: maybe changing cellpadding would be better
         using var indent = ImRaii.PushIndent(1);
 
-        ImGui.TextUnformatted(title);
+        ImGui.Text(title);
 
         var subTitleBuilder = new StringBuilder();
 
@@ -132,7 +132,7 @@ public partial class NameColumn : ColumnString<Leve>
         {
             ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
             using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
-                ImGui.TextUnformatted(subTitleBuilder.ToString());
+                ImGui.Text(subTitleBuilder.ToString());
         }
 
         if (leve.IconIssuer != 0 && _textureProvider.TryGetFromGameIcon(leve.IconIssuer, out var imageTex) && imageTex.TryGetWrap(out var image, out _))

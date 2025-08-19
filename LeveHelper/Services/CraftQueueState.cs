@@ -317,7 +317,7 @@ public partial class CraftQueueState : IDisposable
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                 ImGui.BeginTooltip();
-                ImGui.TextUnformatted(_textService.Translate("ItemContextMenu.OpenOnGarlandTools"));
+                ImGui.Text(_textService.Translate("ItemContextMenu.OpenOnGarlandTools"));
 
                 var pos = ImGui.GetCursorPos();
                 ImGui.GetWindowDrawList().AddText(
@@ -430,7 +430,7 @@ public partial class CraftQueueState : IDisposable
                 var text = _textService.GetAddonText(627); // or 629? "Hidden"
                 var textWidth = ImGui.CalcTextSize(text).X;
                 ImGui.SameLine(availSize.X - textWidth - ImGui.GetStyle().ItemInnerSpacing.X - 20, 0);
-                ImGui.TextUnformatted(text);
+                ImGui.Text(text);
             }
 
             ImGui.SameLine(availSize.X - 20, 0);
