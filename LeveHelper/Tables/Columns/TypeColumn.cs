@@ -3,7 +3,9 @@ using System.Linq;
 using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
@@ -16,9 +18,9 @@ namespace LeveHelper.Tables.Columns;
 public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListTable>
 {
     private readonly PluginConfig _config;
+    private readonly ITextureProvider _textureProvider;
     private readonly ExcelService _excelService;
     private readonly TextService _textService;
-    private readonly TextureService _textureService;
     private readonly Dictionary<string, LeveAssignmentType[]> _groups = [];
 
     private LeveListTable _table = null!;
@@ -93,7 +95,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         if (typeIcon != 0)
         {
             ImGui.BeginGroup();
-            _textureService.DrawIcon(typeIcon, ImGui.GetTextLineHeight());
+            _textureProvider.DrawIcon(typeIcon, ImGui.GetTextLineHeight());
             ImGui.SameLine();
             ImGui.Text(row.LeveAssignmentType.ValueNullable?.Name.ToString() ?? string.Empty);
             ImGui.EndGroup();
@@ -253,7 +255,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         if (type.Icon != 0)
         {
             ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X / 2f);
-            _textureService.DrawIcon(type.Icon, 20);
+            _textureProvider.DrawIcon(type.Icon, 20);
         }
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);

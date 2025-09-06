@@ -28,8 +28,8 @@ namespace LeveHelper.Services;
 public partial class CraftQueueState : IDisposable
 {
     private readonly IClientState _clientState;
+    private readonly ITextureProvider _textureProvider;
     private readonly ExcelService _excelService;
-    private readonly TextureService _textureService;
     private readonly TextService _textService;
     private readonly MapService _mapService;
     private readonly ImGuiContextMenuService _imGuiContextMenuService;
@@ -272,7 +272,7 @@ public partial class CraftQueueState : IDisposable
         // draw icons to the right: Gather, Vendor..
         var isLeveRequiredItem = !(_itemService.IsFish(item.RowId) || _itemService.IsSpearfish(item.RowId)) && LeveRequiredItems.Any(entry => entry.Item.RowId == item.RowId);
 
-        _textureService.DrawIcon(new GameIconLookup(item.Icon, isLeveRequiredItem), 20);
+        _textureProvider.DrawIcon(new GameIconLookup(item.Icon, isLeveRequiredItem), 20);
         ImGui.SameLine();
 
         var color = Color.White;
@@ -434,7 +434,7 @@ public partial class CraftQueueState : IDisposable
             }
 
             ImGui.SameLine(availSize.X - 20, 0);
-            _textureService.DrawIcon(classJobIcon, 20);
+            _textureProvider.DrawIcon(classJobIcon, 20);
         }
     }
 }

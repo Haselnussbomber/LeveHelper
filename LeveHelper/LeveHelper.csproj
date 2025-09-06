@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+  <!-- Project settings -->
   <PropertyGroup>
     <Version>2.5.4</Version>
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
+    <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- Dalamud.NET.Sdk settings -->
+  <PropertyGroup>
+    <Use_Dalamud_Newtonsoft_Json>false</Use_Dalamud_Newtonsoft_Json>
+  </PropertyGroup>
+
+  <!-- Translations -->
+  <ItemGroup Condition="Exists('Translations.json')">
     <EmbeddedResource Include="Translations.json" />
-    <EmbeddedResource Include="LICENSES.md" />
   </ItemGroup>
 
+  <!-- Licenses -->
+  <ItemGroup Condition="Exists('LICENSES.md')">
+    <EmbeddedResource Include="LICENSES.md" />
+    <None Include="LICENSES.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- NuGet dependencies -->
   <ItemGroup>
     <PackageReference Include="AutoCtor" Version="2.8.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Injectio" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 
+  <!-- HaselCommon -->
   <ItemGroup>
     <ProjectReference Include="..\HaselCommon\HaselCommon\HaselCommon.csproj" />
   </ItemGroup>
