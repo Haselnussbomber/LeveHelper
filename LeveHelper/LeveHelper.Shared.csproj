@@ -4,6 +4,7 @@
   <!-- Project settings -->
   <PropertyGroup>
     <AssemblyName>LeveHelper</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
     <Version>2.5.4</Version>
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
@@ -40,6 +41,7 @@
   <!-- FFXIVClientStructs -->
   <PropertyGroup>
     <InteropGenerator_InteropNamespace>$(AssemblyName)</InteropGenerator_InteropNamespace>
+    <DefineConstants>$(DefineConstants);CUSTOM_CS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
