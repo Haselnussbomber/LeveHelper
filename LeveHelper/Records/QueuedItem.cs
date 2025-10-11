@@ -1,5 +1,5 @@
+using HaselCommon.Utils;
 using LeveHelper.Services;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Records;
 
@@ -7,15 +7,15 @@ public record QueuedItem
 {
     private readonly ExtendedItemService ExtendedItemService;
 
-    public QueuedItem(Item Item, uint AmountNeeded, ExtendedItemService ExtendedItemService)
+    public QueuedItem(ItemHandle Item, uint AmountNeeded, ExtendedItemService ExtendedItemService)
     {
         this.Item = Item;
         this.AmountNeeded = AmountNeeded;
         this.ExtendedItemService = ExtendedItemService;
     }
 
-    public Item Item { get; init; }
-    public uint AmountHave => ExtendedItemService.GetQuantity(Item.RowId);
+    public ItemHandle Item { get; init; }
+    public uint AmountHave => ExtendedItemService.GetQuantity(Item.ItemId);
     public uint AmountNeeded { get; set; }
     public uint AmountLeft
     {

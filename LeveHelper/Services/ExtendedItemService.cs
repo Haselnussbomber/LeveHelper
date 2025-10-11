@@ -2,16 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoCtor;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using LeveHelper.Caches;
 using LeveHelper.Enums;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Services;
 
 [RegisterTransient, AutoConstruct]
 public partial class ExtendedItemService : ItemService
 {
-    private readonly ExcelService _excelService;
     private readonly ItemQuantityCache _itemQuantityCache = new();
     private readonly Dictionary<uint, ItemQueueCategory> _itemQueueCategoryCache = [];
 
@@ -22,26 +21,26 @@ public partial class ExtendedItemService : ItemService
         => _itemQuantityCache.GetValue(itemId);
 
     public bool HasAllIngredients(uint itemId)
-        => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item.RowId) > ingredient.Amount);
+        => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item) > ingredient.Amount);
 
-    public ItemQueueCategory GetQueueCategory(uint itemId)
+    public ItemQueueCategory GetQueueCategory(ItemHandle item)
     {
-        if (_itemQueueCategoryCache.TryGetValue(itemId, out var category))
+        if (_itemQueueCategoryCache.TryGetValue(item, out var category))
             return category;
 
-        if (!_excelService.TryGetRow<Item>(itemId, out _))
+        if (!item.TryGetItem(out _))
         {
             category = ItemQueueCategory.None;
         }
-        else if (IsCrystal(itemId))
+        else if (item.IsCrystal)
         {
             category = ItemQueueCategory.Crystals;
         }
-        else if (IsGatherable(itemId) || IsFish(itemId) || IsSpearfish(itemId))
+        else if (item.IsGatherable || item.IsFish || item.IsSpearfish)
         {
             category = ItemQueueCategory.Gatherable;
         }
-        else if (IsCraftable(itemId))
+        else if (item.IsCraftable)
         {
             category = ItemQueueCategory.Craftable;
         }
@@ -50,7 +49,7 @@ public partial class ExtendedItemService : ItemService
             category = ItemQueueCategory.OtherSources;
         }
 
-        _itemQueueCategoryCache.Add(itemId, category);
+        _itemQueueCategoryCache.Add(item, category);
         return category;
     }
 }

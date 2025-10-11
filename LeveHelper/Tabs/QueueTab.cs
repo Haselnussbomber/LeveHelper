@@ -129,18 +129,18 @@ public partial class QueueTab
 
                 foreach (var item in requiredItems)
                 {
-                    if (items.TryGetValue(item.Item.RowId, out var tuple))
+                    if (items.TryGetValue(item.Item, out var tuple))
                     {
-                        items[item.Item.RowId] = (tuple.Item1, tuple.Item2 + item.Amount);
+                        items[item.Item] = (tuple.Item1, tuple.Item2 + item.Amount);
                     }
                     else
                     {
-                        var recipes = _itemService.GetRecipes(item.Item.RowId);
+                        var recipes = _itemService.GetRecipes(item.Item);
 
-                        if (recipes != null && recipes.Count() == 1)
-                            items[item.Item.RowId] = (recipes.First().RowId, item.Amount);
+                        if (recipes != null && recipes.Count == 1)
+                            items[item.Item] = (recipes[0].RowId, item.Amount);
                         else
-                            items[item.Item.RowId] = (0, item.Amount);
+                            items[item.Item] = (0, item.Amount);
                     }
                 }
             }

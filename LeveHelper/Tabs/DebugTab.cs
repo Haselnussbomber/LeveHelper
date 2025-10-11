@@ -55,7 +55,7 @@ public class DebugTab(
 
             ImGui.TableNextColumn();
 
-            using var node = ImRaii.TreeNode($"{itemService.GetGatheringPoints(gatheringItem).Length} Gathering Points###GatheringPoints_{gatheringItem.RowId}", ImGuiTreeNodeFlags.SpanAvailWidth);
+            using var node = ImRaii.TreeNode($"{itemService.GetGatheringPoints(gatheringItem).Count} Gathering Points###GatheringPoints_{gatheringItem.RowId}", ImGuiTreeNodeFlags.SpanAvailWidth);
             if (!node) continue;
 
             foreach (var point in itemService.GetGatheringPoints(gatheringItem))
