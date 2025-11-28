@@ -5,6 +5,7 @@
     <Version>2.5.4</Version>
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
+    <NoWarn>$(NoWarn);Dalamud001</NoWarn>
   </PropertyGroup>
 
   <!-- Dalamud.NET.Sdk settings -->
@@ -25,7 +26,7 @@
 
   <!-- NuGet dependencies -->
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.8.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="AutoCtor" Version="2.9.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Injectio" Version="5.1.0" PrivateAssets="all" />
   </ItemGroup>
 

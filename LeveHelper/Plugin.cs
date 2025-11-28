@@ -12,10 +12,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
-#if CUSTOM_CS
-        pluginInterface.InitializeCustomClientStructs();
-#endif
-
         _host = new HostBuilder()
             .UseContentRoot(pluginInterface.AssemblyLocation.Directory!.FullName)
             .ConfigureServices(services =>
