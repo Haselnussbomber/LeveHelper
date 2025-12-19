@@ -3,7 +3,7 @@
   <!-- Project settings -->
   <PropertyGroup>
     <Name>LeveHelper</Name>
-    <Version>2.5.4</Version>
+    <Version>2.5.5</Version>
     <Author>Haselnussbomber</Author>
     <RepoUrl>https://github.com/Haselnussbomber/LeveHelper</RepoUrl>
     <IconUrl>https://raw.githubusercontent.com/Haselnussbomber/LeveHelper/refs/heads/main/LeveHelper/Assets/Icon.png</IconUrl>

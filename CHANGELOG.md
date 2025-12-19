@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.5] (2025-12-19)
+
+Update for 7.4 (Dalamud API 14).
+
 ## [2.5.4] (2025-08-09)
 
 Update for 7.3 (Dalamud API 13).
@@ -264,7 +268,8 @@ Please report if you found something is not working or if you discover a wanted 
 
 First release! 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/main...dev
+[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.5..main
+[2.5.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.4...v2.5.5
 [2.5.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.3...v2.5.4
 [2.5.3]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.1...v2.5.2
