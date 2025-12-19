@@ -61,7 +61,7 @@ public unsafe partial class WantedTargetScanner : IHostedService
 
     private readonly List<uint> _foundWantedTargets = [];
     private readonly List<uint> _foundTreasures = [];
-    private DateTime _lastCheck = DateTime.Now;
+    private DateTime _lastCheck = DateTime.UtcNow;
     private Director* _lastDirector;
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -85,10 +85,10 @@ public unsafe partial class WantedTargetScanner : IHostedService
         if (!_pluginConfig.NotifyTreasure && !_pluginConfig.NotifyWantedTarget)
             return;
 
-        if (DateTime.Now - _lastCheck < TimeSpan.FromSeconds(1))
+        if (DateTime.UtcNow - _lastCheck < TimeSpan.FromSeconds(1))
             return;
 
-        _lastCheck = DateTime.Now;
+        _lastCheck = DateTime.UtcNow;
 
         var activeDirector = UIState.Instance()->DirectorTodo.Director;
         if (_lastDirector != activeDirector)
