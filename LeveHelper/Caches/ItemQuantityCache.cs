@@ -1,5 +1,5 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
-using HaselCommon.Cache;
+using LeveHelper.Utils;
 
 namespace LeveHelper.Caches;
 

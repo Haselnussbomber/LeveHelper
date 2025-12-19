@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using HaselCommon.Cache;
 using HaselCommon.Services;
+using LeveHelper.Utils;
 using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Caches;
