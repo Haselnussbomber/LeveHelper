@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="HaselCommon/HaselCommon/HaselCommon.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="LeveHelper.DataGenerator/LeveHelper.DataGenerator.csproj" />
+  <Project Path="LeveHelper/LeveHelper.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>

@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
   <!-- Project settings -->
   <PropertyGroup>
+    <Name>LeveHelper</Name>
     <Version>2.5.4</Version>
+    <Author>Haselnussbomber</Author>
+    <RepoUrl>https://github.com/Haselnussbomber/LeveHelper</RepoUrl>
+    <IconUrl>https://raw.githubusercontent.com/Haselnussbomber/LeveHelper/refs/heads/main/LeveHelper/Assets/Icon.png</IconUrl>
+    <Punchline>A little helper for Levequests.</Punchline>
+    <Description>A little helper to check which Levequests have been completed and which are missing.</Description>
+    <LoadRequiredState>1</LoadRequiredState>
+    <CanUnloadAsync>true</CanUnloadAsync>
+  </PropertyGroup>
+
+  <!-- Build settings -->
+  <PropertyGroup>
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>$(DefineConstants);AUTOCTOR_EMBED_ATTRIBUTES</DefineConstants>
-    <NoWarn>$(NoWarn);Dalamud001</NoWarn>
+    <NoWarn>$(NoWarn);Dalamud001;MSB3277</NoWarn>
   </PropertyGroup>
 
   <!-- Dalamud.NET.Sdk settings -->
@@ -26,7 +38,7 @@
 
   <!-- NuGet dependencies -->
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="2.9.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="AutoCtor" Version="2.10.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
     <PackageReference Include="Injectio" Version="5.1.0" PrivateAssets="all" />
   </ItemGroup>
 

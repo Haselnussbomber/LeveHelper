@@ -1,8 +1,0 @@
-name: LeveHelper
-author: Haselnussbomber
-punchline: A little helper for Levequests.
-description: A little helper to check which Levequests have been completed and which are missing.
-repo_url: https://github.com/Haselnussbomber/LeveHelper
-icon_url: https://raw.githubusercontent.com/Haselnussbomber/LeveHelper/refs/heads/main/LeveHelper/Assets/Icon.png
-load_required_state: 1
-can_unload_async: true
