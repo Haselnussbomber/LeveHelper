@@ -408,7 +408,7 @@ public partial class CraftQueueState : IDisposable
         else if (item.IsFish)
         {
             if (_itemService.GetFishingSpots(item).TryGetFirst(out var spot))
-                classJobIcon = spot.GetFishingSpotIcon();
+                classJobIcon = spot.FishingSpotIcon;
         }
         else if (item.IsSpearfish)
         {

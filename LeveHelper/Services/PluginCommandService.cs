@@ -4,13 +4,14 @@ using AutoCtor;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;
+using HaselCommon.Services.Commands;
 using LeveHelper.Windows;
 using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper.Services;
 
 [RegisterSingleton<IHostedService>(Duplicate = DuplicateStrategy.Append), AutoConstruct]
-public partial class CommandManager : IHostedService
+public partial class PluginCommandService : IHostedService
 {
     private readonly IDalamudPluginInterface _pluginInterface;
     private readonly WindowManager _windowManager;
@@ -20,8 +21,20 @@ public partial class CommandManager : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _commandService.Register("/levehelper", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
-        _commandService.Register("/lh", "CommandHandlerHelpMessage", HandleCommand, autoEnable: true);
+        _commandService.AddCommand("levehelper", cmd => cmd
+            .WithHelpTextKey("LeveHelper.CommandHandlerHelpMessage")
+            .WithHandler(OnMainCommand)
+            .AddSubcommand("config", cmd => cmd
+                .WithHelpTextKey("LeveHelper.CommandHandler.Config.HelpMessage")
+                .WithHandler(OnConfigCommand)));
+
+        // TODO: add command aliases lol
+        _commandService.AddCommand("lh", cmd => cmd
+            .WithHelpTextKey("LeveHelper.CommandHandlerHelpMessage")
+            .WithHandler(OnMainCommand)
+            .AddSubcommand("config", cmd => cmd
+                .WithHelpTextKey("LeveHelper.CommandHandler.Config.HelpMessage")
+                .WithHandler(OnConfigCommand)));
 
         _pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
         if (_clientState.IsLoggedIn) EnableMainUiHandler();
@@ -71,18 +84,14 @@ public partial class CommandManager : IHostedService
         }
     }
 
-    private void HandleCommand(string command, string arguments)
+    private void OnMainCommand(CommandContext ctx)
     {
-        switch (arguments)
-        {
-            case "config":
-                ToggleConfigWindow();
-                break;
+        ToggleMainWindow();
+    }
 
-            default:
-                ToggleMainWindow();
-                break;
-        }
+    private void OnConfigCommand(CommandContext ctx)
+    {
+        ToggleConfigWindow();
     }
 
     private void ToggleMainWindow()

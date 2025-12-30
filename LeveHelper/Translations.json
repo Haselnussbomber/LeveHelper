@@ -2,10 +2,6 @@
   "Plugin.DisplayName": {
     "en": "LeveHelper"
   },
-  "CommandHandlerHelpMessage": {
-    "en": "Open Window",
-    "de": "Öffne Fenster"
-  },
   "MainWindow.Title": {
     "en": "LeveHelper"
   },
@@ -16,6 +12,14 @@
   "ConfigWindow.Title": {
     "en": "LeveHelper Configuration",
     "de": "LeveHelper Konfiguration"
+  },
+  "LeveHelper.CommandHandlerHelpMessage": {
+    "en": "Opens the LeveHelper window",
+    "de": "Öffnet das LeveHelper-Fenster"
+  },
+  "LeveHelper.CommandHandler.Config.HelpMessage": {
+    "en": "Opens the LeveHelper configuration window",
+    "de": "Öffnet das LeveHelper-Konfigurationsfenster"
   },
   "ConfigWindow.GitHubLink.Tooltip": {
     "en": "Visit the LeveHelper GitHub Repository",
