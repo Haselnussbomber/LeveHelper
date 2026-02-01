@@ -12,6 +12,7 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
+using HaselCommon.Utils;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
@@ -24,7 +25,6 @@ public partial class NameColumn : ColumnString<Leve>
     private readonly LeveService _leveService;
     private readonly ITextureProvider _textureProvider;
     private readonly ISeStringEvaluator _seStringEvaluator;
-    private readonly ImGuiContextMenuService _imGuiContextMenu;
 
     [AutoPostConstruct]
     private void Initialize()
@@ -62,7 +62,7 @@ public partial class NameColumn : ColumnString<Leve>
             }
         }
 
-        _imGuiContextMenu.Draw($"Leve{row.RowId}ContextMenu", builder =>
+        ImGuiContextMenu.Draw($"Leve{row.RowId}ContextMenu", builder =>
         {
             // TODO: builder.AddCopyName(textService, ToName(row));
             // TODO: Open in Journal

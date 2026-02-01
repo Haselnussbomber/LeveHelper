@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoCtor;
+using HaselCommon.Game.Enums;
 using HaselCommon.Services;
 using HaselCommon.Utils;
 using LeveHelper.Caches;
@@ -23,24 +24,27 @@ public partial class ExtendedItemService : ItemService
     public bool HasAllIngredients(uint itemId)
         => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item) > ingredient.Amount);
 
+    public bool IsCrystal(ItemHandle item)
+        => TryGetItem(item, out var itemRow) && itemRow.FilterGroup == (int)ItemFilterGroup.Crystal;
+
     public ItemQueueCategory GetQueueCategory(ItemHandle item)
     {
         if (_itemQueueCategoryCache.TryGetValue(item, out var category))
             return category;
 
-        if (!item.TryGetItem(out _))
+        if (!TryGetItem(item, out _))
         {
             category = ItemQueueCategory.None;
         }
-        else if (item.IsCrystal)
+        else if (IsCrystal(item))
         {
             category = ItemQueueCategory.Crystals;
         }
-        else if (item.IsGatherable || item.IsFish || item.IsSpearfish)
+        else if (IsGatherable(item) || IsFish(item) || IsSpearfish(item))
         {
             category = ItemQueueCategory.Gatherable;
         }
-        else if (item.IsCraftable)
+        else if (IsCraftable(item))
         {
             category = ItemQueueCategory.Craftable;
         }

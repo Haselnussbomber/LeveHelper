@@ -31,7 +31,6 @@ public partial class CraftQueueState : IDisposable
     private readonly ExcelService _excelService;
     private readonly TextService _textService;
     private readonly MapService _mapService;
-    private readonly ImGuiContextMenuService _imGuiContextMenuService;
     private readonly LeveService _leveService;
     private readonly ExtendedItemService _itemService;
     private readonly AddonObserver _addonObserver;
@@ -222,7 +221,7 @@ public partial class CraftQueueState : IDisposable
 
         if (node.AmountLeft != 0)
         {
-            float resultAmount = item.IsCraftable ? _itemService.GetRecipes(item)[0].AmountResult : 1;
+            float resultAmount = _itemService.IsCraftable(item) ? _itemService.GetRecipes(item)[0].AmountResult : 1;
 
             foreach (var dependency in _itemService.GetIngredients(item))
             {
@@ -244,7 +243,7 @@ public partial class CraftQueueState : IDisposable
             var ingredientAmount = entry.Amount * parentAmount;
 
             // filter crystals completely if we have enough
-            if (entry.Item.IsCrystal && _itemService.GetQuantity(entry.Item) >= ingredientAmount)
+            if (_itemService.IsCrystal(entry.Item) && _itemService.GetQuantity(entry.Item) >= ingredientAmount)
                 continue;
 
             DrawItem(entry.Item, ingredientAmount, $"{key}_{entry.Item.ItemId}");
@@ -268,10 +267,17 @@ public partial class CraftQueueState : IDisposable
         if (key == "Item")
             key += "_" + item.ItemId.ToString();
 
-        // draw icons to the right: Gather, Vendor..
-        var isLeveRequiredItem = !(item.IsFish || item.IsSpearfish) && LeveRequiredItems.Any(entry => entry.Item.ItemId == item.ItemId);
+        var icon = _itemService.GetItemIcon(item);
+        var name = _itemService.GetItemName(item);
+        var isCraftable = _itemService.IsCraftable(item);
+        var isGatherable = _itemService.IsGatherable(item);
+        var isFish = _itemService.IsFish(item);
+        var isSpearfish = _itemService.IsSpearfish(item);
 
-        _textureProvider.DrawIcon(new GameIconLookup(item.Icon, isLeveRequiredItem), 20);
+        // draw icons to the right: Gather, Vendor..
+        var isLeveRequiredItem = !(isFish || isSpearfish) && LeveRequiredItems.Any(entry => entry.Item.ItemId == item.ItemId);
+
+        _textureProvider.DrawIcon(new GameIconLookup(icon, isLeveRequiredItem), 20);
         ImGui.SameLine();
 
         var color = Color.White;
@@ -285,7 +291,7 @@ public partial class CraftQueueState : IDisposable
         }
 
         using (ImRaii.PushColor(ImGuiCol.Text, color))
-            ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item)}/{neededCount} " : "")}{item.Name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+            ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item)}/{neededCount} " : "")}{name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
 
         if (ImGui.IsItemHovered())
         {
@@ -293,11 +299,11 @@ public partial class CraftQueueState : IDisposable
 
             // TODO: info about what leve/recipe needs this?
 
-            if (item.IsCraftable)
+            if (isCraftable)
             {
                 ImGui.SetTooltip(_textService.GetAddonText(1414)); // "Search for Item by Crafting Method"
             }
-            else if (item.IsGatherable)
+            else if (isGatherable)
             {
                 if (territoryType.RowId != 0)
                 {
@@ -308,7 +314,7 @@ public partial class CraftQueueState : IDisposable
                     ImGui.SetTooltip(_textService.GetAddonText(1472)); // "Search for Item by Gathering Method"
                 }
             }
-            else if (item.IsFish || item.IsSpearfish)
+            else if (isFish || isSpearfish)
             {
                 ImGui.SetTooltip(_textService.GetAddonText(8506)); // "Open Map"
             }
@@ -333,7 +339,7 @@ public partial class CraftQueueState : IDisposable
 
         if (ImGui.IsItemClicked())
         {
-            if (item.IsCraftable)
+            if (isCraftable)
             {
                 unsafe
                 {
@@ -342,7 +348,7 @@ public partial class CraftQueueState : IDisposable
                 }
             }
             // TODO: preferance setting?
-            else if (item.IsGatherable)
+            else if (isGatherable)
             {
                 unsafe
                 {
@@ -359,12 +365,12 @@ public partial class CraftQueueState : IDisposable
                     ImGui.ClearWindowFocus();
                 }
             }
-            else if (item.IsFish && _itemService.GetFishingSpots(item).TryGetFirst(out var spot))
+            else if (isFish && _itemService.GetFishingSpots(item).TryGetFirst(out var spot))
             {
                 _mapService.OpenMap(spot, item.ItemId, "LeveHelper");
                 ImGui.ClearWindowFocus();
             }
-            else if (item.IsSpearfish)
+            else if (isSpearfish)
             {
                 _mapService.OpenMap(_itemService.GetSpearfishingGatheringPoints(item)[0], item.ItemId, "LeveHelper");
                 ImGui.ClearWindowFocus();
@@ -375,7 +381,7 @@ public partial class CraftQueueState : IDisposable
             }
         }
 
-        _imGuiContextMenuService.Draw($"##ItemContextMenu_{key}_Tooltip", (builder) =>
+        ImGuiContextMenu.Draw($"##ItemContextMenu_{key}_Tooltip", (builder) =>
         {
             builder
                 .AddSearchCraftingMethod(item)
@@ -392,11 +398,11 @@ public partial class CraftQueueState : IDisposable
 
         var classJobIcon = 0u;
 
-        if (item.IsCraftable)
+        if (isCraftable)
         {
             classJobIcon = 62008 + _itemService.GetRecipes(item.ItemId)[0].CraftType.RowId;
         }
-        else if (item.IsGatherable)
+        else if (isGatherable)
         {
             if (_itemService.GetGatheringPoints(item).TryGetFirst(out var point))
             {
@@ -405,12 +411,12 @@ public partial class CraftQueueState : IDisposable
                 classJobIcon = rare ? (uint)gatheringType.IconMain : (uint)gatheringType.IconOff;
             }
         }
-        else if (item.IsFish)
+        else if (isFish)
         {
             if (_itemService.GetFishingSpots(item).TryGetFirst(out var spot))
                 classJobIcon = spot.FishingSpotIcon;
         }
-        else if (item.IsSpearfish)
+        else if (isSpearfish)
         {
             if (_itemService.GetSpearfishingGatheringPoints(item).TryGetFirst(out var point))
             {
@@ -424,7 +430,7 @@ public partial class CraftQueueState : IDisposable
         {
             var availSize = ImGui.GetContentRegionMax();
 
-            if (item.IsGatherable && !_itemService.GetGatheringItems(item).Any(gi => !gi.IsHidden))
+            if (isGatherable && !_itemService.GetGatheringItems(item).Any(gi => !gi.IsHidden))
             {
                 var text = _textService.GetAddonText(627); // or 629? "Hidden"
                 var textWidth = ImGui.CalcTextSize(text).X;
