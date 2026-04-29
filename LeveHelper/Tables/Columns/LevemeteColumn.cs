@@ -1,6 +1,5 @@
 using System.Linq;
 using AutoCtor;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using HaselCommon.Graphics;
@@ -99,7 +98,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
             {
                 ImGui.SameLine(0, 0);
                 ImGui.Text(",");
-                ImGuiUtils.SameLineSpace();
+                ImCursor.SameLineSpace();
             }
         }
     }
@@ -109,7 +108,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
         using var id = ImRaii.PushId("##Filter");
         var any = _config.Filters.Levemete == 0;
 
-        var itemSpacing = ImGui.GetStyle().ItemSpacing;
+        var itemSpacing = ImStyle.ItemSpacing;
         using var popupBorderColor = LeveListTable.ComboBorder.Push(ImGuiCol.Border);
         using var popupStyle = ImRaii.PushStyle(ImGuiStyleVar.PopupBorderSize, 1, _popupOpen)
             .Push(ImGuiStyleVar.FramePadding, itemSpacing)
@@ -117,7 +116,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
         _popupOpen = false;
 
         using var noFrameRounding = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 0);
-        ImGui.SetNextItemWidth(-Table.ArrowWidth * ImGuiHelpers.GlobalScale);
+        ImGui.SetNextItemWidth(-Table.ArrowWidth * ImStyle.Scale);
         using var labelColor = Color.Green.Push(ImGuiCol.Text, !any);
         using var combo = ImRaii.Combo(string.Empty, Label, ImGuiComboFlags.NoArrowButton | ImGuiComboFlags.HeightLarge);
 

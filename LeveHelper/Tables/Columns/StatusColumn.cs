@@ -1,8 +1,8 @@
 using System.Linq;
 using AutoCtor;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
 using LeveHelper.Config;
@@ -101,7 +101,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         using var id = ImRaii.PushId("##Filter");
         var any = _filterValue.HasFlag(_anyFlags);
 
-        var itemSpacing = ImGui.GetStyle().ItemSpacing;
+        var itemSpacing = ImStyle.ItemSpacing;
         using var popupBorderColor = LeveListTable.ComboBorder.Push(ImGuiCol.Border);
         using var popupStyle = ImRaii.PushStyle(ImGuiStyleVar.PopupBorderSize, 1, _popupOpen)
             .Push(ImGuiStyleVar.FramePadding, itemSpacing)
@@ -109,7 +109,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         _popupOpen = false;
 
         using var style = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 0);
-        ImGui.SetNextItemWidth(-HaselCommon.Gui.ImGuiTable.Table.ArrowWidth * ImGuiHelpers.GlobalScale);
+        ImGui.SetNextItemWidth(-HaselCommon.Gui.ImGuiTable.Table.ArrowWidth * ImStyle.Scale);
         using var labelColor = Color.Green.Push(ImGuiCol.Text, !any);
         using var combo = ImRaii.Combo(string.Empty, Label, ImGuiComboFlags.NoArrowButton | ImGuiComboFlags.HeightLargest);
 

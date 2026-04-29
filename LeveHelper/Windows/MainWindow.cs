@@ -2,7 +2,6 @@ using System.Numerics;
 using AutoCtor;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using HaselCommon.Gui;
 using HaselCommon.Services;
 using LeveHelper.Tabs;
 

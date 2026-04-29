@@ -5,6 +5,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using HaselCommon.Gui;
 using HaselCommon.Services;
 using LeveHelper.Tables;
 
@@ -62,9 +63,9 @@ public class ListTab(TextService TextService, LeveListTable LeveListTable, LeveS
 
         ImGui.TextWrapped(sb.ToString());
 
-        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
+        ImCursor.Y += ImStyle.FramePadding.Y;
         ImGui.Separator();
-        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetStyle().FramePadding.Y);
+        ImCursor.Y += ImStyle.FramePadding.Y;
     }
 
     private unsafe int GetNumTotalLeves()

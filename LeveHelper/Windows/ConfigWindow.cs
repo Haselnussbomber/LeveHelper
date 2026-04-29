@@ -5,7 +5,6 @@ using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
-using HaselCommon.Windows;
 using LeveHelper.Config;
 
 namespace LeveHelper.Windows;
@@ -56,7 +55,7 @@ public partial class ConfigWindow : SimpleWindow
                 _config.Save();
             }
             using (ImGuiUtils.ConfigIndent())
-            using (Color.Grey.Push(ImGuiCol.Text))
+            using (Color.Text700.Push(ImGuiCol.Text))
                 ImGui.Text(_textService.Translate("Config.ShowImportOnTeamCraftButton.Description"));
 
             ImGui.Spacing();
@@ -66,8 +65,8 @@ public partial class ConfigWindow : SimpleWindow
         ImGui.Separator();
         ImGui.Spacing();
 
-        var cursorPos = ImGui.GetCursorPos();
-        var contentAvail = ImGui.GetContentRegionAvail();
+        var cursorPos = ImCursor.Position;
+        var contentAvail = ImStyle.ContentRegionAvail;
 
         ImGuiUtils.DrawLink("GitHub", _textService.Translate("ConfigWindow.GitHubLink.Tooltip"), "https://github.com/Haselnussbomber/LeveHelper");
         ImGui.SameLine();
@@ -91,7 +90,7 @@ public partial class ConfigWindow : SimpleWindow
         if (version != null)
         {
             var versionString = "v" + version.ToString(3);
-            ImGui.SetCursorPos(cursorPos + contentAvail - ImGui.CalcTextSize(versionString));
+            ImCursor.Position = cursorPos + contentAvail - ImGui.CalcTextSize(versionString);
             ImGui.TextDisabled(versionString);
         }
     }

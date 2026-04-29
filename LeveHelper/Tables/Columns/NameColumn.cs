@@ -12,7 +12,6 @@ using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
-using HaselCommon.Utils;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;
 
@@ -91,9 +90,8 @@ public partial class NameColumn : ColumnString<Leve>
         using var id = ImRaii.PushId($"LeveTooltip{leve.RowId}");
 
         using var tooltip = ImRaii.Tooltip();
-        if (!tooltip) return;
 
-        var tooltipPos = ImGui.GetCursorScreenPos();
+        var tooltipPos = ImCursor.ScreenPosition;
 
         IDalamudTextureWrap? icon = null;
         var hasIcon = false;
@@ -106,13 +104,13 @@ public partial class NameColumn : ColumnString<Leve>
         using var popuptable = ImRaii.Table("PopupTable", hasIcon ? 2 : 1, ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.NoKeepColumnsVisible);
         if (!popuptable) return;
 
-        var itemInnerSpacing = ImGui.GetStyle().ItemInnerSpacing * ImGuiHelpers.GlobalScale;
+        var itemInnerSpacing = ImStyle.ItemInnerSpacing * ImStyle.Scale;
         var title = leve.Name.ToString();
 
-        ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImGuiHelpers.GlobalScale));
+        ImGui.TableSetupColumn("Text", ImGuiTableColumnFlags.WidthFixed, Math.Max(ImGui.CalcTextSize(title).X + itemInnerSpacing.X, 300 * ImStyle.Scale));
 
         if (hasIcon && icon != null)
-            ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, icon.Width / 2f * ImGuiHelpers.GlobalScale);
+            ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, icon.Width / 2f * ImStyle.Scale);
 
         ImGui.TableNextColumn(); // Text
         using var indentSpacing = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, itemInnerSpacing.X); // TODO: maybe changing cellpadding would be better
@@ -129,8 +127,8 @@ public partial class NameColumn : ColumnString<Leve>
 
         if (subTitleBuilder.Length > 0)
         {
-            ImGuiUtils.PushCursorY(-3 * ImGuiHelpers.GlobalScale);
-            using (ImRaii.PushColor(ImGuiCol.Text, Color.Grey))
+            ImCursor.Y -= 3 * ImStyle.Scale;
+            using (ImRaii.PushColor(ImGuiCol.Text, Color.Text700))
                 ImGui.Text(subTitleBuilder.ToString());
         }
 
@@ -152,7 +150,7 @@ public partial class NameColumn : ColumnString<Leve>
 
     private static Vector2 GetContainedSize(Vector2 imageSize)
     {
-        var newWidth = ImGui.GetContentRegionAvail().X;
+        var newWidth = ImStyle.ContentRegionAvail.X;
         var ratio = newWidth / imageSize.X;
         var newHeight = imageSize.Y * ratio;
         return new Vector2(newWidth, newHeight);
@@ -160,9 +158,13 @@ public partial class NameColumn : ColumnString<Leve>
 
     private static void DrawSeparator(float marginTop = 2, float marginBottom = 5)
     {
-        ImGuiUtils.PushCursorY(marginTop * ImGuiHelpers.GlobalScale);
-        var pos = ImGui.GetCursorScreenPos();
-        ImGui.GetWindowDrawList().AddLine(pos, pos + new Vector2(ImGui.GetContentRegionAvail().X, 0), ImGui.GetColorU32(ImGuiCol.Separator));
-        ImGuiUtils.PushCursorY(marginBottom * ImGuiHelpers.GlobalScale);
+        ImCursor.Y += marginTop * ImStyle.Scale;
+
+        ImGui.GetWindowDrawList().AddLine(
+            ImCursor.ScreenPosition,
+            ImCursor.ScreenPosition + new Vector2(ImStyle.ContentRegionAvail.X, 0),
+            ImGui.GetColorU32(ImGuiCol.Separator));
+
+        ImCursor.Y += marginBottom * ImStyle.Scale;
     }
 }

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoCtor;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Extensions;
 using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
 using HaselCommon.Services;
 using LeveHelper.Config;
@@ -118,7 +118,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         using var id = ImRaii.PushId("##Filter");
         var all = _config.Filters.Type == 0;
 
-        var itemSpacing = ImGui.GetStyle().ItemSpacing;
+        var itemSpacing = ImStyle.ItemSpacing;
         using var popupBorderColor = LeveListTable.ComboBorder.Push(ImGuiCol.Border);
         using var popupStyle = ImRaii.PushStyle(ImGuiStyleVar.PopupBorderSize, 1, _popupOpen)
             .Push(ImGuiStyleVar.FramePadding, itemSpacing)
@@ -126,7 +126,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         _popupOpen = false;
 
         using var style = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 0);
-        ImGui.SetNextItemWidth(-Table.ArrowWidth * ImGuiHelpers.GlobalScale);
+        ImGui.SetNextItemWidth(-Table.ArrowWidth * ImStyle.Scale);
         using var labelColor = Color.Green.Push(ImGuiCol.Text, !all);
         using var combo = ImRaii.Combo(string.Empty, Label, ImGuiComboFlags.NoArrowButton | ImGuiComboFlags.HeightLargest);
 
@@ -201,7 +201,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             using (Color.Gold.Push(ImGuiCol.Text))
                 ImGui.Text(group.Key);
 
-            using var indentStyle = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, ImGui.GetStyle().ItemSpacing.X);
+            using var indentStyle = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, ImStyle.ItemSpacing.X);
 
             ImGui.Separator();
             ImGui.Spacing();
@@ -254,11 +254,11 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
 
         if (type.Icon != 0)
         {
-            ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X / 2f);
+            ImGui.SameLine(0, ImStyle.ItemInnerSpacing.X / 2f);
             _textureProvider.DrawIcon(type.Icon, 20);
         }
 
-        ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+        ImGui.SameLine(0, ImStyle.ItemInnerSpacing.X);
         ImGui.Text(type.Name.ToString());
 
         if (clicked)

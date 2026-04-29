@@ -1,6 +1,7 @@
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using HaselCommon.Gui;
 using HaselCommon.Services;
 using LeveHelper.Services;
 
@@ -20,7 +21,7 @@ public class RecipeTreeTab(CraftQueueState State, TextService TextService, LeveS
 
         if (!LeveService.HasAcceptedLeveQuests())
         {
-            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
+            ImCursor.Y += ImStyle.ContentRegionAvail.Y / 2f - ImStyle.FrameHeight / 2f;
             ImGuiHelpers.CenteredText(TextService.Translate("RecipeTreeTab.NoActiveLevequests"));
             return;
         }

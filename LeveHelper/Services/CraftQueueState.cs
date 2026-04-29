@@ -14,6 +14,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using HaselCommon.Extensions;
 using HaselCommon.Graphics;
+using HaselCommon.Gui;
 using HaselCommon.Services;
 using HaselCommon.Utils;
 using LeveHelper.Enums;
@@ -287,7 +288,7 @@ public partial class CraftQueueState : IDisposable
             if (_itemService.GetQuantity(item) >= neededCount)
                 color = Color.Green;
             else if (_itemService.GetQuantity(item) < neededCount || _itemService.HasAllIngredients(item) == false)
-                color = Color.Grey;
+                color = Color.Text700;
         }
 
         using (ImRaii.PushColor(ImGuiCol.Text, color))
@@ -321,19 +322,20 @@ public partial class CraftQueueState : IDisposable
             else
             {
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-                ImGui.BeginTooltip();
+                using var tooltip = ImRaii.Tooltip();
+
                 ImGui.Text(_textService.Translate("ItemContextMenu.OpenOnGarlandTools"));
 
-                var pos = ImGui.GetCursorPos();
                 ImGui.GetWindowDrawList().AddText(
-                    UiBuilder.IconFont, 12,
-                    ImGui.GetWindowPos() + pos + new Vector2(2),
-                    Color.Grey.ToUInt(),
+                    UiBuilder.IconFont, 12 * ImStyle.Scale,
+                    ImCursor.ScreenPosition + new Vector2(2 * ImStyle.Scale),
+                    Color.Text700.ToUInt(),
                     FontAwesomeIcon.ExternalLinkAlt.ToIconString()
                 );
-                ImGui.SetCursorPos(pos + new Vector2(20, 0));
-                ImGui.TextColored(Color.Grey, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
-                ImGui.EndTooltip();
+
+                ImCursor.X += 20 * ImStyle.Scale;
+
+                ImGui.TextColored(Color.Text700, $"https://www.garlandtools.org/db/#item/{item.ItemId}");
             }
         }
 
@@ -434,7 +436,7 @@ public partial class CraftQueueState : IDisposable
             {
                 var text = _textService.GetAddonText(627); // or 629? "Hidden"
                 var textWidth = ImGui.CalcTextSize(text).X;
-                ImGui.SameLine(availSize.X - textWidth - ImGui.GetStyle().ItemInnerSpacing.X - 20, 0);
+                ImGui.SameLine(availSize.X - textWidth - ImStyle.ItemInnerSpacing.X - 20, 0);
                 ImGui.Text(text);
             }
 

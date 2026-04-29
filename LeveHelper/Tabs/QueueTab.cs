@@ -6,6 +6,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
+using HaselCommon.Gui;
 using HaselCommon.Services;
 using LeveHelper.Config;
 using LeveHelper.Services;
@@ -32,7 +33,7 @@ public partial class QueueTab
 
         if (!_leveService.HasAcceptedLeveQuests())
         {
-            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetContentRegionAvail().Y / 2f - ImGui.GetFrameHeight() / 2f);
+            ImCursor.Y += ImStyle.ContentRegionAvail.Y / 2f - ImStyle.FrameHeight / 2f;
             ImGuiHelpers.CenteredText(_textService.Translate("QueueTab.NoActiveLevequests"));
             return;
         }

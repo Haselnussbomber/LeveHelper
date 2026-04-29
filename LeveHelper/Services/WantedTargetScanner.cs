@@ -6,12 +6,12 @@ using AutoCtor;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Game;
 using HaselCommon.Services;
 using LeveHelper.Config;
-using Lumina.Text;
 using Microsoft.Extensions.Hosting;
 using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 
@@ -111,7 +111,8 @@ public unsafe partial class WantedTargetScanner : IHostedService
                 if (mapLink == null)
                     continue;
 
-                Chat.Print(new SeStringBuilder()
+                using var rssb = new RentedSeStringBuilder();
+                Chat.Print(rssb.Builder
                     .PushColorType(69)
                     .Append("[LeveHelper] ")
                     .PopColorType()
@@ -123,7 +124,7 @@ public unsafe partial class WantedTargetScanner : IHostedService
 
             if (_pluginConfig.NotifyWantedTarget
                 && obj.ObjectKind == ObjectKind.BattleNpc
-                && obj.SubKind == (byte)BattleNpcSubKind.Enemy
+                && obj.SubKind == (byte)BattleNpcSubKind.Combatant
                 && !_foundWantedTargets.Contains(obj.EntityId)
                 && obj is IBattleNpc battleNpc
                 && WantedTargetIds.Contains(battleNpc.NameId))
@@ -132,7 +133,8 @@ public unsafe partial class WantedTargetScanner : IHostedService
                 if (mapLink == null)
                     continue;
 
-                Chat.Print(new SeStringBuilder()
+                using var rssb = new RentedSeStringBuilder();
+                Chat.Print(rssb.Builder
                     .PushColorType(69)
                     .Append("[LeveHelper] ")
                     .PopColorType()
