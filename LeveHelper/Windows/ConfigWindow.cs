@@ -72,7 +72,7 @@ public partial class ConfigWindow : SimpleWindow
         ImGui.SameLine();
         ImGui.Text("•");
         ImGui.SameLine();
-        ImGuiUtils.DrawLink("Ko-fi", _textService.Translate("ConfigWindow.KoFiLink.Tooltip"), "https://ko-fi.com/haselnussbomber");
+        ImGuiUtils.DrawLink("Sponsor", _textService.Translate("ConfigWindow.SponsorLink.Tooltip"), "https://github.com/sponsors/Haselnussbomber");
         ImGui.SameLine();
         ImGui.Text("•");
         ImGui.SameLine();

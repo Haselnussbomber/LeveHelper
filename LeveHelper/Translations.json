@@ -25,9 +25,9 @@
     "en": "Visit the LeveHelper GitHub Repository",
     "de": "Zum LeveHelper GitHub Repository"
   },
-  "ConfigWindow.KoFiLink.Tooltip": {
-    "en": "Support me on Ko-fi",
-    "de": "Unterstütze mich auf Ko-fi"
+  "ConfigWindow.SponsorLink.Tooltip": {
+    "en": "Support me on GitHub Sponsors",
+    "de": "Unterstütze mich auf GitHub Sponsors"
   },
   "ConfigWindow.Licenses": {
     "en": "Licenses",
