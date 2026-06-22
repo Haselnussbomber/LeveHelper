@@ -20,7 +20,7 @@ public partial class PluginConfig : IPluginConfiguration
     public int LastSavedConfigHash { get; set; }
 
     [JsonIgnore]
-    public static JsonSerializerOptions? SerializerOptions { get; private set; } = new()
+    public static JsonSerializerOptions? SerializerOptions { get; } = new()
     {
         IncludeFields = true,
         WriteIndented = true,
@@ -43,14 +43,7 @@ public partial class PluginConfig : IPluginConfiguration
 
         var json = File.ReadAllText(fileInfo.FullName);
         var node = JsonNode.Parse(json);
-        if (node == null)
-            return new();
-
-        if (node is not JsonObject config)
-            return new();
-
-        var version = config[nameof(Version)]?.GetValue<int>();
-        if (version == null)
+        if (node is not JsonObject)
             return new();
 
         return JsonSerializer.Deserialize<PluginConfig>(node, SerializerOptions) ?? new();
@@ -61,7 +54,7 @@ public partial class PluginConfig : IPluginConfiguration
         try
         {
             var serialized = JsonSerializer.Serialize(this, SerializerOptions);
-            var hash = serialized.GetHashCode();
+            var hash = StringComparer.Ordinal.GetHashCode(serialized);
 
             if (LastSavedConfigHash != hash)
             {
