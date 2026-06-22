@@ -43,8 +43,8 @@
 
   <!-- NuGet dependencies -->
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="3.0.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
-    <PackageReference Include="Injectio" Version="5.2.1" PrivateAssets="all" />
+    <PackageReference Include="AutoCtor" Version="3.1.0" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="Injectio" Version="6.1.0" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- HaselCommon -->
