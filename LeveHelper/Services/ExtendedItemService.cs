@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using AutoCtor;
 using HaselCommon.Game.Enums;
 using HaselCommon.Services;
 using HaselCommon.Utils;

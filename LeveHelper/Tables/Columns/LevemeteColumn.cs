@@ -1,5 +1,4 @@
 using System.Linq;
-using AutoCtor;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using HaselCommon.Graphics;

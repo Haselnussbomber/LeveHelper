@@ -1,4 +1,3 @@
-using AutoCtor;
 using HaselCommon.Gui.ImGuiTable;
 using LeveHelper.Config;
 using Lumina.Excel.Sheets;

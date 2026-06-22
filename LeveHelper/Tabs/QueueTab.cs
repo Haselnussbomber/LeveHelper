@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AutoCtor;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;

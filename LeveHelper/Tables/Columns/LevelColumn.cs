@@ -1,4 +1,3 @@
-using AutoCtor;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;

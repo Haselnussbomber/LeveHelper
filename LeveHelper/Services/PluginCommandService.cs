@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using AutoCtor;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using HaselCommon.Services;

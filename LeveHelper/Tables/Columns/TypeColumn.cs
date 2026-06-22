@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using AutoCtor;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using AutoCtor;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
 using Dalamud.Interface;

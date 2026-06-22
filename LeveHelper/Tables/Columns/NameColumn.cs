@@ -1,7 +1,6 @@
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using AutoCtor;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
