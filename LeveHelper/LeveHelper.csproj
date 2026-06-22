@@ -25,6 +25,11 @@
     <Use_Dalamud_Newtonsoft_Json>false</Use_Dalamud_Newtonsoft_Json>
   </PropertyGroup>
 
+  <!-- Assets -->
+  <ItemGroup>
+    <None Condition="'$(Configuration)' == 'Debug'" Include="Assets\Icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <!-- Translations -->
   <ItemGroup Condition="Exists('Translations.json')">
     <EmbeddedResource Include="Translations.json" />
