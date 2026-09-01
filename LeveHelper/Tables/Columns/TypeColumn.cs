@@ -112,7 +112,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         }
     }
 
-    public override unsafe bool DrawFilter()
+    public override bool DrawFilter()
     {
         using var id = ImRaii.PushId("##Filter");
         var all = _config.Filters.Type == 0;
@@ -247,7 +247,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         return string.Empty;
     }
 
-    private unsafe bool DrawComboOption(LeveAssignmentType type)
+    private bool DrawComboOption(LeveAssignmentType type)
     {
         var clicked = ImGui.Selectable($"##Entry_{type.RowId}", _config.Filters.Type == type.RowId);
 

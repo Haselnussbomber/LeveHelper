@@ -51,7 +51,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         _names = Enum.GetValues<LeveStatus>().Select(status => _textService.Translate("StatusFilter.Status." + Enum.GetName(status))).ToArray();
     }
 
-    public virtual unsafe LeveStatus ToStatus(Leve row)
+    public virtual LeveStatus ToStatus(Leve row)
     {
         if (_leveService.IsAccepted(row.RowId))
         {
@@ -85,17 +85,17 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         return false;
     }
 
-    public override unsafe void DrawColumn(Leve row)
+    public override void DrawColumn(Leve row)
     {
         var value = ToStatus(row);
         using (ImRaii.PushColor(ImGuiCol.Text, value == LeveStatus.Complete ? Color.Green : (value == LeveStatus.Accepted ? Color.Yellow : Color.Red)))
             ImGui.Text(_textService.Translate("StatusFilter.Status." + Enum.GetName(value)));
     }
 
-    public override unsafe int Compare(Leve a, Leve b)
+    public override int Compare(Leve a, Leve b)
         => ToStatus(a).CompareTo(ToStatus(b));
 
-    public override unsafe bool DrawFilter()
+    public override bool DrawFilter()
     {
         using var id = ImRaii.PushId("##Filter");
         var any = _filterValue.HasFlag(_anyFlags);

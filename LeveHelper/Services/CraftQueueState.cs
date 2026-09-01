@@ -286,7 +286,7 @@ public partial class CraftQueueState : IDisposable
         {
             if (_itemService.GetQuantity(item) >= neededCount)
                 color = Color.Green;
-            else if (_itemService.GetQuantity(item) < neededCount || _itemService.HasAllIngredients(item) == false)
+            else if (_itemService.GetQuantity(item) < neededCount || !_itemService.HasAllIngredients(item))
                 color = Color.Text700;
         }
 
@@ -431,7 +431,7 @@ public partial class CraftQueueState : IDisposable
         {
             var availSize = ImGui.GetContentRegionMax();
 
-            if (isGatherable && !_itemService.GetGatheringItems(item).Any(gi => !gi.IsHidden))
+            if (isGatherable && _itemService.GetGatheringItems(item).All(gi => gi.IsHidden))
             {
                 var text = _textService.GetAddonText(627); // or 629? "Hidden"
                 var textWidth = ImGui.CalcTextSize(text).X;

@@ -137,7 +137,7 @@ public partial class QueueTab
                     {
                         var recipes = _itemService.GetRecipes(item.Item);
 
-                        if (recipes != null && recipes.Count == 1)
+                        if (recipes?.Count == 1)
                             items[item.Item] = (recipes[0].RowId, item.Amount);
                         else
                             items[item.Item] = (0, item.Amount);

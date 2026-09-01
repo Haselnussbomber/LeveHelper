@@ -32,10 +32,10 @@ public partial class PluginConfig : IPluginConfiguration
     [JsonIgnore]
     private static IPluginLog? PluginLog;
 
-    public static PluginConfig Load(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog)
+    public static PluginConfig Load(IDalamudPluginInterface pluginInterface)
     {
         PluginInterface = pluginInterface;
-        PluginLog = pluginLog;
+        PluginLog = pluginInterface.GetRequiredService<IPluginLog>();
 
         var fileInfo = PluginInterface.ConfigFile;
         if (!fileInfo.Exists || fileInfo.Length < 2)

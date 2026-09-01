@@ -74,7 +74,7 @@ public partial class LeveListTable : Table<Leve>
             .ToList();
     }
 
-    public unsafe int GetNumTotalLeves()
+    public int GetNumTotalLeves()
     {
         return (_filteredRows ?? Rows).Count;
     }

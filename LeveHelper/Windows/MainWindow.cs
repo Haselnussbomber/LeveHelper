@@ -43,7 +43,7 @@ public partial class MainWindow : SimpleWindow
                     ? "TitleBarButton.ToggleConfig.Tooltip.CloseConfig"
                     : "TitleBarButton.ToggleConfig.Tooltip.OpenConfig"));
             },
-            Click = (button) => _windowManager.CreateOrToggle<ConfigWindow>()
+            Click = _ => _windowManager.CreateOrToggle<ConfigWindow>()
         });
     }
 

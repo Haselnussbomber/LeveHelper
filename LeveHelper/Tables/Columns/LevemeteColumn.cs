@@ -102,7 +102,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
         }
     }
 
-    public override unsafe bool DrawFilter()
+    public override bool DrawFilter()
     {
         using var id = ImRaii.PushId("##Filter");
         var any = _config.Filters.Levemete == 0;
@@ -186,7 +186,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
 
     private IssuerEntry[] GetIssuers()
     {
-        return LeveHelper.Data.Issuers.Keys
+        return Data.Issuers.Keys
             .Select(residentId =>
             {
                 var name = _textService.GetENpcResidentName(residentId);
