@@ -11,6 +11,7 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
@@ -24,7 +25,7 @@ using TerritoryType = Lumina.Excel.Sheets.TerritoryType;
 namespace LeveHelper.Services;
 
 [RegisterTransient, AutoConstruct]
-public partial class CraftQueueState : IDisposable
+public unsafe partial class CraftQueueState : IDisposable
 {
     private readonly IClientState _clientState;
     private readonly ITextureProvider _textureProvider;
@@ -41,8 +42,8 @@ public partial class CraftQueueState : IDisposable
     [AutoPostConstruct]
     private void Initialize()
     {
-        _addonObserver.AddonOpen += OnAddonOpen;
-        _addonObserver.AddonClose += OnAddonClose;
+        _addonObserver.Show += OnAddonOpen;
+        _addonObserver.Hide += OnAddonClose;
         _gameInventory.InventoryChangedRaw += OnInventoryChangedRaw;
         _framework.Update += OnFrameworkUpdate;
     }
@@ -51,10 +52,8 @@ public partial class CraftQueueState : IDisposable
     {
         _framework.Update -= OnFrameworkUpdate;
         _gameInventory.InventoryChangedRaw -= OnInventoryChangedRaw;
-        _addonObserver.AddonOpen -= OnAddonOpen;
-        _addonObserver.AddonClose -= OnAddonClose;
-
-        GC.SuppressFinalize(this);
+        _addonObserver.Show -= OnAddonOpen;
+        _addonObserver.Hide -= OnAddonClose;
     }
 
     private void OnInventoryChangedRaw(IReadOnlyCollection<InventoryEventArgs> events)
@@ -65,21 +64,21 @@ public partial class CraftQueueState : IDisposable
         UpdateList();
     }
 
-    private void OnAddonOpen(string addonName)
+    private void OnAddonOpen(AtkUnitBase* addon)
     {
         if (!_clientState.IsLoggedIn)
             return;
 
-        if (addonName is "Catch")
+        if (addon->NameString is "Catch")
             UpdateList();
     }
 
-    private void OnAddonClose(string addonName)
+    private void OnAddonClose(AtkUnitBase* addon)
     {
         if (!_clientState.IsLoggedIn)
             return;
 
-        if (addonName is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
+        if (addon->NameString is "Synthesis" or "SynthesisSimple" or "Gathering" or "ItemSearchResult" or "InclusionShop" or "Shop" or "ShopExchangeCurrency" or "ShopExchangeItem")
             UpdateList();
     }
 

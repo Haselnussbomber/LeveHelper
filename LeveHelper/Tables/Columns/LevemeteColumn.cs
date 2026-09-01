@@ -47,7 +47,7 @@ public partial class LevemeteColumn : ColumnNumber<Leve>, IConnectedColumn<LeveL
         return string.Join(", ", issuers.Select(issuer => _textService.GetENpcResidentName(issuer.RowId)));
     }
 
-    public override void OnLanguageChanged(string langCode)
+    public override void OnLanguageChanged()
     {
         _issuers = GetIssuers();
     }

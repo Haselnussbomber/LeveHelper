@@ -41,7 +41,7 @@ public partial class StatusColumn : Column<Leve>, IConnectedColumn<LeveListTable
         _table = table;
     }
 
-    public override void OnLanguageChanged(string langCode)
+    public override void OnLanguageChanged()
     {
         UpdateNames();
     }

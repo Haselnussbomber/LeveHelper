@@ -83,7 +83,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         return base.ShouldShow(row);
     }
 
-    public override void OnLanguageChanged(string langCode)
+    public override void OnLanguageChanged()
     {
         LoadGroups();
     }
