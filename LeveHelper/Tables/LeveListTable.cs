@@ -9,7 +9,7 @@ using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Tables;
 
-[RegisterTransient, AutoConstruct]
+[RegisterSingleton, AutoConstruct]
 public partial class LeveListTable : Table<Leve>
 {
     public static readonly Color ComboBorder = Color.Gold.Shade(0.66f);
