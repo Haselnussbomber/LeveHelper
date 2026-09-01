@@ -9,7 +9,7 @@ public class ResidentLevelCache(ExcelService ExcelService) : MemoryCache<uint, L
 {
     public override Level? CreateEntry(uint residentId)
     {
-        return ExcelService.TryFindRow<Level>(row => row.Object.RowId == residentId, out var levelRow)
+        return ExcelService.TryFindRow<Level>(row => row.Type == 8 && row.Object.RowId == residentId, out var levelRow)
             ? levelRow
             : null;
     }
