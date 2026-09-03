@@ -12,6 +12,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
@@ -357,11 +358,11 @@ public unsafe partial class CraftQueueState : IDisposable
         ImGuiContextMenu.Draw($"##ItemContextMenu_{key}_Tooltip", (builder) =>
         {
             builder
+                .AddOpenMapForGatheringPoint(item, territoryType, "LeveHelper")
+                .AddOpenMapForFishingSpot(item, "LeveHelper")
                 .AddSearchCraftingMethod(item)
                 .AddSearchGatheringMethod(item)
                 .AddOpenInFishGuide(item)
-                .AddOpenMapForGatheringPoint(item, territoryType, "LeveHelper")
-                .AddOpenMapForFishingSpot(item, "LeveHelper")
                 .AddSeparator()
                 .AddItemFinder(item)
                 .AddCopyItemName(item)
