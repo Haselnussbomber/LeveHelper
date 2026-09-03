@@ -96,17 +96,29 @@ public static class Data
             618, // Black Market Down
             620, // Adamantoise Tears
             621, // Woodcross Busydeal
+            674, // Waking Wood
             675, // East Bank Story
+            676, // We Couldn't Start the Fire
             677, // Lovely Latex
+            678, // Let the Sun Shine In
             679, // If a Tree Falls
+            680, // Evil Seeds
             681, // No Bark, All Bite
+            682, // A Chest of Nuts
             683, // West Bank Story
+            684, // Digging Deep
             685, // The Heart of the Hedge
+            686, // The Quick and the Dead
             687, // Maple Stories
+            688, // Never Strikes Twice
             689, // Briar in the Hole
+            690, // Nowhere to Slide
             691, // Shaken, Not Stirred
+            692, // Just the Artifacts, Madam
             693, // Fueling the Flames
+            694, // Over the Underbrush
             695, // Moon in Rouge
+            696, // Appleanche
             697, // Mushroom Gobblin'
             731, // Elemental Housekeeping
             733, // Rock My Wall
@@ -138,6 +150,7 @@ public static class Data
             545, // A Shroom with a View
             682, // A Chest of Nuts
             683, // West Bank Story
+            684, // Digging Deep
             685, // The Heart of the Hedge
         ],
         // Qina Lyehga
@@ -154,6 +167,7 @@ public static class Data
             570, // Ochus Bite, Leaves Bleed
             571, // Stew for Two
             572, // A Guest for Supper
+            686, // The Quick and the Dead
             687, // Maple Stories
             689, // Briar in the Hole
         ],
@@ -425,11 +439,15 @@ public static class Data
             282, // Sweet Smell of Success
             283, // Rustic Repast
             284, // Flakes for Friends
+            574, // Sucked Dry
             575, // A Glamourous Life
+            576, // First to Reave
             577, // Beasts of Bourbon
             578, // Field Testing
             579, // Barley Legal
+            766, // My Own Private Shell
             767, // The Deepest Cut
+            768, // The Moral of the Coral
             769, // Crab Life by the Horns
         ],
         // Eustace
@@ -525,23 +543,31 @@ public static class Data
             496, // Gold Is So Last Year
             497, // The Big Red
             513, // Road Rage
+            515, // Nothing Compares to Shrews
             516, // Observe and Protect
             517, // Either Love Them or Kill Them
             518, // Berries Got Bucked
             532, // The Ore the Better
+            533, // Needles to Say
             534, // Procession of the Noble
             535, // A Spoonful of Poison
             536, // Two Yalms Under
+            557, // Reeking Havoc
             558, // Skin-deep
             559, // Beak to Beak
             560, // Out of Body, Out of Mind
             561, // Field of Beans
+            563, // You Cannot Kill the Metal
+            565, // From Ruins to Riches
             581, // The Enterprise of Undeath
+            583, // A Simple Solution
             584, // Death with Indignity
             585, // Going for Goat
             586, // Earthbound
+            587, // The Missing Merchant
             611, // Dead Men Lie
             612, // Drakes' Misfortune
+            613, // Necrologos: Fluid Corruption
             614, // Flower Power
             615, // Run, Run Away
             714, // Rubble Bubble
@@ -579,6 +605,7 @@ public static class Data
             565, // From Ruins to Riches
             722, // Break It Up
             723, // That's Why They Call It Fool's Gold
+            724, // It Peiste to Listen
             725, // We Do This the Hard Way
         ],
         // Poponagu
@@ -616,22 +643,29 @@ public static class Data
             91, // A Place to Call Helm
             92, // Throwing Down the Gauntlet
             501, // Water, Water Everywhere
+            503, // Scourge of the Saplings
             504, // Stay for a Vile
             505, // Nutbreaker Suite
             506, // Picking Up the Piercers
             520, // A Vine Finer than Twine
+            521, // River Raid
             522, // A Full Stomach
             523, // Wrangling Raptors
             524, // Compost with the Most
+            674, // Waking Wood
             675, // East Bank Story
+            676, // We Couldn't Start the Fire
             677, // Lovely Latex
+            678, // Let the Sun Shine In
             679, // If a Tree Falls
+            680, // Evil Seeds
             681, // No Bark, All Bite
         ],
         // Esmond
         [1002365] = [
             611, // Dead Men Lie
             612, // Drakes' Misfortune
+            613, // Necrologos: Fluid Corruption
             614, // Flower Power
             615, // Run, Run Away
         ],
@@ -669,13 +703,16 @@ public static class Data
             486, // Wear Your Patriotic Pin
             487, // Dead Can't Defang
             488, // Faith and Fashion
+            636, // Now We're Even
             637, // Have a Nice Trip
+            638, // Necrologos: Cinerary Rite
             639, // Meat and Bleat
             640, // Little Lost Lamb
             641, // Cower to the People
             703, // Spear of Heaven
             704, // Salad Days
             705, // Catch My Drift
+            742, // Rocks for Brains
             743, // There Are No Good Answers
             744, // Eye for an Eye
             745, // Mythril Madness
@@ -733,6 +770,7 @@ public static class Data
             707, // Straight and Arrow
             709, // Sign of the Crimes
             747, // Brother in Arms
+            748, // Breach and Build
             749, // Not Losing Our Heads This Time
             787, // Laird of the Lakes
             789, // Rationally Speaking
@@ -851,6 +889,7 @@ public static class Data
         // Ourawann
         [1004347] = [
             598, // Claw-struck
+            599, // The Light Stripes
             600, // Another Egg Gone
             601, // Strand by Me
             602, // Man the Ore
@@ -949,10 +988,13 @@ public static class Data
         [1007068] = [
             833, // Fanning the Flames
             834, // Fishing off the Company Pier
+            835, // Mad about You
             838, // Feathered Foes
             839, // Just Making an Observation
+            840, // Roast Lamb with Mint and Hellfire
             843, // The Baddest Brigade in Town
             844, // Dress for Aggress
+            845, // Pick Your Poison
         ],
         // Lodille
         [1007069] = [
@@ -1252,62 +1294,87 @@ public static class Data
             1147, // It's the Circlet of Life (L)
             1148, // Does This Look Infected?
             1149, // Breathe Deeply
+            1150, // Warm in Their Beds
             1151, // Secondhand Smoke Screen (L)
             1152, // A Crown for Every Head (L)
+            1153, // No Rest for the Thicket (L)
             1154, // Ladies and Gentians
             1155, // The Bitter, the Better
+            1156, // Six Hours in a Leaky Boat
             1157, // Coat the Harm (L)
             1158, // The Sour Patch Grids (L)
+            1159, // Hot Tub Clime Machine (L)
             1160, // Your Mother Is Medicine and Your Father Is the Wild
             1161, // Dandelion Don't Tell No Lies
+            1162, // Chewed Up and Snuffed Out
             1163, // Exotic Remedies (L)
             1164, // Sacrilege Neutralized (L)
+            1165, // Hybrid Theories (L)
             1166, // Heart to Heart
             1167, // Bold and Blue
+            1168, // The Anointing of the Dead
             1169, // Putting on Airs (L)
             1170, // These Colors Run Not (L)
+            1171, // Nectar of the Goddess (L)
             1172, // Watching the Western Wall
             1173, // Bleeding Out
+            1174, // A Taste of Their Own Medicine
             1175, // Blending In (L)
             1176, // Mending Wings (L)
+            1177, // Thank You for Smoke Screening (L)
             1178, // Taken for Granite
             1179, // The Road to Pilgrimage
+            1180, // The Merits of Upcycling
             1181, // The Basics of Forgery (L)
             1182, // For Vares Beyond Compare (L)
+            1183, // Breaking Beacons (L)
             1184, // Permit for Destruction of Religious Property
             1185, // I'll Show You My Battle Shards
+            1186, // Halone's Jewelry Box
             1187, // Rose Never Lets Go (L)
             1188, // Forging Lance Base (L)
+            1189, // Polished till They Shine (L)
             1190, // From Creepers to Squatters
             1191, // Dreams of War, Dreams of Liars, Dreams of Dragon Fire
+            1192, // Talk about Boundaries
             1193, // All of These Bases Belong to Us (L)
             1194, // There's Sand in My Water (L)
+            1195, // History Needs Some Revisions (L)
             1196, // Fake-icite
             1197, // What Goes Up
+            1198, // Mortarin'
             1199, // Fool Me Once (L)
             1200, // The Puppets of War (L)
+            1201, // A Spire for New Heights (L)
             1202, // Sticking It Out
             1203, // Crystal Chronicles
+            1204, // Dragonproofing
             1205, // Pommeling the Enemy (L)
             1206, // Not So Crystal Clear (L)
+            1207, // Sharlayan Sympathizers (L)
             1208, // Please Halone, Tell Me I'm Still Asleep
             1209, // The Voice of the Fury
+            1210, // Dine or Spine
             1211, // Snipped for Spirituality (L)
             1212, // A Whole Lot of Nope (L)
             1214, // Loose Lips Heal (Broken) Hips
             1215, // Fish Oils and Forgotten Spoils
+            1216, // Bounty of Sky, Bounty of Earth
             1217, // Prayer and Prejudice (L)
             1218, // Valuing the Vintage (L)
             1220, // Analysis of Paralysis
             1221, // The Aquariums of Ishgard
+            1222, // Bearing of the Blue
             1223, // Send a Feeling to My Spine (L)
             1224, // A Win-win Situation (L)
             1226, // Dining with Dravanians
             1227, // Solo Out the Bolo
+            1228, // Pipira Pirouette
             1229, // Hundred Fins for a Hundred Wings (L)
             1230, // Sucking on Face (L)
             1232, // Spew Forth and Spawn
             1233, // They Call It the Kissing Disease
+            1234, // Warmer than Wine
             1235, // Unleash the Hydro Cannons (L)
             1236, // Angling for Ailments (L)
         ],
