@@ -83,6 +83,7 @@ public static class Data
             539, // Turning Out the Blight
             540, // Bump in the Night
             541, // Wail of a Tale
+            543, // Scent of a Roselet
             545, // A Shroom with a View
             567, // Monkey Business
             568, // Something in the Mead
@@ -96,12 +97,14 @@ public static class Data
             592, // The Root of the Problem
             593, // Killing Beasts Softly
             594, // It's a Trap
+            595, // It's Hard Being Moogle
             604, // Refugee Raw
             605, // More than Meets the Eye
             606, // Necrologos: Olidious Separation
             607, // Revisiting Raimdelle
             608, // Up the Creek
             609, // Rope a 'Lope
+            610, // Necrologos: The Beholders
             617, // A Feast in the Forest
             618, // Black Market Down
             619, // Necrologos: Brand of the Impure
@@ -248,17 +251,29 @@ public static class Data
             608, // Up the Creek
             609, // Rope a 'Lope
             610, // Necrologos: The Beholders
+            690, // Nowhere to Slide
             691, // Shaken, Not Stirred
+            692, // Just the Artifacts, Madam
             693, // Fueling the Flames
+            694, // Over the Underbrush
             695, // Moon in Rouge
+            696, // Appleanche
             697, // Mushroom Gobblin'
+            730, // Look How They Shine for You
             731, // Elemental Housekeeping
+            732, // Location, Location, Location
             733, // Rock My Wall
+            734, // Fool Me Twice
             735, // Can't Start a Fire
+            736, // Tag, You're It
             737, // Baby, Light My Way
+            770, // Sounds Fishy to Me
             771, // The Long and the Shortcrust
+            772, // Food Chain Reaction
             773, // Blind Ambition
+            774, // A Shocking Soirée
             775, // A Watery Web of Lies
+            776, // Fishing 101
             777, // The Truth Will Set You Free
         ],
         // T'mokkri
@@ -438,7 +453,9 @@ public static class Data
             551, // At the Gates
             553, // Fresh Meat
             555, // No Egg to Stand On
+            762, // Fish by Many Other Names
             763, // Just Add Water
+            764, // Brain Candy
             765, // The Fertile Incandescent
         ],
         // Orwen
@@ -638,7 +655,9 @@ public static class Data
             585, // Going for Goat
             586, // Earthbound
             587, // The Missing Merchant
+            726, // A Man's Gotta Dream
             727, // Earth Sprites Are Easy
+            728, // Eiderdown for Eidolons
             729, // The Doom that Came to Belah'dia
         ],
         // Muriaule
@@ -722,6 +741,7 @@ public static class Data
             639, // Meat and Bleat
             640, // Little Lost Lamb
             641, // Cower to the People
+            702, // A Stash of Herbs
             703, // Spear of Heaven
             704, // Salad Days
             705, // Catch My Drift
@@ -738,6 +758,7 @@ public static class Data
         [1002397] = [
             617, // A Feast in the Forest
             618, // Black Market Down
+            619, // Necrologos: Brand of the Impure
             620, // Adamantoise Tears
             621, // Woodcross Busydeal
         ],
@@ -781,8 +802,11 @@ public static class Data
             652, // The Area's a Bit Sketchy
             653, // The Tropes of the Trade
             654, // Pets Are Family Too
+            706, // Plague on Both Our Forests
             707, // Straight and Arrow
+            708, // This Old Fort
             709, // Sign of the Crimes
+            746, // Nature Is a Monster
             747, // Brother in Arms
             748, // Breach and Build
             749, // Not Losing Our Heads This Time
@@ -891,7 +915,9 @@ public static class Data
             626, // Birds of a Feather
             627, // Out to Sea
             628, // Clearing Steer
+            698, // The Palm in Your Hand
             699, // Nature Calls
+            700, // Bleeding Them Dry
             701, // Always Right
             738, // I Kidd You Not
             739, // That's What the Money Is For
