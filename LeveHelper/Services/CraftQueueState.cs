@@ -12,7 +12,6 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;
@@ -139,62 +138,36 @@ public unsafe partial class CraftQueueState : IDisposable
                 .Where(entry => _itemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Gatherable)
                 .ToArray();
 
-            // group items by zone
-            var zones = new Dictionary<uint, HashSet<QueuedItem>>();
-            foreach (var entry in gatherables)
-            {
-                foreach (var point in _itemService.GetGatheringPoints(entry.Item))
-                {
-                    if (zones.TryGetValue(point.TerritoryType.RowId, out var list))
-                    {
-                        list.Add(entry);
-                    }
-                    else
-                    {
-                        zones.Add(point.TerritoryType.RowId, [entry]);
-                    }
-                }
+            // Map each item to all TerritoryType RowIds where it can be obtained
+            var itemToZones = gatherables.ToDictionary(
+                entry => entry,
+                entry => _itemService.GetGatheringPoints(entry.Item).Select(p => p.TerritoryType.RowId)
+                    .Concat(_itemService.GetFishingSpots(entry.Item).Select(s => s.TerritoryType.RowId))
+                    .Concat(_itemService.GetSpearfishingGatheringPoints(entry.Item).Select(sp => sp.TerritoryType.RowId))
+                    .ToHashSet());
 
-                foreach (var spot in _itemService.GetFishingSpots(entry.Item))
-                {
-                    if (zones.TryGetValue(spot.TerritoryType.RowId, out var list))
-                    {
-                        list.Add(entry);
-                    }
-                    else
-                    {
-                        zones.Add(spot.TerritoryType.RowId, [entry]);
-                    }
-                }
+            // Build the overall zone density map (TerritoryType RowId -> Set of items available there)
+            var zones = itemToZones
+                .SelectMany(kvp => kvp.Value.Select(zoneId => (ZoneId: zoneId, Item: kvp.Key)))
+                .GroupBy(x => x.ZoneId)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.Item).ToHashSet());
 
-                foreach (var point in _itemService.GetSpearfishingGatheringPoints(entry.Item))
-                {
-                    if (zones.TryGetValue(point.TerritoryType.RowId, out var list))
-                    {
-                        list.Add(entry);
-                    }
-                    else
-                    {
-                        zones.Add(point.TerritoryType.RowId, [entry]);
-                    }
-                }
-            }
+            // For each item, select its best zone (most items available, tie-broken by current player territory)
+            var selectedZones = gatherables
+                .Select(entry => itemToZones[entry]
+                    .Select(zoneId => (ZoneId: zoneId, Items: zones[zoneId]))
+                    .OrderByDescending(z => z.Items.Count)
+                    .ThenByDescending(z => z.ZoneId == _clientState.TerritoryType)
+                    .First())
+                .DistinctBy(z => z.ZoneId);
 
-            // for each item, get the one zone with the most items in it
-            var groupedGatherables = new Dictionary<uint, ZoneItems>();
-            foreach (var entry in gatherables)
-            {
-                var zone = zones
-                    .Where(zone => zone.Value.Select(e => e.Item.ItemId).Contains(entry.Item.ItemId))
-                    .OrderByDescending(zone => zone.Value.Count)
-                    .ThenBy(zone => zone.Key.CompareTo(_clientState.TerritoryType))
-                    .First();
-
-                if (!groupedGatherables.ContainsKey(zone.Key) && _excelService.TryGetRow<TerritoryType>(zone.Key, out var territoryType))
-                    groupedGatherables.Add(zone.Key, new(territoryType, zone.Value));
-            }
-
-            Gatherable = [.. groupedGatherables.Values.Distinct()];
+            // Populate final list
+            Gatherable = selectedZones
+                .Where(z => _excelService.TryGetRow<TerritoryType>(z.ZoneId, out _))
+                .Select(z => _excelService.TryGetRow<TerritoryType>(z.ZoneId, out var territoryType) ? new ZoneItems(territoryType, z.Items) : null)
+                .Where(zi => zi != null)
+                .Cast<ZoneItems>()
+                .ToArray();
         }
 
         OtherSources = RequiredItems
