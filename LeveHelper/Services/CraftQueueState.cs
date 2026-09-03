@@ -37,6 +37,7 @@ public unsafe partial class CraftQueueState : IDisposable
     private readonly AddonObserver _addonObserver;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
+    private readonly GatherBuddyIpcProvider _gatherBuddyIpc;
     private ushort[] _lastActiveLevequestIds = [];
 
     [AutoPostConstruct]
@@ -288,7 +289,11 @@ public unsafe partial class CraftQueueState : IDisposable
             }
             else if (isFish || isSpearfish)
             {
-                ImGui.SetTooltip(_textService.GetAddonText(8506)); // "Open Map"
+                using var tooltip = ImRaii.Tooltip();
+                if (!_gatherBuddyIpc.DrawTooltip(item.ItemId, territoryType.RowId))
+                {
+                    ImGui.Text(_textService.GetAddonText(8506)); // "Open Map"
+                }
             }
             else
             {
