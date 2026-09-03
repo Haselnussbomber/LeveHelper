@@ -69,31 +69,42 @@ public static class Data
             136, // Too Hot to Handle
             137, // Handle with Care
             501, // Water, Water Everywhere
+            503, // Scourge of the Saplings
             504, // Stay for a Vile
             505, // Nutbreaker Suite
             506, // Picking Up the Piercers
             520, // A Vine Finer than Twine
+            521, // River Raid
             522, // A Full Stomach
             523, // Wrangling Raptors
             524, // Compost with the Most
+            537, // Going Green
             538, // Infestation Cessation
             539, // Turning Out the Blight
             540, // Bump in the Night
             541, // Wail of a Tale
+            545, // A Shroom with a View
+            567, // Monkey Business
             568, // Something in the Mead
+            569, // Can't Say No to Gnat
             570, // Ochus Bite, Leaves Bleed
             571, // Stew for Two
             572, // A Guest for Supper
+            589, // Belly Up
             590, // No Leaves Left Behind
+            591, // What's Yours Is Mine
             592, // The Root of the Problem
             593, // Killing Beasts Softly
             594, // It's a Trap
+            604, // Refugee Raw
             605, // More than Meets the Eye
+            606, // Necrologos: Olidious Separation
             607, // Revisiting Raimdelle
             608, // Up the Creek
             609, // Rope a 'Lope
             617, // A Feast in the Forest
             618, // Black Market Down
+            619, // Necrologos: Brand of the Impure
             620, // Adamantoise Tears
             621, // Woodcross Busydeal
             674, // Waking Wood
@@ -120,8 +131,10 @@ public static class Data
             695, // Moon in Rouge
             696, // Appleanche
             697, // Mushroom Gobblin'
+            730, // Look How They Shine for You
             731, // Elemental Housekeeping
             733, // Rock My Wall
+            734, // Fool Me Twice
             735, // Can't Start a Fire
             737, // Baby, Light My Way
             770, // Sounds Fishy to Me
@@ -716,6 +729,7 @@ public static class Data
             743, // There Are No Good Answers
             744, // Eye for an Eye
             745, // Mythril Madness
+            782, // The Perks of Politics
             783, // Hands off Our Fish
             784, // Fry Me a River
             785, // Gathering Light
@@ -772,7 +786,9 @@ public static class Data
             747, // Brother in Arms
             748, // Breach and Build
             749, // Not Losing Our Heads This Time
+            786, // Empire Builder
             787, // Laird of the Lakes
+            788, // Make a Fish
             789, // Rationally Speaking
         ],
         // Graceful Song
@@ -965,7 +981,9 @@ public static class Data
         ],
         // H'amneko
         [1004738] = [
+            823, // This Is Going to Sting, A Lot
             824, // Creature Feature
+            825, // It Goes with the Territory
             826, // Dead Man Walking
         ],
         // Kikiri
@@ -1357,26 +1375,31 @@ public static class Data
             1210, // Dine or Spine
             1211, // Snipped for Spirituality (L)
             1212, // A Whole Lot of Nope (L)
+            1213, // Lurchin' from Urchins (L)
             1214, // Loose Lips Heal (Broken) Hips
             1215, // Fish Oils and Forgotten Spoils
             1216, // Bounty of Sky, Bounty of Earth
             1217, // Prayer and Prejudice (L)
             1218, // Valuing the Vintage (L)
+            1219, // Eating Like the Natives (L)
             1220, // Analysis of Paralysis
             1221, // The Aquariums of Ishgard
             1222, // Bearing of the Blue
             1223, // Send a Feeling to My Spine (L)
             1224, // A Win-win Situation (L)
+            1225, // Blue of Sky and Sea (L)
             1226, // Dining with Dravanians
             1227, // Solo Out the Bolo
             1228, // Pipira Pirouette
             1229, // Hundred Fins for a Hundred Wings (L)
             1230, // Sucking on Face (L)
+            1231, // Plus One or Two or Three (L)
             1232, // Spew Forth and Spawn
             1233, // They Call It the Kissing Disease
             1234, // Warmer than Wine
             1235, // Unleash the Hydro Cannons (L)
             1236, // Angling for Ailments (L)
+            1237, // What Does Not Break Us, Devours Us (L)
         ],
         // Keltraeng
         [1018997] = [
