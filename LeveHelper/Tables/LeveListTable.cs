@@ -57,8 +57,8 @@ public partial class LeveListTable : Table<Leve>
 
     public override void Dispose()
     {
+        _clientState.Login -= OnLogin;
         base.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     private void OnLogin()
