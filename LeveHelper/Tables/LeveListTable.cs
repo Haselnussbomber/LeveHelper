@@ -12,7 +12,7 @@ namespace LeveHelper.Tables;
 [RegisterTransient, AutoConstruct]
 public partial class LeveListTable : Table<Leve>
 {
-    public static Color ComboBorder { get; } = Color.Gold.Shade(0.66f);
+    public static readonly Color ComboBorder = Color.Gold.Shade(0.66f);
 
     private static readonly uint[] ExcludedLeves = {
         502, 508, 514, 519, 525,

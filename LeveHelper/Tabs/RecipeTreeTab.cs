@@ -27,6 +27,6 @@ public class RecipeTreeTab(CraftQueueState State, TextService TextService, LeveS
         }
 
         ImGui.Spacing();
-        State.DrawIngredients("RecipeTree", State.LeveRequiredItems, 1);
+        State.DrawIngredients(State.LeveRequiredItems, 1);
     }
 }

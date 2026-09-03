@@ -40,8 +40,6 @@ public partial class QueueTab
         if (_config.ShowImportOnTeamCraftButton)
             DrawExportButton();
 
-        var i = 0;
-
         if (_state.RequiredItems.Length != 0)
         {
             if (_state.Crystals.Length != 0)
@@ -50,7 +48,7 @@ public partial class QueueTab
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in _state.Crystals)
                 {
-                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, true);
                 }
             }
 
@@ -65,7 +63,7 @@ public partial class QueueTab
                     using var territoryIndent = ImRaii.PushIndent();
                     foreach (var entry in kv.Items)
                     {
-                        _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true, kv.TerritoryType);
+                        _state.DrawItem(entry.Item, entry.AmountNeeded, true, kv.TerritoryType);
                     }
                 }
             }
@@ -76,7 +74,7 @@ public partial class QueueTab
                 using var indent = ImRaii.PushIndent();
                 foreach (var entry in _state.OtherSources)
                 {
-                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, true);
                 }
             }
 
@@ -88,7 +86,7 @@ public partial class QueueTab
                 {
                     // TODO: somehow show that the item is one of LeveRequiredItems, so we can craft it in HQ
                     // TODO: sort by dependency and job???
-                    _state.DrawItem(entry.Item, entry.AmountNeeded, $"Item{i++}", true);
+                    _state.DrawItem(entry.Item, entry.AmountNeeded, true);
                 }
             }
 

@@ -207,7 +207,7 @@ public unsafe partial class CraftQueueState : IDisposable
             neededAmounts.Add(item, node);
     }
 
-    public void DrawIngredients(string key, IReadOnlyList<ItemAmount> ingredients, uint parentAmount = 1, int depth = 0)
+    public void DrawIngredients(IReadOnlyList<ItemAmount> ingredients, uint parentAmount = 1, int depth = 0)
     {
         using var indent = ImRaii.PushIndent(1, depth > 0);
 
@@ -219,7 +219,9 @@ public unsafe partial class CraftQueueState : IDisposable
             if (_itemService.IsCrystal(entry.Item) && _itemService.GetQuantity(entry.Item) >= ingredientAmount)
                 continue;
 
-            DrawItem(entry.Item, ingredientAmount, $"{key}_{entry.Item.ItemId}");
+            using var id = ImRaii.PushId(entry.Item.ItemId.ToString());
+
+            DrawItem(entry.Item, ingredientAmount);
 
             // filter ingredients if we have enough
             if (_itemService.GetQuantity(entry.Item) >= ingredientAmount)
@@ -230,16 +232,13 @@ public unsafe partial class CraftQueueState : IDisposable
             {
                 float resultAmount = _itemService.IsCraftable(entry.Item) ? _itemService.GetRecipes(entry.Item)[0].AmountResult : 1;
                 var ingredientCount = (uint)Math.Ceiling(ingredientAmount / resultAmount);
-                DrawIngredients($"{key}_{entry.Item.ItemId}", entryIngredients, ingredientCount, depth + 1);
+                DrawIngredients(entryIngredients, ingredientCount, depth + 1);
             }
         }
     }
 
-    public void DrawItem(ItemHandle item, uint neededCount = 0, string key = "Item", bool showIndicators = false, TerritoryType territoryType = default)
+    public void DrawItem(ItemHandle item, uint neededCount = 0, bool showIndicators = false, TerritoryType territoryType = default)
     {
-        if (key == "Item")
-            key += "_" + item.ItemId.ToString();
-
         var icon = _itemService.GetItemIcon(item);
         var name = _itemService.GetItemName(item);
         var isCraftable = _itemService.IsCraftable(item);
@@ -264,7 +263,7 @@ public unsafe partial class CraftQueueState : IDisposable
         }
 
         using (ImRaii.PushColor(ImGuiCol.Text, color))
-            ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item)}/{neededCount} " : "")}{name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{key}_Selectable");
+            ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item)}/{neededCount} " : "")}{name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{item.ItemId}_Selectable");
 
         if (ImGui.IsItemHovered())
         {
@@ -355,7 +354,7 @@ public unsafe partial class CraftQueueState : IDisposable
             }
         }
 
-        ImGuiContextMenu.Draw($"##ItemContextMenu_{key}_Tooltip", (builder) =>
+        ImGuiContextMenu.Draw($"##ItemContextMenu_{item.ItemId}_Tooltip", (builder) =>
         {
             builder
                 .AddOpenMapForGatheringPoint(item, territoryType, "LeveHelper")
