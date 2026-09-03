@@ -314,29 +314,23 @@ public unsafe partial class CraftQueueState : IDisposable
         {
             if (isCraftable)
             {
-                unsafe
-                {
-                    AgentRecipeNote.Instance()->SearchRecipeByItemId(item);
-                    ImGui.ClearWindowFocus();
-                }
+                AgentRecipeNote.Instance()->SearchRecipeByItemId(item);
+                ImGui.ClearWindowFocus();
             }
             // TODO: preferance setting?
             else if (isGatherable)
             {
-                unsafe
+                if (territoryType.RowId != 0)
                 {
-                    if (territoryType.RowId != 0)
-                    {
-                        var point = _itemService.GetGatheringPoints(item).First(point => point.TerritoryType.RowId == territoryType.RowId);
-                        _mapService.OpenMap(point, item, "LeveHelper");
-                    }
-                    else
-                    {
-                        AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
-                    }
-
-                    ImGui.ClearWindowFocus();
+                    var point = _itemService.GetGatheringPoints(item).First(point => point.TerritoryType.RowId == territoryType.RowId);
+                    _mapService.OpenMap(point, item, "LeveHelper");
                 }
+                else
+                {
+                    AgentGatheringNote.Instance()->OpenGatherableByItemId((ushort)item.ItemId);
+                }
+
+                ImGui.ClearWindowFocus();
             }
             else if (isFish && _itemService.GetFishingSpots(item).TryGetFirst(out var spot))
             {
