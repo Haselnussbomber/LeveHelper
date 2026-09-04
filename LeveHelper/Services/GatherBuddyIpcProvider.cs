@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Plugin;
@@ -9,10 +10,12 @@ namespace LeveHelper.Services;
 public class GatherBuddyIpcProvider
 {
     private readonly ICallGateSubscriber<uint, uint?, Vector2, Vector2, Vector2, bool, object> _drawFishTooltip;
+    private readonly ICallGateSubscriber<uint, byte, IEnumerable<(DateTimeOffset Start, TimeSpan Length)>> _queryUptimes;
 
     public GatherBuddyIpcProvider(IDalamudPluginInterface pluginInterface)
     {
         _drawFishTooltip = pluginInterface.GetIpcSubscriber<uint, uint?, Vector2, Vector2, Vector2, bool, object>("GatherBuddy.DrawFishToolitp");
+        _queryUptimes = pluginInterface.GetIpcSubscriber<uint, byte, IEnumerable<(DateTimeOffset Start, TimeSpan Length)>>("GatherBuddy.QueryUptimes");
     }
 
     public bool DrawTooltip(uint fishId, uint? territoryId)
@@ -31,6 +34,18 @@ public class GatherBuddyIpcProvider
         catch
         {
             return false;
+        }
+    }
+
+    public IEnumerable<(DateTimeOffset Start, TimeSpan Length)> QueryUptimes(uint itemId, byte numUptimes)
+    {
+        try
+        {
+            return _queryUptimes.InvokeFunc(itemId, numUptimes);
+        }
+        catch
+        {
+            return [];
         }
     }
 }

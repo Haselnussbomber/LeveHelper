@@ -207,6 +207,41 @@
     "en": "Ready for turn in!",
     "de": "Bereit zur Abgabe!"
   },
+  "QueueTab.FishUptimeTable.Title": {
+    "en": "Next Uptime:",
+    "de": "Nächste Uptime:"
+  },
+  "QueueTab.FishUptimeTable.Day": {
+    "en": "Day",
+    "de": "Tag"
+  },
+  "QueueTab.FishUptimeTable.Time": {
+    "en": "Time",
+    "de": "Zeit"
+  },
+  "QueueTab.FishUptimeTable.StartsIn": {
+    "en": "Starts in",
+    "de": "Startet in"
+  },
+  "QueueTab.FishUptimeTable.Duration": {
+    "en": "Duration",
+    "de": "Dauer"
+  },
+  "QueueTab.FishUptimeTable.Downtime": {
+    "en": "Downtime",
+    "de": "Downtime"
+  },
+  "QueueTab.FishUptimeTable.DateFormat": {
+    "en": "yyyy-MM-dd (ddd)",
+    "de": "dd.MM.yyyy (ddd)"
+  },
+  "QueueTab.FishUptimeTable.TimeFormat": {
+    "en": "HH:mm"
+  },
+  "QueueTab.FishUptimeTable.Active": {
+    "en": "Active",
+    "de": "Aktiv"
+  },
 
   "RecipeTreeTab.NoActiveLevequests": {
     "en": "No accepted Levequests",

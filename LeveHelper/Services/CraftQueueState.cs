@@ -6,6 +6,7 @@ using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
@@ -37,6 +38,7 @@ public unsafe partial class CraftQueueState : IDisposable
     private readonly AddonObserver _addonObserver;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
+    private readonly LanguageProvider _languageProvider;
     private readonly GatherBuddyIpcProvider _gatherBuddyIpc;
     private ushort[] _lastActiveLevequestIds = [];
 
@@ -290,7 +292,11 @@ public unsafe partial class CraftQueueState : IDisposable
             else if (isFish || isSpearfish)
             {
                 using var tooltip = ImRaii.Tooltip();
-                if (!_gatherBuddyIpc.DrawTooltip(item.ItemId, territoryType.RowId))
+                if (_gatherBuddyIpc.DrawTooltip(item, territoryType.RowId))
+                {
+                    DrawTimeIntervalTooltip(item);
+                }
+                else
                 {
                     ImGui.Text(_textService.GetAddonText(8506)); // "Open Map"
                 }
@@ -413,5 +419,90 @@ public unsafe partial class CraftQueueState : IDisposable
             ImGui.SameLine(availSize.X - 20, 0);
             _textureProvider.DrawIcon(classJobIcon, 20);
         }
+    }
+
+    private void DrawTimeIntervalTooltip(ItemHandle item)
+    {
+        var uptimes = _gatherBuddyIpc.QueryUptimes(item, 10);
+        var uptimesCount = uptimes.Count();
+        if (uptimesCount <= 0 || (uptimesCount == 1 && uptimes.ElementAt(0).Length == TimeSpan.MaxValue))
+            return;
+
+        ImGui.Text(_textService.Translate("QueueTab.FishUptimeTable.Title"));
+
+        var cellPadding = new Vector2(10, 5) * ImGuiHelpers.GlobalScale;
+
+        using var style = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, cellPadding);
+        using var table = ImRaii.Table("##UpcomingUptimesTable", 5, ImGuiTableFlags.RowBg | ImGuiTableFlags.PadOuterX | ImGuiTableFlags.NoSavedSettings);
+        if (!table)
+            return;
+
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Day"));
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Time"));
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.StartsIn"));
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Duration"));
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Downtime"));
+        ImGui.TableHeadersRow();
+
+        DateTime? previousStartDate = null;
+        var now = DateTime.Now;
+
+        foreach (var (i, time) in uptimes.Index())
+        {
+            var startDate = time.Start.DateTime;
+            ImGui.TableNextColumn();
+            if (previousStartDate is null || previousStartDate.Value.Date != startDate.Date)
+            {
+                ImGui.Text(startDate.ToString(_textService.Translate("QueueTab.FishUptimeTable.DateFormat"), _languageProvider.CultureInfo));
+                previousStartDate = startDate;
+            }
+
+            ImGui.TableNextColumn();
+            ImGui.Text(startDate.ToString(_textService.Translate("QueueTab.FishUptimeTable.TimeFormat"), _languageProvider.CultureInfo));
+
+            ImGui.TableNextColumn();
+            if (now < time.Start)
+            {
+                ImGui.Text(DurationString(now, time.Start.DateTime));
+            }
+            else
+            {
+                ImGui.Text(_textService.Translate("QueueTab.FishUptimeTable.Active"));
+            }
+
+            ImGui.TableNextColumn();
+            ImGui.Text(DurationString(time.Start.DateTime, time.Start.DateTime.Add(time.Length)));
+
+            ImGui.TableNextColumn();
+            if (i < uptimesCount - 1)
+            {
+                var (start, length) = uptimes.ElementAt(i);
+                ImGui.Text(DurationString(start.DateTime + length, uptimes.ElementAt(i + 1).Start.DateTime));
+            }
+            else
+            {
+                ImGui.Text("-"u8);
+            }
+        }
+    }
+
+    public static string DurationString(DateTime a, DateTime b)
+    {
+        (a, b) = a < b ? (a, b) : (b, a);
+
+        var tmp = b - a;
+        var totalDays = (int)tmp.TotalDays;
+        if (totalDays > 0)
+        {
+            return $">{totalDays}d";
+        }
+
+        var totalHours = (int)tmp.TotalHours;
+        if (totalHours > 0)
+        {
+            return $">{totalHours}h";
+        }
+
+        return $"{(int)tmp.TotalMinutes}:{tmp.Seconds:D2}m";
     }
 }
