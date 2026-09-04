@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
@@ -433,13 +434,14 @@ public unsafe partial class CraftQueueState : IDisposable
         var cellPadding = new Vector2(10, 5) * ImGuiHelpers.GlobalScale;
 
         using var style = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, cellPadding);
-        using var table = ImRaii.Table("##UpcomingUptimesTable", 5, ImGuiTableFlags.RowBg | ImGuiTableFlags.PadOuterX | ImGuiTableFlags.NoSavedSettings);
+        using var table = ImRaii.Table("##UpcomingUptimesTable", 6, ImGuiTableFlags.RowBg | ImGuiTableFlags.PadOuterX | ImGuiTableFlags.NoSavedSettings);
         if (!table)
             return;
 
         ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Day"));
         ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Time"));
         ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.StartsIn"));
+        ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.EndsIn"));
         ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Duration"));
         ImGui.TableSetupColumn(_textService.Translate("QueueTab.FishUptimeTable.Downtime"));
         ImGui.TableHeadersRow();
@@ -450,17 +452,17 @@ public unsafe partial class CraftQueueState : IDisposable
         foreach (var (i, time) in uptimes.Index())
         {
             var startDate = time.Start.DateTime;
-            ImGui.TableNextColumn();
+            ImGui.TableNextColumn(); // Day
             if (previousStartDate is null || previousStartDate.Value.Date != startDate.Date)
             {
                 ImGui.Text(startDate.ToString(_textService.Translate("QueueTab.FishUptimeTable.DateFormat"), _languageProvider.CultureInfo));
                 previousStartDate = startDate;
             }
 
-            ImGui.TableNextColumn();
+            ImGui.TableNextColumn(); // Time
             ImGui.Text(startDate.ToString(_textService.Translate("QueueTab.FishUptimeTable.TimeFormat"), _languageProvider.CultureInfo));
 
-            ImGui.TableNextColumn();
+            ImGui.TableNextColumn(); // Starts in
             if (now < time.Start)
             {
                 ImGui.Text(DurationString(now, time.Start.DateTime));
@@ -470,10 +472,20 @@ public unsafe partial class CraftQueueState : IDisposable
                 ImGui.Text(_textService.Translate("QueueTab.FishUptimeTable.Active"));
             }
 
-            ImGui.TableNextColumn();
+            ImGui.TableNextColumn(); // Ends in
+            if (i < uptimesCount - 1)
+            {
+                ImGui.Text(DurationString(now, time.Start.DateTime.Add(time.Length)));
+            }
+            else
+            {
+                ImGui.Text("-"u8);
+            }
+
+            ImGui.TableNextColumn(); // Duration
             ImGui.Text(DurationString(time.Start.DateTime, time.Start.DateTime.Add(time.Length)));
 
-            ImGui.TableNextColumn();
+            ImGui.TableNextColumn(); // Downtime
             if (i < uptimesCount - 1)
             {
                 var (start, length) = uptimes.ElementAt(i);
@@ -492,17 +504,19 @@ public unsafe partial class CraftQueueState : IDisposable
 
         var tmp = b - a;
         var totalDays = (int)tmp.TotalDays;
+        var sb = new StringBuilder();
         if (totalDays > 0)
         {
-            return $">{totalDays}d";
+            sb.Append($"{totalDays}:");
         }
 
-        var totalHours = (int)tmp.TotalHours;
-        if (totalHours > 0)
+        var hours = tmp.Hours;
+        if (hours > 0)
         {
-            return $">{totalHours}h";
+            sb.Append($"{hours:D2}:");
         }
 
-        return $"{(int)tmp.TotalMinutes}:{tmp.Seconds:D2}m";
+        sb.Append($"{tmp.Minutes:D2}:{tmp.Seconds:D2}");
+        return sb.ToString();
     }
 }

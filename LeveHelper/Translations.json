@@ -223,6 +223,10 @@
     "en": "Starts in",
     "de": "Startet in"
   },
+  "QueueTab.FishUptimeTable.EndsIn": {
+    "en": "Ends in",
+    "de": "Endet in"
+  },
   "QueueTab.FishUptimeTable.Duration": {
     "en": "Duration",
     "de": "Dauer"
