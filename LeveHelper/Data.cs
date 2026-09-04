@@ -136,9 +136,11 @@ public static class Data
             697, // Mushroom Gobblin'
             730, // Look How They Shine for You
             731, // Elemental Housekeeping
+            732, // Location, Location, Location
             733, // Rock My Wall
             734, // Fool Me Twice
             735, // Can't Start a Fire
+            736, // Tag, You're It
             737, // Baby, Light My Way
             770, // Sounds Fishy to Me
             771, // The Long and the Shortcrust
@@ -879,8 +881,10 @@ public static class Data
             529, // The Cure
             530, // Far from the Vine
             755, // Soup to Guts
+            756, // A Kelping Hand
             757, // Poor Boys Eat Well
             759, // They Taste Just as Pretty
+            760, // Yummy in the Tummy
             761, // Splendor in the Glass
         ],
         // Nahctahr
@@ -991,7 +995,9 @@ public static class Data
         ],
         // C'lafumyn
         [1004736] = [
+            818, // Road Worriers
             819, // It's Better (for You) Under the Sea
+            820, // You Are NOT a Pirate
             821, // Twenty-nine Was the Cutoff
         ],
         // Cedrepierre
