@@ -36,10 +36,13 @@ public partial class PluginCommandService : IHostedService
                 .WithHandler(OnConfigCommand)));
 
         _pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigWindow;
-        if (_clientState.IsLoggedIn) EnableMainUiHandler();
+
+        if (_clientState.IsLoggedIn)
+            EnableMainUiHandler();
 
         _clientState.Login += OnLogin;
         _clientState.Logout += OnLogout;
+
         return Task.CompletedTask;
     }
 

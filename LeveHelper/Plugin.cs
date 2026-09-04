@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using HaselCommon.Extensions;
 using LeveHelper.Config;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +12,6 @@ namespace LeveHelper;
 public partial class Plugin : IAsyncDalamudPlugin
 {
     private readonly IDalamudPluginInterface _pluginInterface;
-    private readonly IFramework _framework;
     private IHost _host;
 
     [AutoPostConstruct]
@@ -21,6 +19,11 @@ public partial class Plugin : IAsyncDalamudPlugin
     {
         _host = new HostBuilder()
             .UseContentRoot(_pluginInterface.AssemblyLocation.Directory!.FullName)
+            .ConfigureHostOptions(options =>
+            {
+                options.ServicesStartConcurrently = true;
+                options.ServicesStopConcurrently = true;
+            })
             .ConfigureServices(services =>
             {
                 services.AddDalamud(_pluginInterface);
@@ -33,14 +36,14 @@ public partial class Plugin : IAsyncDalamudPlugin
 
     public Task LoadAsync(CancellationToken cancellationToken)
     {
-        return _host.StartOnFrameworkThread(_framework, cancellationToken);
+        return _host.StartAsync(cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
     {
         try
         {
-            await _host.StopOnFrameworkThread(_framework).ConfigureAwait(false);
+            await _host.StopAsync().ConfigureAwait(false);
         }
         finally
         {
