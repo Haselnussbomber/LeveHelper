@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="HaselCommon/HaselCommon.Generators/HaselCommon.Generators.csproj" />
   <Project Path="HaselCommon/HaselCommon/HaselCommon.csproj">
     <Platform Project="x64" />
   </Project>
