@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+- **Added:** You can now click on the group header in the Type filter to filter for either all Fieldcraft, Tradecraft or Grand Company Leves.
+- **Added:** When GatherBuddy is installed, the Queue and Recipe Tree now display GatherBuddys tooltip on fish and spearfish, including info about the Bait, Time and Weather restrictions and the next uptimes.
+- **Fixed:** Some gatherables did not show up in the Queue.
+
+### Regarding the Levemete filter
+
+With this version, the wiki-scraped data for Levequest issuers was replaced with data collected via the **Tracky** plugin.
+
+We've been collecting data for a week now and only a few entries are still missing.  
+As a temporary measure, any untracked issuer data is added to LeveHelper automatically when the client receives it. This data is tab-specific and only available until the plugin is unloaded, as it is not saved to disk.
+
+Please install the Tracky plugin and enable uploads if you'd like to contribute.  
+I'll release an update in the future when more data is available.
+
 ## [2.5.6] (2026-04-30)
 
 Update for 7.5 (Dalamud API 15).
