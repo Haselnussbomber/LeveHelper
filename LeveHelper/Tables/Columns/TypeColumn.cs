@@ -20,7 +20,7 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
     private readonly ITextureProvider _textureProvider;
     private readonly ExcelService _excelService;
     private readonly TextService _textService;
-    private readonly Dictionary<string, LeveAssignmentType[]> _groups = [];
+    private readonly Dictionary<uint, (string Label, LeveAssignmentType[] Types)> _groups = [];
 
     private LeveListTable _table = null!;
     private bool _popupOpen;
@@ -46,15 +46,15 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
 
         // HowTo#69 => Fieldcraft Leves
         if (_excelService.TryGetRow<HowTo>(69, out var howTo))
-            _groups.Add(howTo.Name.ToString(), CreateGroup(2, 3, 4));
+            _groups.Add(100, (howTo.Name.ToString(), CreateGroup(2, 3, 4)));
 
         // HowTo#67 => Tradecraft Leves
         if (_excelService.TryGetRow(67, out howTo))
-            _groups.Add(howTo.Name.ToString(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12));
+            _groups.Add(200, (howTo.Name.ToString(), CreateGroup(5, 6, 7, 8, 9, 10, 11, 12)));
 
         // HowTo#112 => Grand Company Leves
         if (_excelService.TryGetRow(112, out howTo))
-            _groups.Add(howTo.Name.ToString(), CreateGroup(13, 14, 15));
+            _groups.Add(300, (howTo.Name.ToString(), CreateGroup(13, 14, 15)));
     }
 
     private LeveAssignmentType[] CreateGroup(params uint[] rowIds)
@@ -80,7 +80,14 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
         if (_config.Filters.Type == 0)
             return true;
 
-        return base.ShouldShow(row);
+        var value = ToValue(row);
+        return _config.Filters.Type switch
+        {
+            100 => value is 2 or 3 or 4,
+            200 => value is 5 or 6 or 7 or 8 or 9 or 10 or 11 or 12,
+            300 => value is 13 or 14 or 15,
+            _ => value == _config.Filters.Type
+        };
     }
 
     public override void OnLanguageChanged()
@@ -146,7 +153,6 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             if (_config.Filters.Type != suggestedType)
             {
                 SetValue((uint)suggestedType);
-                return true;
             }
 
             return true;
@@ -195,17 +201,23 @@ public partial class TypeColumn : ColumnNumber<Leve>, IConnectedColumn<LeveListT
             return true;
 
         // Groups
-        foreach (var group in _groups)
+        foreach (var (key, (label, types)) in _groups)
         {
             using (Color.Gold.Push(ImGuiCol.Text))
-                ImGui.Text(group.Key);
+            {
+                if (ImGui.Selectable($"{label}##Group_{key}", _config.Filters.Type == key))
+                {
+                    SetValue(key);
+                    return true;
+                }
+            }
 
             using var indentStyle = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, ImStyle.ItemSpacing.X);
 
             ImGui.Separator();
             ImGui.Spacing();
 
-            foreach (var type in group.Value)
+            foreach (var type in types)
             {
                 if (DrawComboOption(type))
                     return true;
