@@ -4,9 +4,9 @@
     "net10.0-windows7.0": {
       "AutoCtor": {
         "type": "Direct",
-        "requested": "[3.1.0, )",
-        "resolved": "3.1.0",
-        "contentHash": "Wc7TNqq/tQEqHvWPeIdyD4kbrNFhC+2hAjxLqN47QB3aE7z6dWZaE0UnV4JsZzfBGocPP2efchY1tmLvu3tx7Q=="
+        "requested": "[3.1.1, )",
+        "resolved": "3.1.1",
+        "contentHash": "ug8CVTQAlLfqigQIjCr6rsEKK5ma8Llqa60Ou98mL4id6AbKVH5EkCvv0jxGgP5t5iZlZzpX5qPz6T6OiXEfvQ=="
       },
       "DalamudPackager": {
         "type": "Direct",
@@ -22,9 +22,9 @@
       },
       "Injectio": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "UrLWKpGTIliUPzKd0WnBAeXH3haZt7f13DESaWTUnTnpld5wAizlsJ9wwC5H8rs5APlmXIYDxfiDKIjnNpHdcw=="
+        "requested": "[6.2.0, )",
+        "resolved": "6.2.0",
+        "contentHash": "MgtjdaL1LJojuOTG5Wak9/zrQWnk1o2NYFZZlOLX1AMqcvZj7DCIot31N/e7e9e81iEsQRyEV0ClKIdkozqkqA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
