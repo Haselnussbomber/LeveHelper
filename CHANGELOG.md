@@ -1,9 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [2.6.0] (2026-09-10)
 
 - **Added:** You can now click on the group header in the Type filter to filter for either all Fieldcraft, Tradecraft or Grand Company Leves.
-- **Added:** When GatherBuddy is installed, the Queue and Recipe Tree now display GatherBuddys tooltip on fish and spearfish, including info about the Bait, Time and Weather restrictions and the next uptimes.
+- **Added:** When GatherBuddy is installed, the Queue and Recipe Tree now display GatherBuddys tooltip on fish and spearfish, including info about the Bait, Time and Weather restrictions and the next uptimes.  
+  - Please note that GatherBuddy uses the client language, not Dalamuds UI language like LeveHelper. It's out of my control.
 - **Fixed:** Some gatherables did not show up in the Queue.
 
 ### Regarding the Levemete filter
@@ -290,7 +291,8 @@ Please report if you found something is not working or if you discover a wanted 
 
 First release! 🥳
 
-[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.6..main
+[Unreleased]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.6.0..main
+[2.6.0]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.6...v2.6.0
 [2.5.6]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.5...v2.5.6
 [2.5.5]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.4...v2.5.5
 [2.5.4]: https://github.com/Haselnussbomber/LeveHelper/compare/v2.5.3...v2.5.4
