@@ -166,6 +166,7 @@ public static class Data
             541, // Wail of a Tale
             543, // Scent of a Roselet
             545, // A Shroom with a View
+            546, // Too Close to Home
             682, // A Chest of Nuts
             683, // West Bank Story
             684, // Digging Deep
@@ -185,6 +186,7 @@ public static class Data
             570, // Ochus Bite, Leaves Bleed
             571, // Stew for Two
             572, // A Guest for Supper
+            573, // The Transporter
             686, // The Quick and the Dead
             687, // Maple Stories
             688, // Never Strikes Twice
@@ -247,6 +249,7 @@ public static class Data
             593, // Killing Beasts Softly
             594, // It's a Trap
             595, // It's Hard Being Moogle
+            596, // Treevenge
             604, // Refugee Raw
             605, // More than Meets the Eye
             606, // Necrologos: Olidious Separation
@@ -457,6 +460,7 @@ public static class Data
             551, // At the Gates
             553, // Fresh Meat
             555, // No Egg to Stand On
+            556, // Grabbing Crabs
             762, // Fish by Many Other Names
             763, // Just Add Water
             764, // Brain Candy
@@ -479,6 +483,7 @@ public static class Data
             577, // Beasts of Bourbon
             578, // Field Testing
             579, // Barley Legal
+            580, // Tail in Tow
             766, // My Own Private Shell
             767, // The Deepest Cut
             768, // The Moral of the Coral
@@ -637,6 +642,7 @@ public static class Data
             561, // Field of Beans
             563, // You Cannot Kill the Metal
             565, // From Ruins to Riches
+            566, // What Peistes Crave
             722, // Break It Up
             723, // That's Why They Call It Fool's Gold
             724, // It Peiste to Listen
@@ -659,6 +665,7 @@ public static class Data
             585, // Going for Goat
             586, // Earthbound
             587, // The Missing Merchant
+            588, // The Law Won
             726, // A Man's Gotta Dream
             727, // Earth Sprites Are Easy
             728, // Eiderdown for Eidolons
@@ -704,6 +711,7 @@ public static class Data
             613, // Necrologos: Fluid Corruption
             614, // Flower Power
             615, // Run, Run Away
+            616, // Necrologos: The Noctambulist
         ],
         // Aileen
         [1002367] = [
@@ -712,6 +720,7 @@ public static class Data
             632, // Necrologos: Igneous Moil
             633, // Bud Bait
             634, // Wonder Wine
+            635, // Appetite for Abduction
         ],
         // Cimeaurant
         [1002384] = [
@@ -745,6 +754,7 @@ public static class Data
             639, // Meat and Bleat
             640, // Little Lost Lamb
             641, // Cower to the People
+            642, // Saving Bessy
             702, // A Stash of Herbs
             703, // Spear of Heaven
             704, // Salad Days
@@ -765,6 +775,7 @@ public static class Data
             619, // Necrologos: Brand of the Impure
             620, // Adamantoise Tears
             621, // Woodcross Busydeal
+            622, // Where the Fur's At
         ],
         // Rurubana
         [1002398] = [
@@ -773,6 +784,7 @@ public static class Data
             645, // Don't Forget to Cry
             646, // Circling the Ceruleum
             647, // Someone's in the Doghouse
+            648, // Blow-up Incubator
         ],
         // Voilinaut
         [1002401] = [
@@ -806,6 +818,7 @@ public static class Data
             652, // The Area's a Bit Sketchy
             653, // The Tropes of the Trade
             654, // Pets Are Family Too
+            655, // We Can Dismember It for You Wholesale
             706, // Plague on Both Our Forests
             707, // Straight and Arrow
             708, // This Old Fort
@@ -849,9 +862,11 @@ public static class Data
             534, // Procession of the Noble
             535, // A Spoonful of Poison
             536, // Two Yalms Under
+            714, // Rubble Bubble
             715, // Who Needs the Paperwork
             716, // The Primrose Path
             717, // Miners' Holiday
+            718, // Vanishing Point
             719, // Do They Ore Don't They
             720, // Pipikkuli's Ship Comes In
             721, // I Don't Zinc It's a Coincidence
@@ -890,6 +905,7 @@ public static class Data
             755, // Soup to Guts
             756, // A Kelping Hand
             757, // Poor Boys Eat Well
+            758, // Cloud Cutlet
             759, // They Taste Just as Pretty
             760, // Yummy in the Tummy
             761, // Splendor in the Glass
@@ -926,6 +942,7 @@ public static class Data
             626, // Birds of a Feather
             627, // Out to Sea
             628, // Clearing Steer
+            629, // Under Foot
             698, // The Palm in Your Hand
             699, // Nature Calls
             700, // Bleeding Them Dry
@@ -946,6 +963,7 @@ public static class Data
             600, // Another Egg Gone
             601, // Strand by Me
             602, // Man the Ore
+            603, // The Deathliest Catch
         ],
         // K'leytai
         [1004348] = [
@@ -978,6 +996,7 @@ public static class Data
             658, // Big, Bad Idea
             659, // Put Your Stomp on It
             660, // One of Our Naturalists Is Missing
+            661, // A Toad Less Taken
             710, // Caught in the Long Grass
             711, // Topsy-turvy Time
             712, // Wonders Don't Cease, They're Discontinued
