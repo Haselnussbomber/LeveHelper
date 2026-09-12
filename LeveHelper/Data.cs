@@ -621,6 +621,7 @@ public static class Data
             723, // That's Why They Call It Fool's Gold
             724, // It Peiste to Listen
             725, // We Do This the Hard Way
+            726, // A Man's Gotta Dream
             727, // Earth Sprites Are Easy
             729, // The Doom that Came to Belah'dia
         ],
