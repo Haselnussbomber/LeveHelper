@@ -11,6 +11,8 @@
     <Description>A little helper to check which Levequests have been completed and which are missing.</Description>
     <LoadRequiredState>1</LoadRequiredState>
     <CanUnloadAsync>true</CanUnloadAsync>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <!-- Build settings -->
@@ -27,28 +29,22 @@
 
   <!-- Assets -->
   <ItemGroup>
+    <None Include="Translations.json" Link="$(AssemblyName).Translations.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="LICENSES.md" Link="LICENSES.md" CopyToOutputDirectory="PreserveNewest" />
+
     <None Condition="'$(Configuration)' == 'Debug'" Include="Assets\Icon.png" Link="images\icon.png" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <!-- Translations -->
-  <ItemGroup Condition="Exists('Translations.json')">
-    <EmbeddedResource Include="Translations.json" />
-  </ItemGroup>
-
-  <!-- Licenses -->
-  <ItemGroup Condition="Exists('LICENSES.md')">
-    <EmbeddedResource Include="LICENSES.md" />
-    <None Include="LICENSES.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- NuGet dependencies -->
   <ItemGroup>
-    <PackageReference Include="AutoCtor" Version="3.1.1" PrivateAssets="all" ExcludeAssets="compile;runtime" />
-    <PackageReference Include="Injectio" Version="6.2.0" PrivateAssets="all" />
+    <PackageReference Include="AutoCtor" Version="4.0.2" PrivateAssets="all" ExcludeAssets="compile;runtime" />
+    <PackageReference Include="Injectio" Version="6.3.0" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="5.0.1" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- HaselCommon -->
   <ItemGroup>
     <ProjectReference Include="..\HaselCommon\HaselCommon\HaselCommon.csproj" />
+    <ProjectReference Include="..\HaselCommon\HaselCommon.Generators\HaselCommon.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

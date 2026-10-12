@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Threading.Tasks;
-using HaselCommon.Extensions;
 using HaselCommon.Graphics;
 using HaselCommon.Gui;
 using HaselCommon.Services;

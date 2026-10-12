@@ -1,9 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
-using HaselCommon.Utils;
+using HaselCommon;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper;
 
@@ -11,21 +10,15 @@ namespace LeveHelper;
 public partial class Plugin : IAsyncDalamudPlugin
 {
     private readonly IDalamudPluginInterface _pluginInterface;
-    private IHost _host;
+    private Host _host;
 
     [AutoPostConstruct]
     private void Initialize()
     {
         _host = new HostBuilder()
-            .UseContentRoot(_pluginInterface.AssemblyLocation.Directory!.FullName)
-            .ConfigureHostOptions(options =>
-            {
-                options.ServicesStartConcurrently = true;
-                options.ServicesStopConcurrently = true;
-            })
             .ConfigureServices(services =>
             {
-                services.AddSingleton(new PluginAssembly(GetType().Assembly));
+                services.AddFallbackProvider(_pluginInterface);
                 services.AddSingleton(_pluginInterface);
                 services.AddHaselCommon();
                 services.AddLeveHelper();
@@ -46,7 +39,7 @@ public partial class Plugin : IAsyncDalamudPlugin
         }
         finally
         {
-            _host.Dispose();
+            await _host.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

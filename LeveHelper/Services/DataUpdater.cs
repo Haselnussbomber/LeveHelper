@@ -8,7 +8,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Network;
 using LeveHelper.Caches;
 using LeveHelper.Tables;
-using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper.Services;
 

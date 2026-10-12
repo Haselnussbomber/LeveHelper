@@ -5,7 +5,6 @@ using Dalamud.Plugin.Services;
 using HaselCommon.Services;
 using HaselCommon.Services.Commands;
 using LeveHelper.Windows;
-using Microsoft.Extensions.Hosting;
 
 namespace LeveHelper.Services;
 
