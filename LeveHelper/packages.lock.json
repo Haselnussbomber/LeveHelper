@@ -4,9 +4,9 @@
     "net10.0-windows7.0": {
       "AutoCtor": {
         "type": "Direct",
-        "requested": "[3.1.1, )",
-        "resolved": "3.1.1",
-        "contentHash": "ug8CVTQAlLfqigQIjCr6rsEKK5ma8Llqa60Ou98mL4id6AbKVH5EkCvv0jxGgP5t5iZlZzpX5qPz6T6OiXEfvQ=="
+        "requested": "[4.0.1, )",
+        "resolved": "4.0.1",
+        "contentHash": "okT3WzFOTagMp028hELJHY8gUpIuVtp/uRWozgE9z33m1RUjSy58dXFjO9VAU6oxWO2yBGMZr/mcxs4GT4K/Pg=="
       },
       "DalamudPackager": {
         "type": "Direct",
@@ -25,6 +25,12 @@
         "requested": "[6.2.0, )",
         "resolved": "6.2.0",
         "contentHash": "MgtjdaL1LJojuOTG5Wak9/zrQWnk1o2NYFZZlOLX1AMqcvZj7DCIot31N/e7e9e81iEsQRyEV0ClKIdkozqkqA=="
+      },
+      "Roslynator.Analyzers": {
+        "type": "Direct",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "sCZ0Di4B937wKa9pwKbdsE6Njr8A/FdCLw28+yDKyMaDZ/f8JWxcFn6NOCukzKhCG/eA6M2DbXlKkrPi0g0lIA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
