@@ -11,7 +11,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using HaselCommon.Game;
 using HaselCommon.Services;
 using LeveHelper.Config;
-using Microsoft.Extensions.Hosting;
 using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 
 namespace LeveHelper.Services;
