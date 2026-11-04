@@ -623,6 +623,7 @@ public static class Data
             725, // We Do This the Hard Way
             726, // A Man's Gotta Dream
             727, // Earth Sprites Are Easy
+            728, // Eiderdown for Eidolons
             729, // The Doom that Came to Belah'dia
         ],
         // Totonowa
