@@ -1,26 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Game.Text;
-using Dalamud.Interface;
 using Dalamud.Interface.Textures;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using HaselCommon.Graphics;
-using HaselCommon.Gui;
-using HaselCommon.Services;
-using HaselCommon.Utils;
-using LeveHelper.Enums;
 using LeveHelper.Records;
-using Lumina.Extensions;
 using TerritoryType = Lumina.Excel.Sheets.TerritoryType;
 
 namespace LeveHelper.Services;

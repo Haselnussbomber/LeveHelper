@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Numerics;
-using Dalamud.Interface.Utility;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 
 namespace LeveHelper.Services;

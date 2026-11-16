@@ -1,8 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Plugin;
 using HaselCommon;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LeveHelper;
 

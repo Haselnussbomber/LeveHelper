@@ -1,5 +1,4 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
-using LeveHelper.Utils;
 
 namespace LeveHelper.Caches;
 

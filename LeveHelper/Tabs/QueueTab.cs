@@ -1,14 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
-using HaselCommon.Gui;
-using HaselCommon.Services;
-using LeveHelper.Config;
-using LeveHelper.Services;
 
 namespace LeveHelper.Tabs;
 

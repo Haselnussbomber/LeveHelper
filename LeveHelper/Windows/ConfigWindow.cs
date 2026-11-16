@@ -1,10 +1,5 @@
 using System.Reflection;
 using System.Threading.Tasks;
-using HaselCommon.Graphics;
-using HaselCommon.Gui;
-using HaselCommon.Services;
-using HaselCommon.Windows;
-using LeveHelper.Config;
 
 namespace LeveHelper.Windows;
 

@@ -1,9 +1,4 @@
 using System.Diagnostics;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
-using HaselCommon.Services;
-using LeveHelper.Services;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Tabs;
 

@@ -17,8 +17,6 @@ var data = await JsonSerializer.DeserializeAsync<Dictionary<uint, LeveIssuer>>(s
 static string Indent(int level, string line) => new string(' ', level * 4) + line;
 
 var sb = new StringBuilder();
-sb.AppendLine("using System.Collections.Generic;");
-sb.AppendLine();
 sb.AppendLine("namespace LeveHelper;");
 sb.AppendLine();
 sb.AppendLine("public static class Data");

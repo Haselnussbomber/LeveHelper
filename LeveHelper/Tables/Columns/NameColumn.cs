@@ -1,18 +1,9 @@
-using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using Dalamud.Interface.Textures.TextureWraps;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using HaselCommon.Graphics;
-using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
-using HaselCommon.Services;
-using LeveHelper.Config;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Tables.Columns;
 

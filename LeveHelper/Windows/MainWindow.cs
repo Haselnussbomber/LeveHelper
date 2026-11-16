@@ -1,8 +1,3 @@
-using System.Numerics;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
-using HaselCommon.Services;
-using HaselCommon.Windows;
 using LeveHelper.Tabs;
 
 namespace LeveHelper.Windows;

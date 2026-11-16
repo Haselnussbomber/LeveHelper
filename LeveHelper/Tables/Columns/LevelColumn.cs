@@ -1,12 +1,5 @@
-using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using HaselCommon.Graphics;
-using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
-using HaselCommon.Services;
-using LeveHelper.Config;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Tables.Columns;
 

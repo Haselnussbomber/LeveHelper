@@ -1,12 +1,4 @@
-using System.Linq;
-using Dalamud.Interface.Utility.Raii;
-using HaselCommon.Graphics;
-using HaselCommon.Gui;
 using HaselCommon.Gui.ImGuiTable;
-using HaselCommon.Services;
-using LeveHelper.Config;
-using LeveHelper.Enums;
-using Lumina.Excel.Sheets;
 
 namespace LeveHelper.Tables.Columns;
 

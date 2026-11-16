@@ -1,8 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
-using HaselCommon.Services;
 using HaselCommon.Services.Commands;
 using LeveHelper.Windows;
 
