@@ -9,7 +9,7 @@ public partial class QueueTab
     private readonly CraftQueueState _state;
     private readonly TextService _textService;
     private readonly LeveService _leveService;
-    private readonly ExtendedItemService _itemService;
+    private readonly ItemService _itemService;
     private readonly PluginConfig _config;
 
     public void Draw(Window window)

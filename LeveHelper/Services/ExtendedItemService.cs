@@ -4,8 +4,10 @@ using LeveHelper.Caches;
 namespace LeveHelper.Services;
 
 [RegisterTransient, AutoConstruct]
-public partial class ExtendedItemService : ItemService
+public partial class ExtendedItemService
 {
+    private readonly ItemService _itemService;
+
     private readonly ItemQuantityCache _itemQuantityCache = new();
     private readonly Dictionary<uint, ItemQueueCategory> _itemQueueCategoryCache = [];
 
@@ -16,17 +18,17 @@ public partial class ExtendedItemService : ItemService
         => _itemQuantityCache.GetValue(itemId);
 
     public bool HasAllIngredients(uint itemId)
-        => GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item) > ingredient.Amount);
+        => _itemService.GetIngredients(itemId).All(ingredient => GetQuantity(ingredient.Item) > ingredient.Amount);
 
     public bool IsCrystal(ItemHandle item)
-        => TryGetItem(item, out var itemRow) && itemRow.FilterGroup == (int)ItemFilterGroup.Crystal;
+        => _itemService.TryGetItem(item, out var itemRow) && itemRow.FilterGroup == (int)ItemFilterGroup.Crystal;
 
     public ItemQueueCategory GetQueueCategory(ItemHandle item)
     {
         if (_itemQueueCategoryCache.TryGetValue(item, out var category))
             return category;
 
-        if (!TryGetItem(item, out _))
+        if (!_itemService.TryGetItem(item, out _))
         {
             category = ItemQueueCategory.None;
         }
@@ -34,11 +36,11 @@ public partial class ExtendedItemService : ItemService
         {
             category = ItemQueueCategory.Crystals;
         }
-        else if (IsGatherable(item) || IsFish(item) || IsSpearfish(item))
+        else if (_itemService.IsGatherable(item) || _itemService.IsFish(item) || _itemService.IsSpearfish(item))
         {
             category = ItemQueueCategory.Gatherable;
         }
-        else if (IsCraftable(item))
+        else if (_itemService.IsCraftable(item))
         {
             category = ItemQueueCategory.Craftable;
         }

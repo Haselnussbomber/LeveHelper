@@ -7,7 +7,7 @@ public class DebugTab(
     CraftQueueState state,
     ExcelService excelService,
     MapService mapService,
-    ExtendedItemService itemService,
+    ItemService itemService,
     TextService textService)
 {
     [Conditional("DEBUG")]

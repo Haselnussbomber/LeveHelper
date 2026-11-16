@@ -20,12 +20,6 @@
         "resolved": "1.2.39",
         "contentHash": "fcFN01tDTIQqDuTwr1jUQK/geofiwjG5DycJQOnC72i1SsLAk1ELe+apBOuZ11UMQG8YKFZG1FgvjZPbqHyatg=="
       },
-      "Injectio": {
-        "type": "Direct",
-        "requested": "[6.3.0, )",
-        "resolved": "6.3.0",
-        "contentHash": "Bv3jWmaU2U4DHq3ekTzE/8Dmp0KpMzgfoxtml1cDwBG7ZT4Jl1HNV4yHceckNUf6KsBN8cm++/UUzT1A4QV43w=="
-      },
       "Roslynator.Analyzers": {
         "type": "Direct",
         "requested": "[5.0.1, )",

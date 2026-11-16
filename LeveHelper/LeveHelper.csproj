@@ -38,7 +38,6 @@
   <!-- NuGet dependencies -->
   <ItemGroup>
     <PackageReference Include="AutoCtor" Version="4.0.2" PrivateAssets="all" ExcludeAssets="compile;runtime" />
-    <PackageReference Include="Injectio" Version="6.3.0" PrivateAssets="all" />
     <PackageReference Include="Roslynator.Analyzers" Version="5.0.1" PrivateAssets="all" />
   </ItemGroup>
 

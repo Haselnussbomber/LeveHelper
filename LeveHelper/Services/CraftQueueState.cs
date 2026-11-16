@@ -21,7 +21,8 @@ public unsafe partial class CraftQueueState : IDisposable
     private readonly TextService _textService;
     private readonly MapService _mapService;
     private readonly LeveService _leveService;
-    private readonly ExtendedItemService _itemService;
+    private readonly ItemService _itemService;
+    private readonly ExtendedItemService _extendedItemService;
     private readonly AddonObserver _addonObserver;
     private readonly IGameInventory _gameInventory;
     private readonly IFramework _framework;
@@ -120,13 +121,13 @@ public unsafe partial class CraftQueueState : IDisposable
 
         // categorize
         Crystals = RequiredItems
-            .Where(entry => _itemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Crystals)
+            .Where(entry => _extendedItemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Crystals)
             .ToArray();
 
         // special case for Gatherables
         {
             var gatherables = RequiredItems
-                .Where(entry => _itemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Gatherable)
+                .Where(entry => _extendedItemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Gatherable)
                 .ToArray();
 
             // Map each item to all TerritoryType RowIds where it can be obtained
@@ -162,11 +163,11 @@ public unsafe partial class CraftQueueState : IDisposable
         }
 
         OtherSources = RequiredItems
-            .Where(entry => _itemService.GetQueueCategory(entry.Item) == ItemQueueCategory.OtherSources)
+            .Where(entry => _extendedItemService.GetQueueCategory(entry.Item) == ItemQueueCategory.OtherSources)
             .ToArray();
 
         Craftable = RequiredItems
-            .Where(entry => _itemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Craftable)
+            .Where(entry => _extendedItemService.GetQueueCategory(entry.Item) == ItemQueueCategory.Craftable)
             .ToArray();
     }
 
@@ -175,8 +176,8 @@ public unsafe partial class CraftQueueState : IDisposable
         var newNode = false;
         if (!neededAmounts.TryGetValue(item, out var node))
         {
-            _itemService.InvalidateQuantity(item);
-            node = new(item, 0, _itemService);
+            _extendedItemService.InvalidateQuantity(item);
+            node = new(item, 0, _extendedItemService);
             newNode = true;
         }
 
@@ -206,7 +207,7 @@ public unsafe partial class CraftQueueState : IDisposable
             var ingredientAmount = entry.Amount * parentAmount;
 
             // filter crystals completely if we have enough
-            if (_itemService.IsCrystal(entry.Item) && _itemService.GetQuantity(entry.Item) >= ingredientAmount)
+            if (_extendedItemService.IsCrystal(entry.Item) && _extendedItemService.GetQuantity(entry.Item) >= ingredientAmount)
                 continue;
 
             using var id = ImRaii.PushId(entry.Item.ItemId.ToString());
@@ -214,7 +215,7 @@ public unsafe partial class CraftQueueState : IDisposable
             DrawItem(entry.Item, ingredientAmount);
 
             // filter ingredients if we have enough
-            if (_itemService.GetQuantity(entry.Item) >= ingredientAmount)
+            if (_extendedItemService.GetQuantity(entry.Item) >= ingredientAmount)
                 continue;
 
             var entryIngredients = _itemService.GetIngredients(entry.Item);
@@ -246,14 +247,14 @@ public unsafe partial class CraftQueueState : IDisposable
 
         if (neededCount > 0)
         {
-            if (_itemService.GetQuantity(item) >= neededCount)
+            if (_extendedItemService.GetQuantity(item) >= neededCount)
                 color = Color.Green;
-            else if (_itemService.GetQuantity(item) < neededCount || !_itemService.HasAllIngredients(item))
+            else if (_extendedItemService.GetQuantity(item) < neededCount || !_extendedItemService.HasAllIngredients(item))
                 color = Color.Text700;
         }
 
         using (ImRaii.PushColor(ImGuiCol.Text, color))
-            ImGui.Selectable($"{(neededCount > 0 ? $"{_itemService.GetQuantity(item)}/{neededCount} " : "")}{name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{item.ItemId}_Selectable");
+            ImGui.Selectable($"{(neededCount > 0 ? $"{_extendedItemService.GetQuantity(item)}/{neededCount} " : "")}{name}{(isLeveRequiredItem ? (char)SeIconChar.HighQuality : "")}##{item.ItemId}_Selectable");
 
         if (ImGui.IsItemHovered())
         {
